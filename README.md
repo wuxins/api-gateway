@@ -1,13 +1,41 @@
+设计目的
+
+```
+    高性能可伸缩弹性部署的 API Gateway 中间件，不做业务定制功能
+    支持功能：
+        接口管理：
+            (1) 支持接口管理
+                各环境接口渐进式审批发布
+                接口租户、接口分组
+            (2) restful 接口支持
+                源接口和目标的接口的相对路径地址不要求一致，但URL的可变参数名称和数量需要保持一致
+        限流：支持客户端模式和服务端模式，客户端模式是限对调用方的承诺QPS，服务端模式是限服务方实际处理能力QPS，两种模式都支持fallback
+        降级：供开发环境Api Mock，生产突发访问或故障降级非核心接口
+        监控：数据上报、过滤、清洗、聚合、数据展示
+            目前实现了数据将metric上报到指定日志文件，等待数据平台采集
+```
+
 部署介绍
 
 ```
-新建项目：
-    go mod init za.group/life-gateway
-    go mod tidy
+    1、go version：go 1.16+ 
+    2、编译&运行环境：linux、macos、windows
+    example:
+        cd api-gateway
+        go env -w CGO_ENABLED=0 GOOS=linux GOARCH=amd64
+        go build -o api-gateway main.go
+    3、依赖中间件
+    （1）mysql：启动时强依赖；启动后，定时刷新
+        应用场景：用于加载API动态信息到内存
+    （2）redis：启动时强依赖；启动后，定时刷新
+        应用场景：雪花算法NodeId控制、限流
+```
 
+配置管理
+
+```
 配置：
-    日志配置log.xml和全局配置文件config.yaml，需要和二进制平级
-    Config.yaml 需要指定配置加载方式（Conf.Mode），目前支持本地配置加载、Nacos配置中心加载两种方式:
+    设计需要支持多种配置管理，配置管理模式需要在Config.yaml 指定（Conf.Mode），目前支持本地配置加载、Nacos配置中心加载两种方式:
     （1）本地配置方式（Conf.Mode=local）：
          需要将配置信息配置在Config.yml 的Local 节点下
             运行示例：./run &
@@ -23,33 +51,7 @@
          加载优先级：
             优先用启动命令参数，然后环境变量，最后本地配置
          
-编译&运行：
-    环境：go 1.17+ ,linux
-    cd life-gateway
-    go env -w CGO_ENABLED=0 GOOS=linux GOARCH=amd64
-    go build -o run main.go
-```
 
-设计目的
-
-```
-    高性能可伸缩弹性部署的 API Gateway 中间件，不做业务定制功能
-    支持功能：
-        接口管理：接口权限管理，restful 接口支持，源接口和目标的接口的相对路径地址不要求一致，但URL的可变参数名称和数量需要保持一致
-        限流：保护后台服务
-        降级：供开发环境Api Mock，生产突发访问或故障降级非核心接口
-        服务端客户端超时（keepalive、readtimeout）
-        配置管理：支持本地配置和Nacos配置两种方式
-        优雅停机：等待请求处理完成
-```
-
-第三方中间件依赖
-
-```
-    mysql：启动时强依赖；启动后，定时刷新
-        应用场景：用于加载API动态信息到内存
-    redis：启动时强依赖；启动后，定时刷新
-        应用场景：雪花算法NodeId控制、限流
 ```
 
 表设计
@@ -108,19 +110,7 @@
 1、数据上报
     (1) 数据定义
         定义了什么业务场景（Metric、MetricType）在什么时间（Time）做了一件什么样的事情（Key），以及具体事情内容（Content）
-        type Event struct {
-            // what business, mandatory
-            Metric string
-            // what scenario, secondary category under Metric, allow null
-            MetricType string
-            // what time, mandatory
-            Time string
-            // what's happening
-            Content interface{}
-            // happening key info
-            Key string
-        }
-       日志需要分片
+        参考  metrics.go    type Event struct 
 2、数据采集&过滤&存储
      filebeat -> es 
 3、数据清洗聚合
@@ -134,9 +124,7 @@
 TODO list
 
 ```
-1、监控设计
-监控内容
-全局配置
-api配置
-2、Api gateway admin
+
+1、监控设计 监控内容 全局配置 api配置 2、Api gateway admin
+
 ```

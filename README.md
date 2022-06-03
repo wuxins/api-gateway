@@ -129,64 +129,14 @@
     dashboard
 ```
 
+```
+
 TODO list
 
 ```
-1、src目录移除、log4go gitstliu instead、80 fail-fast   -- done
-2、配置中心重构    -- done
-4、表设计修改 -- done
-    app的概念转换为group，group设计只是为了做分组和管理
-    channel 转换为 tenant, 目前只是用于接入方的管理，后续可扩展为接入方api个性化支持
-    去掉host，加入了needMonitor
-5、http server 优雅停机  -- done
-6、rate -- done
-7、监控设计  -- done
-	监控内容
-	全局配置
-	api配置
-8、Api gateway admin 设计  -- doing
-```
-
-```
-package main
-
-import (
-	"log"
-	"net"
-	"net/http"
-	"net/http/httputil"
-	"net/url"
-	"time"
-)
-
-var MyTransport http.RoundTripper = &http.Transport{
-	Proxy: http.ProxyFromEnvironment,
-	DialContext: (&net.Dialer{
-		Timeout:   30 * time.Second,
-		KeepAlive: 30 * time.Second,
-	}).DialContext,
-	ForceAttemptHTTP2:     true,
-	MaxIdleConns:          100,
-	IdleConnTimeout:       90 * time.Second,
-	TLSHandshakeTimeout:   10 * time.Second,
-	ExpectContinueTimeout: 1 * time.Second,
-	ResponseHeaderTimeout: 2 * time.Second,
-}
-
-func ProxyRequestHandler(proxy *httputil.ReverseProxy) func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		proxy.ServeHTTP(w, r)
-	}
-}
-
-func main() {
-	parseURL, err := url.Parse("http://192.168.43.18:9090")
-	if err != nil {
-		return
-	}
-	proxy := httputil.NewSingleHostReverseProxy(parseURL)
-	proxy.Transport = MyTransport
-	http.HandleFunc("/", ProxyRequestHandler(proxy))
-	log.Fatal(http.ListenAndServe(":6666", nil))
-}
+1、监控设计
+监控内容
+全局配置
+api配置
+2、Api gateway admin
 ```

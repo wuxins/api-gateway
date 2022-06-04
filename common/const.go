@@ -25,32 +25,26 @@ var REQ_METHOD_UNSUPPORTED_MSG = "{\"code\":\"50003\",\"msg\":\"Request method n
 var CHANNEL_UNSUPPORTED_MSG = "{\"code\":\"50004\",\"msg\":\"Request channel not supported!\",\"success\":false}"
 var RATE_LIMiT_MSG = "{\"code\":\"50005\",\"msg\":\"Rate limited!\",\"success\":false}"
 
-//SELECT
-//    a.id,
-//    a.name,
-//    a.api_code,
-//    a.method,
-//    a.read_timeout,
-//    a.src_url,
-//    a.des_url,
-//    a.need_rate_limit,
-//    a.rate_limit,
-//    a.need_monitor,
-//    a.need_fallback,
-//    a.fallback
-//FROM
-//    api a
-//        JOIN
-//    api_env ae ON ae.api_code = a.api_code
-//        JOIN
-//    env e ON e.env_code = ae.env_code
-//WHERE
-//    a.is_deleted = 'N'
-//        AND ae.is_deleted = 'N'
-//        AND e.is_deleted = 'N'
-//        AND e.env_code = ?
+//SELECT a.id,
+//       a.name,
+//       a.api_code,
+//       a.method,
+//       av.read_timeout,
+//       av.src_url,
+//       av.des_url,
+//       av.need_rate_limit,
+//       av.rate_limit,
+//       av.need_monitor,
+//       av.need_fallback,
+//       av.fallback
+//FROM api_version av
+//         JOIN
+//     api a ON a.api_code = av.api_code
+//WHERE av.env = ?
+//  AND av.is_deleted = 'N'
+//  AND a.is_deleted = 'N'
 
-var API_SQL = "SELECT \n    a.id,\n    a.name,\n    a.api_code,\n    a.method,\n    a.read_timeout,\n    a.src_url,\n    a.des_url,\n    a.need_rate_limit,\n    a.rate_limit,\n    a.need_monitor,\n    a.need_fallback,\n    a.fallback\nFROM\n    api a\n        JOIN\n    api_env ae ON ae.api_code = a.api_code\n        JOIN\n    env e ON e.env_code = ae.env_code\nWHERE\n    a.is_deleted = 'N'\n        AND ae.is_deleted = 'N'\n        AND e.is_deleted = 'N'\n        AND e.env_code = ?"
+var API_SQL = "SELECT a.id,\n       a.name,\n       a.api_code,\n       a.method,\n       av.read_timeout,\n       av.src_url,\n       av.des_url,\n       av.need_rate_limit,\n       av.rate_limit,\n       av.need_monitor,\n       av.need_fallback,\n       av.fallback\nFROM api_version av\n         JOIN\n     api a ON a.api_code = av.api_code\nWHERE av.env = ?\n  AND av.is_deleted = 'N'\n  AND a.is_deleted = 'N'"
 
 /**
 SELECT

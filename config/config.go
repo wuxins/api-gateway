@@ -63,8 +63,9 @@ type Redis struct {
 }
 
 type Routing struct {
-	RequestTimeout int64 `yaml:"RequestTimeout"`
-	Transport      http.RoundTripper
+	RequestTimeout        int64  `yaml:"RequestTimeout"`
+	LoadBalanceStrategies string `yaml:"LoadBalanceStrategies"`
+	Transport             http.RoundTripper
 }
 
 type Rate struct {

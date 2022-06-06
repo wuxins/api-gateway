@@ -59,31 +59,29 @@
 ```
     共7张表
     1、api
-        对api行为的描述，描述了api的行为，比如api是如何应对降级、限流、超时、监控等问题
+        对api的基础定义，包含名称、编码、请求方式、源地址、目标地址、具体描述
     2、group
         对api分组管理的描述，由业务方自己去根据业务的特点进行分类，仅为了方便api管理方集中管理和归类api，不会影响api的系统特性
         以保险行业举例：
             当api管理者以领域角度分组：分组（group_code）就是公共域、客户、产品、订单、保单、账务、财务 ......
             当api管理者以流程角度分组：分组（group_code）就是新契约、保全、续期、续保、理赔、营销（券、活动） ......
             多种分组可以同时存在，不要求一个api只能有一个分组，主要还是看api管理者怎么归类管理起来更清晰
-    3、env
-        对api环境管理的描述，目前支持dev、test、prd
-        api渐进式发布流程思路（需要在api后台管理系统完成）：
+    3、tenant
+        对api租户管理的描述，后续可扩展为api调用者及其个性化的api行为
+    4、api_group
+        api和分组的映射多对多关系，一个api可以有多个分组，一个分组下可以有多个api
+    5、api_tenant
+        api和租户的映射多对多关系，一个api可以被多个调用者租户使用，一个调用者租户下可以使用多个api
+    6、api_version
+        描述了api在各个环境的api配置行为，比如降级、限流、超时、监控；
+        映射多对多关系，一个api可以在多个环境下，一个环境下可以有多个api；
+        支持api渐进式发布流程思路（需要在api后台管理系统完成）：
             （1）api调用方提供调用方excel api信息（使用场景、并发），api服务方开发人员补充完excel其他信息，由后台管理系统导入，系统会在开发环境生成api信息
             （2）调用方和服务方开发人员完成对接，服务方开发人员点击提测，api会同步测试环境并生效，并通知测试人员验证
             （3）测试人员完成测试，可以由运维点击发布，api将同步生产环境并生效
-    4、tenant
-        对api租户管理的描述，描述了api调用者及其个性化的api行为
-    5、api_group
-        api和分组的映射多对多关系，一个api可以有多个分组，一个分组下可以有多个api
-    6、api_tenant
-        api和租户的映射多对多关系，一个api可以被多个调用者租户使用，一个调用者租户下可以使用多个api
-    7、api_env
-        api和环境的映射多对多关系，一个api可以在多个环境下，一个环境下可以有多个api
-        维护了api在各个环境的状态
-        dev 状态 ：草稿 -> 测试中 -> 已发布
-        test 状态 ：测试中 -> 已发布
-        prd 状态：已发布
+     7、api_upstream_server
+        对api对应转发后台服务列表(通过配置方式的方案)描述，使用者可以根据自身特点，结合适合的负载均衡策略，设置每个服务的权重、区域配置
+        后续会拓展为服务注册和发现等方式
     具体设计见table.sql
 ```
 
@@ -101,6 +99,21 @@
     （1）启动依赖redis
     （2）启动后，探活redis
         redis 探活失败，分布式限流到本地限流，直到redis alive again，降级是为了避免redis故障引发网关不可用     
+```
+
+Upstream Server 负载均衡设计
+
+```
+目前支持api静态化配置服务列表方案，表api_upstream_server可以设置api权重、区域，
+需要结合负载均衡策略使用，通过配置(Routing.LoadBalanceStrategies)设置，默认为随机，
+
+负载接口：
+type LoadBalancer interface {
+	Select(servers []dto.UpstreamServer) (string, error)
+}
+
+已实现：Random
+TODO：Round Robin、Weighted Round Robin、Rigion Round Robin、Ip Consistent Hash
 ```
 
 监控设计

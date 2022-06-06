@@ -30,8 +30,8 @@ var RATE_LIMiT_MSG = "{\"code\":\"50005\",\"msg\":\"Rate limited!\",\"success\":
 //       a.api_code,
 //       a.method,
 //       av.read_timeout,
-//       av.src_url,
-//       av.des_url,
+//       a.src_url,
+//       a.des_url,
 //       av.need_rate_limit,
 //       av.rate_limit,
 //       av.need_monitor,
@@ -44,17 +44,20 @@ var RATE_LIMiT_MSG = "{\"code\":\"50005\",\"msg\":\"Rate limited!\",\"success\":
 //  AND av.is_deleted = 'N'
 //  AND a.is_deleted = 'N'
 
-var API_SQL = "SELECT a.id,\n       a.name,\n       a.api_code,\n       a.method,\n       av.read_timeout,\n       av.src_url,\n       av.des_url,\n       av.need_rate_limit,\n       av.rate_limit,\n       av.need_monitor,\n       av.need_fallback,\n       av.fallback\nFROM api_version av\n         JOIN\n     api a ON a.api_code = av.api_code\nWHERE av.env = ?\n  AND av.is_deleted = 'N'\n  AND a.is_deleted = 'N'"
+var API_SQL = "SELECT a.id,\n       a.name,\n       a.api_code,\n       a.method,\n       av.read_timeout,\n       a.src_url,\n       a.des_url,\n       av.need_rate_limit,\n       av.rate_limit,\n       av.need_monitor,\n       av.need_fallback,\n       av.fallback\nFROM api_version av\n         JOIN\n     api a ON a.api_code = av.api_code\nWHERE av.env = ?\n  AND av.is_deleted = 'N'\n  AND a.is_deleted = 'N'"
 
-/**
-SELECT
-    apt.api_code, t.tenant_code, t.name
-FROM
-    tenant t
-        JOIN
-    api_tenant apt ON apt.tenant_code = t.tenant_code
-WHERE
-    t.is_deleted = 'N'
-        AND apt.is_deleted = 'N'
-*/
+//SELECT
+//    apt.api_code, t.tenant_code, t.name
+//FROM
+//    tenant t
+//        JOIN
+//    api_tenant apt ON apt.tenant_code = t.tenant_code
+//WHERE
+//    t.is_deleted = 'N'
+//        AND apt.is_deleted = 'N'
+
 var API_TENANT_SQL = "SELECT \n    apt.api_code, t.tenant_code, t.name\nFROM\n    tenant t\n        JOIN\n    api_tenant apt ON apt.tenant_code = t.tenant_code\nWHERE\n    t.is_deleted = 'N'\n        AND apt.is_deleted = 'N'"
+
+// SELECT api_code, host, region FROM api_upstream_server WHERE env = ? AND is_deleted = 'N'
+
+var API_UPSTREAM_SERVER_SQL = "SELECT api_code, host, region FROM api_upstream_server WHERE env = ? AND is_deleted = 'N'"

@@ -11,10 +11,10 @@ Nacos:
 Local:
   Sysconf:
     ServicePort: 7777
-    FlushPathMapSpan: 60000
-    ServerReadTimeout: 1000
-    ServerKeepalive: 3000
-    GracefulShutdownTimeout: 60000
+    FlushPathMapSpan: 60000 # flush db api configuration to local process memory per interval
+    ServerReadTimeout: 1000 # proxy server keepalive the tenant invoker connection
+    ServerKeepalive: 3000 # proxy server keepalive the tenant invoker connection
+    GracefulShutdownTimeout: 60000 # default '30s' if not config, means interrupt or kill server will max waiting for received request process
     LogConfigFile: /Users/liuyicai/work/log.xml # default 'log.xml 'with the startup binary file int the same dir, if not config
   DB:
     DBType: mysql
@@ -29,10 +29,11 @@ Local:
     Password:
     DetectAliveInterval: 1000
   Rate:
-    Enable: true
+    Enable: true # default 'true' if not config, means api rate limit control
     Mode: server # server - limit the server actually rate; client - limit the tenant caller rate
   Routing:
-    RequestTimeout: 5000
+    RequestTimeout: 5000 # default no timeout if not config
+    LoadBalanceStrategies: Random  # default "Random" if not config
   Monitor:
     LogDir: # default "" if not config , means current dir
     LogFileName: # default monitor.log if not config

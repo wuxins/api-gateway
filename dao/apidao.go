@@ -15,15 +15,27 @@ func GetAllApi() []dto.Api {
 	var apiTenants []dto.Tenant
 	dbclient.GetDB().Raw(common.API_TENANT_SQL).Scan(&apiTenants)
 
+	var serverHosts []dto.UpstreamServer
+	dbclient.GetDB().Raw(common.API_UPSTREAM_SERVER_SQL, config.GetConfigure().Env).Scan(&serverHosts)
+
 	for idx, _ := range apis {
-		tenants := &[]dto.Tenant{}
-		for index, _ := range apiTenants {
+		var tenants []dto.Tenant
+		for index := range apiTenants {
 			apiTenant := apiTenants[index]
 			if apis[idx].ApiCode == apiTenant.ApiCode {
-				*tenants = append(*tenants, apiTenant)
+				tenants = append(tenants, apiTenant)
 			}
 		}
 		apis[idx].Tenants = tenants
+
+		var servers []dto.UpstreamServer
+		for index := range serverHosts {
+			server := serverHosts[index]
+			if apis[idx].ApiCode == server.ApiCode {
+				servers = append(servers, server)
+			}
+		}
+		apis[idx].Servers = servers
 	}
 
 	return apis

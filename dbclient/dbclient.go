@@ -3,8 +3,8 @@ package dbclient
 import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-	"time"
 	"github.com/wuxins/api-gateway/config"
+	"time"
 )
 
 var db *gorm.DB

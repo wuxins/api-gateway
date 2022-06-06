@@ -3,11 +3,11 @@ package ratelimiter
 import (
 	"github.com/gitstliu/log4go"
 	"github.com/go-redis/redis/v8"
+	"github.com/wuxins/api-gateway/common"
+	"github.com/wuxins/api-gateway/redisclient"
 	"strconv"
 	"sync"
 	"time"
-	"github.com/wuxins/api-gateway/common"
-	"github.com/wuxins/api-gateway/redisclient"
 )
 
 type ServerRateLimiter struct {

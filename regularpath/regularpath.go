@@ -30,6 +30,7 @@ type RegularPath struct {
 	NeedMonitor    bool
 	ReadTimeout    int64
 	Tenants        []dto.Tenant
+	Servers        []dto.UpstreamServer
 }
 
 type RegularPathTree struct {
@@ -139,7 +140,8 @@ func urlsToPath(api dto.Api) (RegularPath, error) {
 	path.ApiCode = api.ApiCode
 	path.Method = api.Method
 	path.ReadTimeout = api.ReadTimeout
-	path.Tenants = *api.Tenants
+	path.Tenants = api.Tenants
+	path.Servers = api.Servers
 	path.URL = placeHolderRegexp.ReplaceAllString(api.SrcUrl, regexpStringUnshell)
 	path.SrcURL = api.SrcUrl
 	path.DesURL = api.DesUrl

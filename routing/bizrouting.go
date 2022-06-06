@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"github.com/wuxins/api-gateway/common"
 	"github.com/wuxins/api-gateway/config"
+	"github.com/wuxins/api-gateway/loadbalance"
 	"github.com/wuxins/api-gateway/monitor"
 	"github.com/wuxins/api-gateway/regularpath"
 	"io/ioutil"
@@ -25,7 +26,11 @@ func Routing(w http.ResponseWriter, r *http.Request, regularPath *regularpath.Re
 		return urlParseMetaErr
 	}
 
-	remote, err := url.Parse(remoteUrlMeta.Scheme + "://" + remoteUrlMeta.Host)
+	routeServer, err := loadbalance.GetLoadBalancer(config.GetConfigure().Routing.LoadBalanceStrategies).Select(regularPath.Servers)
+	if err != nil {
+		return err
+	}
+	remote, err := url.Parse(routeServer)
 	if err != nil {
 		return err
 	}

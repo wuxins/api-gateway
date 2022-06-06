@@ -3,11 +3,6 @@ package handler
 import (
 	"github.com/bwmarrin/snowflake"
 	"github.com/gitstliu/log4go"
-	"net/http"
-	"net/url"
-	"strconv"
-	"strings"
-	"time"
 	"github.com/wuxins/api-gateway/common"
 	"github.com/wuxins/api-gateway/config"
 	"github.com/wuxins/api-gateway/monitor"
@@ -15,6 +10,11 @@ import (
 	"github.com/wuxins/api-gateway/redisclient"
 	"github.com/wuxins/api-gateway/regularpath"
 	"github.com/wuxins/api-gateway/routing"
+	"net/http"
+	"net/url"
+	"strconv"
+	"strings"
+	"time"
 )
 
 func CommonHandler(w http.ResponseWriter, r *http.Request) {

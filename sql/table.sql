@@ -1,10 +1,12 @@
 drop table if exists `api`;
 CREATE TABLE `api`
 (
-    `id`           bigint      NOT NULL AUTO_INCREMENT COMMENT 'primary key',
-    `name`         varchar(32) NOT NULL COMMENT 'api name',
-    `api_code`     varchar(32) NOT NULL COMMENT 'api code',
-    `method`       varchar(8)  NOT NULL COMMENT 'api request method',
+    `id`           bigint       NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+    `name`         varchar(32)  NOT NULL COMMENT 'api name',
+    `api_code`     varchar(32)  NOT NULL COMMENT 'api code',
+    `method`       varchar(8)   NOT NULL COMMENT 'api request method',
+    `src_url`      varchar(64)  NOT NULL COMMENT 'api request origin url',
+    `des_url`      varchar(128) NOT NULL COMMENT 'api proxy forwarding url',
     `description`  varchar(2048) DEFAULT NULL COMMENT 'api introduction',
     `created_time` datetime      DEFAULT CURRENT_TIMESTAMP COMMENT 'record created time',
     `updated_time` datetime      DEFAULT CURRENT_TIMESTAMP COMMENT 'record updated time',
@@ -93,11 +95,9 @@ CREATE TABLE `api_tenant`
 drop table if exists `api_version`;
 CREATE TABLE `api_version`
 (
-    `id`              bigint       NOT NULL AUTO_INCREMENT COMMENT 'primary key',
-    `api_code`        varchar(32)  NOT NULL COMMENT 'api code',
-    `env`             varchar(32)  NOT NULL COMMENT 'api env',
-    `src_url`         varchar(64)  NOT NULL COMMENT 'api request origin url',
-    `des_url`         varchar(128) NOT NULL COMMENT 'api proxy forwarding url',
+    `id`              bigint      NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+    `api_code`        varchar(32) NOT NULL COMMENT 'api code',
+    `env`             varchar(32) NOT NULL COMMENT 'api env',
     `need_rate_limit` char(1)       DEFAULT 'N' COMMENT 'rate limit switch',
     `rate_limit`      int           DEFAULT NULL COMMENT 'rate limit size',
     `need_fallback`   char(1)       DEFAULT 'N' COMMENT 'fallback switch',
@@ -115,3 +115,24 @@ CREATE TABLE `api_version`
   AUTO_INCREMENT = 100000000
   DEFAULT CHARSET = utf8
   ROW_FORMAT = COMPACT COMMENT ='Api configuration';
+
+drop table if exists `api_upstream_server`;
+CREATE TABLE `api_upstream_server`
+(
+    `id`           bigint       NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+    `api_code`     varchar(32)  NOT NULL COMMENT 'api code',
+    `env`          varchar(32)  NOT NULL COMMENT 'api env',
+    `host`         varchar(128) NOT NULL COMMENT 'api host',
+    `weight`       int          DEFAULT 0 COMMENT 'api host weight',
+    `region`       varchar(32)  NOT NULL COMMENT 'api host region',
+    `created_time` datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record created time',
+    `updated_time` datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record updated time',
+    `created_by`   varchar(255) DEFAULT 'system' COMMENT 'who created the record',
+    `updated_by`   varchar(255) DEFAULT 'system' COMMENT 'who updated the record',
+    `is_deleted`   char(1)      DEFAULT 'N' COMMENT 'logical delete identifier(Y-effective,N-ineffective)',
+    PRIMARY KEY (`id`) USING BTREE,
+    KEY `idx_api_env` (`api_code`, `env`)
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 100000000
+  DEFAULT CHARSET = utf8
+  ROW_FORMAT = COMPACT COMMENT ='Api upstream server information';

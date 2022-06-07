@@ -141,3 +141,18 @@ TODO list
 1、监控设计 监控内容 全局配置 api配置 2、Api gateway admin
 
 ```
+// UnixMilliseconds go support millisecond function until go 1.17+
+//
+//	func (t Time) UnixMilli() int64 {
+//		return t.unixSec()*1e3 + int64(t.nsec())/1e6
+//	}
+//	func (t Time) UnixNano() int64 {
+//		return (t.unixSec())*1e9 + int64(t.nsec())
+//	}
+//
+// (t.unixSec())*1e9 + int64(t.nsec()) / 1e6 = t.unixSec()*1e3 + int64(t.nsec())/1e6
+func UnixMilliseconds(t time.Time) int64 {
+	return time.Now().UnixNano() / 1e6
+}
+
+common.UnixMilliseconds(from)

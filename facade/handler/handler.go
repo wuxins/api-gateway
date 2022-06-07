@@ -21,7 +21,7 @@ func CommonHandler(w http.ResponseWriter, r *http.Request) {
 
 	requestId := common.GenSnowflakeId()
 	r.Header.Set(common.HEADER_REQUEST_ID, requestId.String())
-	r.Header.Set(common.HEADER_REQUEST_TIME, strconv.FormatInt(time.Now().UnixMilli(), 10))
+	r.Header.Set(common.HEADER_REQUEST_TIME, strconv.FormatInt(common.UnixMilliseconds(time.Now()), 10))
 
 	initRegularPath := &regularpath.RegularPath{
 		SrcURL:      r.URL.Path,
@@ -115,10 +115,11 @@ func writeResponse(w http.ResponseWriter, status int, body string, r *http.Reque
 	w.WriteHeader(status)
 	if regularPath.NeedMonitor {
 		requestStartTime, _ := strconv.ParseInt(r.Header[common.HEADER_REQUEST_TIME][0], 10, 64)
+		now := time.Now()
 		monitor.Report(monitor.Event{
 			Metric:     "API",
 			MetricType: "ACCESS_LOG",
-			Time:       time.Now().UnixMilli(),
+			Time:       common.UnixMilliseconds(now),
 			Key:        r.Header[common.HEADER_REQUEST_ID][0],
 			Content: monitor.ApiTransportMetric{
 				Url:       r.URL.Path,
@@ -129,8 +130,8 @@ func writeResponse(w http.ResponseWriter, status int, body string, r *http.Reque
 				RespHeader: w.Header(),
 				RespBody:   body,
 				StartTime:  requestStartTime,
-				EndTime:    time.Now().UnixMilli(),
-				Cost:       time.Now().UnixMilli() - requestStartTime,
+				EndTime:    common.UnixMilliseconds(now),
+				Cost:       common.UnixMilliseconds(now) - requestStartTime,
 			},
 		})
 	}

@@ -43,10 +43,11 @@ func Routing(w http.ResponseWriter, r *http.Request, regularPath *regularpath.Re
 				return respErr
 			}
 			requestStartTime, _ := strconv.ParseInt(r.Header[common.HEADER_REQUEST_TIME][0], 10, 64)
+			now := time.Now()
 			monitor.Report(monitor.Event{
 				Metric:     "API",
 				MetricType: "ACCESS_LOG",
-				Time:       time.Now().UnixMilli(),
+				Time:       common.UnixMilliseconds(now),
 				Key:        r.Header[common.HEADER_REQUEST_ID][0],
 				Content: monitor.ApiTransportMetric{
 					Url:       regularPath.SrcURL,
@@ -57,8 +58,8 @@ func Routing(w http.ResponseWriter, r *http.Request, regularPath *regularpath.Re
 					RespHeader: w.Header(),
 					RespBody:   string(respBody),
 					StartTime:  requestStartTime,
-					EndTime:    time.Now().UnixMilli(),
-					Cost:       time.Now().UnixMilli() - requestStartTime,
+					EndTime:    common.UnixMilliseconds(now),
+					Cost:       common.UnixMilliseconds(now) - requestStartTime,
 				},
 			})
 			respErr = res.Body.Close()

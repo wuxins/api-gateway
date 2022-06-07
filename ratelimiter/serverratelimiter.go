@@ -39,7 +39,7 @@ func (rateLimiter *ServerRateLimiter) FlushLimiter(info RateLimiterCtx) {
 	if info.RedisAlive {
 		// Remove useless key
 		key := common.SERVER_RATE_PREFIX + info.Key // key[1]
-		count, _ := redisclient.GetInstance().Zremrangebyscore(key, int64(0), time.Now().Add(-time.Minute*1).UnixMilli())
+		count, _ := redisclient.GetInstance().Zremrangebyscore(key, int64(0), common.UnixMilliseconds(time.Now().Add(-time.Minute*1)))
 		log4go.Info("FlushLimiter, Remove useless key % v, count %v", key, count)
 	}
 }
@@ -58,8 +58,8 @@ func (rateLimiter *ServerRateLimiter) TryAcquire(info RateLimiterCtx) (bool, err
 			},
 			[]string{
 				rate,
-				strconv.FormatInt(from.UnixMilli(), 10),
-				strconv.FormatInt(to.UnixMilli(), 10),
+				strconv.FormatInt(common.UnixMilliseconds(from), 10),
+				strconv.FormatInt(common.UnixMilliseconds(to), 10),
 				requestId.String(),
 			})
 		// Lua boolean false -> r Nil bulk reply

@@ -68,3 +68,17 @@ func ContainsStr(items []string, item string) bool {
 	}
 	return false
 }
+
+// UnixMilliseconds go support millisecond function until go 1.17+
+//
+//	func (t Time) UnixMilli() int64 {
+//		return t.unixSec()*1e3 + int64(t.nsec())/1e6
+//	}
+//	func (t Time) UnixNano() int64 {
+//		return (t.unixSec())*1e9 + int64(t.nsec())
+//	}
+//
+// (t.unixSec())*1e9 + int64(t.nsec()) / 1e6 = t.unixSec()*1e3 + int64(t.nsec())/1e6
+func UnixMilliseconds(t time.Time) int64 {
+	return time.Now().UnixNano() / 1e6
+}

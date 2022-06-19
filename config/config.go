@@ -83,7 +83,8 @@ type Routing struct {
 }
 
 type Rate struct {
-	Enable bool `yaml:"Enable"`
+	Enable               bool `yaml:"Enable"`
+	LocalRateDownPercent int  `yaml:"LocalRateDownPercent"`
 }
 
 type Monitor struct {
@@ -119,7 +120,7 @@ type ConfigureLoader interface {
 func getConfigureLoader(mode string) ConfigureLoader {
 
 	var loader ConfigureLoader
-	if common.CONF_LOAD_MODE_NACOS == mode {
+	if common.ConfLoadModeNacos == mode {
 		loader = &NacosLoader{}
 	} else {
 		loader = &LocalLoader{}
@@ -135,7 +136,7 @@ func getConfigureLoader(mode string) ConfigureLoader {
 // Example on program arguments startup: -NACOSADDRESS=127.0.0.1:8888 -NAMESPACE=dev -DATAID=testDataId -GROUP=DEFAULT_GROUP
 func init() {
 
-	configMode := flag.String(common.CONF_LOAD_MODE, "", "config mode")
+	configMode := flag.String(common.ConfLoadMode, "", "config mode")
 	flag.Parse()
 
 	config := Config{}
@@ -143,7 +144,7 @@ func init() {
 	config.Conf = &Conf{}
 	config.Local = &Local{}
 	if len(*configMode) <= 0 {
-		*configMode = os.Getenv(common.CONF_LOAD_MODE)
+		*configMode = os.Getenv(common.ConfLoadMode)
 	}
 	if len(*configMode) > 0 {
 		config.Conf.Mode = *configMode

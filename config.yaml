@@ -30,6 +30,7 @@ Local:
     DetectAliveInterval: 1000 # ms
   Rate:
     Enable: true # default 'true' if not config, means api rate limit control
+    LocalRateDownPercent: 30
   Routing:
     RequestTimeout: 30000 # default no timeout if not config
     MaxConnsPerHost: 20000

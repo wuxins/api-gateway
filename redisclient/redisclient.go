@@ -6,6 +6,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/wuxins/api-gateway/common"
 	"github.com/wuxins/api-gateway/config"
+	"github.com/wuxins/api-gateway/monitor"
 	"strings"
 	"time"
 )
@@ -17,7 +18,7 @@ var alive = true
 func Init(redisConf config.Redis) redis.UniversalClient {
 
 	client = redis.NewUniversalClient(&redis.UniversalOptions{
-		Addrs:        strings.Split(redisConf.Addresses, common.DELIMITER_COMMA),
+		Addrs:        strings.Split(redisConf.Addresses, common.DelimiterComma),
 		Password:     redisConf.Password,
 		DB:           redisConf.DB,
 		PoolSize:     redisConf.PoolSize,
@@ -31,11 +32,17 @@ func Init(redisConf config.Redis) redis.UniversalClient {
 
 	go func() {
 		ticker := time.NewTicker(time.Duration(redisConf.DetectAliveInterval) * time.Millisecond)
+		defer ticker.Stop()
 		for range ticker.C {
 			_, err := client.Ping(BackgroundCtx).Result()
 			if err != nil {
 				alive = false
-				log4go.Debug("Redis heartbeat fail")
+				monitor.Report(monitor.Event{
+					Metric:     monitor.MetricApi,
+					MetricType: monitor.MetricApiRedisBreakdown,
+					Time:       time.Now().Format(common.DateFormatMs),
+					Content:    err.Error(),
+				})
 			} else {
 				alive = true
 				log4go.Debug("Redis heartbeat ok")

@@ -39,13 +39,13 @@ func Routing(w http.ResponseWriter, r *http.Request, regularPath *regularpath.Re
 			if respErr != nil {
 				return respErr
 			}
-			requestStartTime, _ := strconv.ParseInt(r.Header[common.HEADER_REQUEST_TIME][0], 10, 64)
+			requestStartTime, _ := strconv.ParseInt(r.Header[common.HeaderRequestTime][0], 10, 64)
 			now := time.Now()
 			monitor.Report(monitor.Event{
-				Metric:     monitor.METRIC_API,
-				MetricType: monitor.METRIC_API_ACC_LOG,
-				Time:       now.Format(common.DATE_FORMAT_MS),
-				Key:        r.Header[common.HEADER_REQUEST_ID][0],
+				Metric:     monitor.MetricApi,
+				MetricType: monitor.MetricApiAccLog,
+				Time:       now.Format(common.DateFormatMs),
+				Key:        r.Header[common.HeaderRequestId][0],
 				Content: monitor.ApiTransportMetric{
 					Url:        regularPath.SrcURL,
 					Method:     r.Method,

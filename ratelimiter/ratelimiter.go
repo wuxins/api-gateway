@@ -3,10 +3,11 @@ package ratelimiter
 import "github.com/bwmarrin/snowflake"
 
 type RateLimiterCtx struct {
-	Key        string
-	Rate       int
-	RedisAlive bool
-	RequestId  snowflake.ID
+	Key                  string
+	Rate                 int
+	RedisAlive           bool
+	RequestId            snowflake.ID
+	LocalRateDownPercent int
 }
 
 type RateLimiter interface {

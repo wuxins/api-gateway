@@ -3,7 +3,6 @@ package handler
 import (
 	"bytes"
 	"github.com/bwmarrin/snowflake"
-	"github.com/gitstliu/log4go"
 	"github.com/wuxins/api-gateway/common"
 	"github.com/wuxins/api-gateway/config"
 	"github.com/wuxins/api-gateway/idgenerator"
@@ -23,8 +22,8 @@ import (
 func CommonHandler(w http.ResponseWriter, r *http.Request) {
 
 	requestId := idgenerator.GenSnowflakeId()
-	r.Header.Set(common.HEADER_REQUEST_ID, requestId.String())
-	r.Header.Set(common.HEADER_REQUEST_TIME, strconv.FormatInt(common.UnixMilliseconds(time.Now()), 10))
+	r.Header.Set(common.HeaderRequestId, requestId.String())
+	r.Header.Set(common.HeaderRequestTime, strconv.FormatInt(common.UnixMilliseconds(time.Now()), 10))
 
 	initRegularPath := &regularpath.RegularPath{
 		SrcURL:      r.URL.Path,
@@ -32,26 +31,26 @@ func CommonHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	currUrl, decodeErr := url.PathUnescape(r.URL.Path)
 	if currUrl == "/" {
-		writeResponse(w, 200, common.WELCOME_MSG, r, initRegularPath)
+		writeResponse(w, 200, common.WelcomeMsg, r, initRegularPath)
 		return
 	}
 	if decodeErr != nil {
-		writeResponse(w, 200, common.PATH_ERROR_MSG, r, initRegularPath)
+		writeResponse(w, 200, common.PathErrorMsg, r, initRegularPath)
 		return
 	}
 
 	regularPath := regularpath.CheckURLMatch(currUrl)
 	if regularPath == nil {
-		writeResponse(w, 200, common.UNAUTHIRIZED_MSG, r, initRegularPath)
+		writeResponse(w, 200, common.UnauthorizedMsg, r, initRegularPath)
 		return
 	}
 
 	if regularPath.Method != r.Method {
-		writeResponse(w, 200, common.REQ_METHOD_UNSUPPORTED_MSG, r, regularPath)
+		writeResponse(w, 200, common.ReqMethodUnsupportedMsg, r, regularPath)
 		return
 	}
 
-	tenant := r.Header[common.HEADER_TENANT]
+	tenant := r.Header[common.HeaderTenant]
 	supportedTenants := regularPath.Tenants
 	isTenantSupport := false
 	if tenant != nil && len(supportedTenants) > 0 {
@@ -63,8 +62,7 @@ func CommonHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !isTenantSupport {
-		log4go.Info("Routing tenant:%v,but supported tenants:%v", tenant, supportedTenants)
-		writeResponse(w, 200, common.CHANNEL_UNSUPPORTED_MSG, r, regularPath)
+		writeResponse(w, 200, common.ChannelUnsupportedMsg, r, regularPath)
 		return
 	}
 
@@ -89,26 +87,32 @@ func routeWithRateLimit(w http.ResponseWriter, r *http.Request, regularPath *reg
 		acquireOk, err := ratelimiter.GetRateLimiter().TryAcquire(reteCtx)
 		defer ratelimiter.GetRateLimiter().Release(reteCtx)
 		if err != nil {
-			writeResponse(w, 200, common.SYS_ERROR_MSG, r, regularPath)
+			writeResponse(w, 200, common.SysErrorMsg, r, regularPath)
 			return
 		}
 		if !acquireOk {
-			writeResponse(w, 200, common.RATE_LIMiT_MSG, r, regularPath)
+			writeResponse(w, 200, common.RateLimitMsg, r, regularPath)
 			return
 		}
 	}
 	// route
 	routingErr := routing.Routing(w, r, regularPath)
 	if routingErr != nil {
-		log4go.Error("Routing error : %v", routingErr)
-		writeResponse(w, 200, common.SYS_ERROR_MSG, r, regularPath)
+		monitor.Report(monitor.Event{
+			Metric:     monitor.MetricApi,
+			MetricType: monitor.MetricApiRouteErr,
+			Time:       time.Now().Format(common.DateFormatMs),
+			Key:        strconv.FormatInt(int64(requestId), 10),
+			Content:    routingErr.Error(),
+		})
+		writeResponse(w, 200, common.SysErrorMsg, r, regularPath)
 		return
 	}
 }
 
 func writeResponse(w http.ResponseWriter, status int, body string, r *http.Request, regularPath *regularpath.RegularPath) {
 
-	value := r.Header[common.HEADER_CONTENT_ENCODING]
+	value := r.Header[common.HeaderContentEncoding]
 	IsGzipEncode := value != nil && strings.EqualFold(value[0], "gzip")
 	var bodyBytes []byte
 	if IsGzipEncode {
@@ -120,13 +124,13 @@ func writeResponse(w http.ResponseWriter, status int, body string, r *http.Reque
 	if regularPath.NeedMonitor {
 		requestBody, _ := ioutil.ReadAll(r.Body)
 		r.Body = ioutil.NopCloser(bytes.NewBuffer(requestBody))
-		requestStartTime, _ := strconv.ParseInt(r.Header[common.HEADER_REQUEST_TIME][0], 10, 64)
+		requestStartTime, _ := strconv.ParseInt(r.Header[common.HeaderRequestTime][0], 10, 64)
 		now := time.Now()
 		monitor.Report(monitor.Event{
-			Metric:     monitor.METRIC_API,
-			MetricType: monitor.METRIC_API_ACC_LOG,
-			Time:       now.Format(common.DATE_FORMAT_MS),
-			Key:        r.Header[common.HEADER_REQUEST_ID][0],
+			Metric:     monitor.MetricApi,
+			MetricType: monitor.MetricApiAccLog,
+			Time:       now.Format(common.DateFormatMs),
+			Key:        r.Header[common.HeaderRequestId][0],
 			Content: monitor.ApiTransportMetric{
 				Url:        r.URL.Path,
 				Method:     r.Method,

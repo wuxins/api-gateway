@@ -6,11 +6,11 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/clients/config_client"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/vo"
+	"github.com/wuxins/api-gateway/common"
 	"gopkg.in/yaml.v3"
 	"os"
 	"strconv"
 	"strings"
-	"github.com/wuxins/api-gateway/common"
 )
 
 var client config_client.IConfigClient
@@ -20,16 +20,16 @@ type NacosLoader struct {
 
 func (loader *NacosLoader) load(config Config) error {
 
-	serviceAddr := flag.String(common.NACOS_ADDRESS, "", "Nacos Address")
-	namespace := flag.String(common.NACOS_NAMESPACE, "", "Nacos Namespace")
-	dataId := flag.String(common.NACOS_DATAID, "", "Nacos DataId")
-	group := flag.String(common.NACOS_GROUP, "", "Nacos Group")
+	serviceAddr := flag.String(common.NacosAddress, "", "Nacos Address")
+	namespace := flag.String(common.NacosNamespace, "", "Nacos Namespace")
+	dataId := flag.String(common.NacosDataid, "", "Nacos DataId")
+	group := flag.String(common.NacosGroup, "", "Nacos Group")
 	flag.Parse()
 
 	if len(*serviceAddr) > 0 {
 		config.Nacos.Address = *serviceAddr
 	} else {
-		envAddr := os.Getenv(common.NACOS_ADDRESS)
+		envAddr := os.Getenv(common.NacosAddress)
 		if len(envAddr) > 0 {
 			config.Nacos.Address = envAddr
 		}
@@ -38,7 +38,7 @@ func (loader *NacosLoader) load(config Config) error {
 	if len(*namespace) > 0 {
 		config.Nacos.Namespace = *namespace
 	} else {
-		envNamespace := os.Getenv(common.NACOS_NAMESPACE)
+		envNamespace := os.Getenv(common.NacosNamespace)
 		if len(envNamespace) > 0 {
 			config.Nacos.Namespace = envNamespace
 		}
@@ -47,7 +47,7 @@ func (loader *NacosLoader) load(config Config) error {
 	if len(*dataId) > 0 {
 		config.Nacos.DataId = *dataId
 	} else {
-		envDataId := os.Getenv(common.NACOS_DATAID)
+		envDataId := os.Getenv(common.NacosDataid)
 		if len(envDataId) > 0 {
 			config.Nacos.DataId = envDataId
 		}
@@ -56,7 +56,7 @@ func (loader *NacosLoader) load(config Config) error {
 	if len(*group) > 0 {
 		config.Nacos.Group = *group
 	} else {
-		envGroup := os.Getenv(common.NACOS_GROUP)
+		envGroup := os.Getenv(common.NacosGroup)
 		if len(envGroup) > 0 {
 			config.Nacos.Group = envGroup
 		}

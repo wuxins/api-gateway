@@ -30,7 +30,7 @@ func flushPathMap() {
 			Rate:       api.RateLimit,
 			RedisAlive: redisclient.Alive(),
 		}
-		ratelimiter.GetRateLimiter(config.GetConfigure().Rate.Mode).FlushLimiter(reteInfo)
+		ratelimiter.GetRateLimiter().FlushLimiter(reteInfo)
 	}
 
 	if flushErr != nil {

@@ -8,14 +8,15 @@ var NACOS_NAMESPACE = "NACOS_NAMESPACE"
 var NACOS_DATAID = "NACOS_DATAID"
 var NACOS_GROUP = "NACOS_GROUP"
 
-var CLIENT_RATE_PREFIX = "GW_CR_"
-var SERVER_RATE_PREFIX = "GW_SR_"
+var SERVER_RATE_PREFIX = "GW_SRP_"
 var SNOWFLAKE_NODE_KEY = "GW_SN_ND"
 
 var HEADER_TENANT = "G-Tenant"
 var HEADER_REQUEST_ID = "G-Req-Id"
 var HEADER_REQUEST_TIME = "G-Req-Time"
 var HEADER_CONTENT_ENCODING = "Content-Encoding"
+
+var DELIMITER_COMMA = ","
 
 var WELCOME_MSG = "{\"code\":\"00\",\"msg\":\"Welcome!\",\"success\":true}"
 var UNAUTHIRIZED_MSG = "{\"code\":\"50000\",\"msg\":\"Unauthorized access!\",\"success\":false}"

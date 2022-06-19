@@ -39,8 +39,8 @@ func (rateLimiter *ServerRateLimiter) FlushLimiter(info RateLimiterCtx) {
 	if info.RedisAlive {
 		// Remove useless key
 		key := common.SERVER_RATE_PREFIX + info.Key // key[1]
-		count, _ := redisclient.GetInstance().Zremrangebyscore(key, int64(0), common.UnixMilliseconds(time.Now().Add(-time.Minute*1)))
-		log4go.Info("FlushLimiter, Remove useless key % v, count %v", key, count)
+		count, _ := redisclient.GetInstance().ZRemRangeByScore(redisclient.BackgroundCtx, key, "0", strconv.FormatInt(common.UnixMilliseconds(time.Now().Add(-time.Minute*1)), 10)).Result()
+		log4go.Debug("FlushLimiter, Remove useless key % v, count %v", key, count)
 	}
 }
 
@@ -52,7 +52,7 @@ func (rateLimiter *ServerRateLimiter) TryAcquire(info RateLimiterCtx) (bool, err
 		key := common.SERVER_RATE_PREFIX + apiCode // key[1]
 		to := time.Now()                           // arg[3]
 		from := to.Add(-time.Minute * 1)           // arg[2]
-		resp, err := redisclient.GetInstance().Eval(script,
+		resp, err := redisclient.GetInstance().Eval(redisclient.BackgroundCtx, script,
 			[]string{
 				key,
 			},
@@ -61,7 +61,7 @@ func (rateLimiter *ServerRateLimiter) TryAcquire(info RateLimiterCtx) (bool, err
 				strconv.FormatInt(common.UnixMilliseconds(from), 10),
 				strconv.FormatInt(common.UnixMilliseconds(to), 10),
 				requestId.String(),
-			})
+			}).Result()
 		// Lua boolean false -> r Nil bulk reply
 		if err == redis.Nil {
 			log4go.Info("TryAcquire redis key,requestId %v", requestId)
@@ -93,7 +93,7 @@ func (rateLimiter *ServerRateLimiter) Release(info RateLimiterCtx) {
 	var apiCode = info.Key
 	if info.RedisAlive {
 		key := common.SERVER_RATE_PREFIX + apiCode
-		remCount, err := redisclient.GetInstance().Zrem(key, int64(info.RequestId))
+		remCount, err := redisclient.GetInstance().ZRem(redisclient.BackgroundCtx, key, int64(info.RequestId)).Result()
 		if err != nil {
 			// Err occurs, It will be released by the next time api visited (Method - FlushLimiter). The impact of the fault is small.
 			log4go.Error("Release redis key %v ,requestId %v, removeCount %v, error:%v", key, info.RequestId, remCount, err)

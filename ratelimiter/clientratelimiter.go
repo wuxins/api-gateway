@@ -1,9 +1,9 @@
 package ratelimiter
 
 import (
-	"github.com/wuxins/api-gateway/common"
-	"github.com/wuxins/api-gateway/redisclient"
 	"github.com/zeromicro/go-zero/core/limit"
+	"za.group/api-gateway/common"
+	"za.group/api-gateway/redisclient"
 )
 
 // 线性写，并发读

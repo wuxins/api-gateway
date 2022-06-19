@@ -1,15 +1,18 @@
 package handler
 
 import (
+	"bytes"
 	"github.com/bwmarrin/snowflake"
 	"github.com/gitstliu/log4go"
 	"github.com/wuxins/api-gateway/common"
 	"github.com/wuxins/api-gateway/config"
+	"github.com/wuxins/api-gateway/idgenerator"
 	"github.com/wuxins/api-gateway/monitor"
 	"github.com/wuxins/api-gateway/ratelimiter"
 	"github.com/wuxins/api-gateway/redisclient"
 	"github.com/wuxins/api-gateway/regularpath"
 	"github.com/wuxins/api-gateway/routing"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -19,7 +22,7 @@ import (
 
 func CommonHandler(w http.ResponseWriter, r *http.Request) {
 
-	requestId := common.GenSnowflakeId()
+	requestId := idgenerator.GenSnowflakeId()
 	r.Header.Set(common.HEADER_REQUEST_ID, requestId.String())
 	r.Header.Set(common.HEADER_REQUEST_TIME, strconv.FormatInt(common.UnixMilliseconds(time.Now()), 10))
 
@@ -83,8 +86,8 @@ func routeWithRateLimit(w http.ResponseWriter, r *http.Request, regularPath *reg
 			RedisAlive: redisclient.Alive(),
 			RequestId:  requestId,
 		}
-		acquireOk, err := ratelimiter.GetRateLimiter(config.GetConfigure().Rate.Mode).TryAcquire(reteCtx)
-		defer ratelimiter.GetRateLimiter(config.GetConfigure().Rate.Mode).Release(reteCtx)
+		acquireOk, err := ratelimiter.GetRateLimiter().TryAcquire(reteCtx)
+		defer ratelimiter.GetRateLimiter().Release(reteCtx)
 		if err != nil {
 			writeResponse(w, 200, common.SYS_ERROR_MSG, r, regularPath)
 			return
@@ -115,18 +118,20 @@ func writeResponse(w http.ResponseWriter, status int, body string, r *http.Reque
 	}
 	w.WriteHeader(status)
 	if regularPath.NeedMonitor {
+		requestBody, _ := ioutil.ReadAll(r.Body)
+		r.Body = ioutil.NopCloser(bytes.NewBuffer(requestBody))
 		requestStartTime, _ := strconv.ParseInt(r.Header[common.HEADER_REQUEST_TIME][0], 10, 64)
 		now := time.Now()
 		monitor.Report(monitor.Event{
-			Metric:     "API",
-			MetricType: "ACCESS_LOG",
-			Time:       common.UnixMilliseconds(now),
+			Metric:     monitor.METRIC_API,
+			MetricType: monitor.METRIC_API_ACC_LOG,
+			Time:       now.Format(common.DATE_FORMAT_MS),
 			Key:        r.Header[common.HEADER_REQUEST_ID][0],
 			Content: monitor.ApiTransportMetric{
-				Url:       r.URL.Path,
-				Method:    r.Method,
-				ReqHeader: r.Header,
-				//ReqBody: strings(r.Body),
+				Url:        r.URL.Path,
+				Method:     r.Method,
+				ReqHeader:  r.Header,
+				ReqBody:    string(requestBody),
 				Status:     status,
 				RespHeader: w.Header(),
 				RespBody:   body,

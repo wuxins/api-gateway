@@ -2,9 +2,9 @@ package main
 
 import (
 	"github.com/gitstliu/log4go"
-	"github.com/wuxins/api-gateway/common"
 	"github.com/wuxins/api-gateway/config"
 	"github.com/wuxins/api-gateway/dbclient"
+	"github.com/wuxins/api-gateway/idgenerator"
 	"github.com/wuxins/api-gateway/monitor"
 	"github.com/wuxins/api-gateway/redisclient"
 	"github.com/wuxins/api-gateway/server"
@@ -28,7 +28,7 @@ func main() {
 	redisClient := redisclient.Init(*config.GetConfigure().Redis)
 
 	// snowflake generator init
-	common.InitSnowflakeNode(redisClient)
+	idgenerator.InitSnowflakeNode(redisClient)
 
 	// async db api info loader
 	go task.StartFlushPathMap()

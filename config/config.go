@@ -59,9 +59,16 @@ type DB struct {
 }
 
 type Redis struct {
-	Address             string `yaml:"Address"`
-	Mode                string `yaml:"Mode"`
+	Addresses           string `yaml:"Addresses"`
 	Password            string `yaml:"Password"`
+	DB                  int    `yaml:"DB"`
+	PoolSize            int    `yaml:"PoolSize"`
+	DialTimeout         int64  `yaml:"DialTimeout"`
+	ReadTimeout         int64  `yaml:"ReadTimeout"`
+	WriteTimeout        int64  `yaml:"WriteTimeout"`
+	IdleTimeout         int64  `yaml:"IdleTimeout"`
+	MinIdleConns        int    `yaml:"MinIdleConns"`
+	MaxRetries          int    `yaml:"MaxRetries"`
 	DetectAliveInterval int    `yaml:"DetectAliveInterval"`
 }
 
@@ -76,8 +83,7 @@ type Routing struct {
 }
 
 type Rate struct {
-	Enable bool   `yaml:"Enable"`
-	Mode   string `yaml:"Mode"`
+	Enable bool `yaml:"Enable"`
 }
 
 type Monitor struct {

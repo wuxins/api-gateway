@@ -1,42 +1,37 @@
 package redisclient
 
 import (
-	"context"
 	"github.com/gitstliu/log4go"
-	"github.com/go-redis/redis/v8"
-	"github.com/wuxins/api-gateway/common"
 	"github.com/wuxins/api-gateway/config"
-	"strings"
+	"github.com/zeromicro/go-zero/core/stores/redis"
 	"time"
 )
 
-var BackgroundCtx = context.Background()
-var client redis.UniversalClient
+var client *redis.Redis
 var alive = true
 
-func Init(redisConf config.Redis) redis.UniversalClient {
+func Init(redisConf config.Redis) *redis.Redis {
 
-	client = redis.NewUniversalClient(&redis.UniversalOptions{
-		Addrs:        strings.Split(redisConf.Addresses, common.DELIMITER_COMMA),
-		Password:     redisConf.Password,
-		DB:           redisConf.DB,
-		PoolSize:     redisConf.PoolSize,
-		DialTimeout:  time.Duration(redisConf.DialTimeout) * time.Millisecond,
-		ReadTimeout:  time.Duration(redisConf.ReadTimeout) * time.Millisecond,
-		WriteTimeout: time.Duration(redisConf.WriteTimeout) * time.Millisecond,
-		IdleTimeout:  time.Duration(redisConf.IdleTimeout) * time.Millisecond,
-		MinIdleConns: redisConf.MinIdleConns,
-		MaxRetries:   redisConf.MaxRetries,
+	mode := redisConf.Mode
+	addresses := redisConf.Address
+	pwd := redisConf.Password
+	detectAliveInterval := redisConf.DetectAliveInterval
+
+	client = redis.New(addresses, func(r *redis.Redis) {
+		r.Addr = addresses
+		r.Type = mode
+		r.Pass = pwd
 	})
 
+	// redis heartbeat
 	go func() {
-		ticker := time.NewTicker(time.Duration(redisConf.DetectAliveInterval) * time.Millisecond)
+		ticker := time.NewTicker(time.Duration(detectAliveInterval) * time.Millisecond)
 		for range ticker.C {
-			_, err := client.Ping(BackgroundCtx).Result()
-			if err != nil {
+			if !client.Ping() {
 				alive = false
 				log4go.Debug("Redis heartbeat fail")
 			} else {
+
 				alive = true
 				log4go.Debug("Redis heartbeat ok")
 			}
@@ -46,7 +41,7 @@ func Init(redisConf config.Redis) redis.UniversalClient {
 	return client
 }
 
-func GetInstance() redis.UniversalClient {
+func GetInstance() *redis.Redis {
 	return client
 }
 

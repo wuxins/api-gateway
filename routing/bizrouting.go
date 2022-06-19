@@ -2,17 +2,16 @@ package routing
 
 import (
 	"bytes"
-	"github.com/wuxins/api-gateway/common"
-	"github.com/wuxins/api-gateway/config"
-	"github.com/wuxins/api-gateway/loadbalance"
-	"github.com/wuxins/api-gateway/monitor"
-	"github.com/wuxins/api-gateway/regularpath"
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"strconv"
 	"time"
+	"github.com/wuxins/api-gateway/common"
+	"github.com/wuxins/api-gateway/config"
+	"github.com/wuxins/api-gateway/monitor"
+	"github.com/wuxins/api-gateway/regularpath"
 )
 
 func Routing(w http.ResponseWriter, r *http.Request, regularPath *regularpath.RegularPath) error {
@@ -25,17 +24,13 @@ func Routing(w http.ResponseWriter, r *http.Request, regularPath *regularpath.Re
 	if urlParseMetaErr != nil {
 		return urlParseMetaErr
 	}
-
-	routeServer, err := loadbalance.GetLoadBalancer(config.GetConfigure().Routing.LoadBalanceStrategies).Select(regularPath.Servers)
-	if err != nil {
-		return err
-	}
-	remote, err := url.Parse(routeServer)
+	remote, err := url.Parse(regularPath.UpstreamHost)
 	if err != nil {
 		return err
 	}
 	proxy := httputil.NewSingleHostReverseProxy(remote)
 	proxy.Transport = config.GetConfigure().Routing.Transport
+
 	proxy.ModifyResponse = func(res *http.Response) error {
 		if regularPath.NeedMonitor {
 			respBody, respErr := ioutil.ReadAll(res.Body)

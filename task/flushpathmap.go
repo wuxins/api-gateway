@@ -2,12 +2,12 @@ package task
 
 import (
 	"github.com/gitstliu/log4go"
+	"time"
 	"github.com/wuxins/api-gateway/config"
 	"github.com/wuxins/api-gateway/dao"
 	"github.com/wuxins/api-gateway/ratelimiter"
 	"github.com/wuxins/api-gateway/redisclient"
 	"github.com/wuxins/api-gateway/regularpath"
-	"time"
 )
 
 func StartFlushPathMap() {
@@ -30,7 +30,7 @@ func flushPathMap() {
 			Rate:       api.RateLimit,
 			RedisAlive: redisclient.Alive(),
 		}
-		ratelimiter.GetRateLimiter().FlushLimiter(reteInfo)
+		ratelimiter.GetRateLimiter(config.GetConfigure().Rate.Mode).FlushLimiter(reteInfo)
 	}
 
 	if flushErr != nil {

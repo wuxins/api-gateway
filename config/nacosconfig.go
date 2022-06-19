@@ -6,11 +6,11 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/clients/config_client"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/vo"
-	"github.com/wuxins/api-gateway/common"
 	"gopkg.in/yaml.v3"
 	"os"
 	"strconv"
 	"strings"
+	"github.com/wuxins/api-gateway/common"
 )
 
 var client config_client.IConfigClient

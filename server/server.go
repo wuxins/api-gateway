@@ -3,8 +3,6 @@ package server
 import (
 	"context"
 	"github.com/gitstliu/log4go"
-	"github.com/wuxins/api-gateway/config"
-	"github.com/wuxins/api-gateway/facade/handler"
 	"net/http"
 	"os"
 	"os/signal"
@@ -12,6 +10,8 @@ import (
 	"sync"
 	"syscall"
 	"time"
+	"github.com/wuxins/api-gateway/config"
+	"github.com/wuxins/api-gateway/facade/handler"
 )
 
 func Start() {

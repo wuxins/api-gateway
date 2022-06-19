@@ -80,5 +80,5 @@ func ContainsStr(items []string, item string) bool {
 //
 // (t.unixSec())*1e9 + int64(t.nsec()) / 1e6 = t.unixSec()*1e3 + int64(t.nsec())/1e6
 func UnixMilliseconds(t time.Time) int64 {
-	return time.Now().UnixNano() / 1e6
+	return t.UnixNano() / 1e6
 }

@@ -21,6 +21,13 @@ type RateLimiter interface {
 	Release(info RateLimiterCtx)
 }
 
-func GetRateLimiter() RateLimiter {
-	return &ServerRateLimiter{}
+func GetRateLimiter(mode string) RateLimiter {
+
+	var rateLimiter RateLimiter
+	if mode == "server" {
+		rateLimiter = &ServerRateLimiter{}
+	} else {
+		rateLimiter = &ClientRateLimiter{}
+	}
+	return rateLimiter
 }

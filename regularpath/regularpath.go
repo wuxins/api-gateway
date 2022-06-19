@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gitstliu/log4go"
-	"github.com/wuxins/api-gateway/dao/dto"
 	"regexp"
 	"strings"
+	"github.com/wuxins/api-gateway/dao/dto"
 )
 
 type RegularPath struct {
@@ -15,6 +15,7 @@ type RegularPath struct {
 	ApiCode        string
 	Method         string
 	URL            string
+	UpstreamHost   string
 	SrcURL         string
 	DesURL         string
 	SrcParams      map[string]int
@@ -30,7 +31,6 @@ type RegularPath struct {
 	NeedMonitor    bool
 	ReadTimeout    int64
 	Tenants        []dto.Tenant
-	Servers        []dto.UpstreamServer
 }
 
 type RegularPathTree struct {
@@ -141,7 +141,7 @@ func urlsToPath(api dto.Api) (RegularPath, error) {
 	path.Method = api.Method
 	path.ReadTimeout = api.ReadTimeout
 	path.Tenants = api.Tenants
-	path.Servers = api.Servers
+	path.UpstreamHost = api.UpstreamHost
 	path.URL = placeHolderRegexp.ReplaceAllString(api.SrcUrl, regexpStringUnshell)
 	path.SrcURL = api.SrcUrl
 	path.DesURL = api.DesUrl

@@ -1,39 +1,35 @@
 Conf:
   Mode: local
-  Env: dev # dev、test、prd
-
-Nacos:
-  Address: 39.99.150.175:8848
-  Namespace: dev
-  DataId: life-gateway
-  Group: DEFAULT_GROUP
-
 Local:
   Sysconf:
     ServicePort: 7777
-    FlushPathMapSpan: 60000 # flush db api configuration to local process memory per interval
-    ServerReadTimeout: 1000 # proxy server keepalive the tenant invoker connection
-    ServerKeepalive: 3000 # proxy server keepalive the tenant invoker connection
-    GracefulShutdownTimeout: 60000 # default '30s' if not config, means interrupt or kill server will max waiting for received request process
-    LogConfigFile: /Users/liuyicai/work/log.xml # default 'log.xml 'with the startup binary file int the same dir, if not config
+    FlushPathMapSpan: 60000 # ms, flush db api configuration to local process memory per interval
+    ServerReadTimeout: 1000 # ms, proxy server keepalive the tenant invoker connection
+    ServerKeepalive: 3000 # ms, proxy server keepalive the tenant invoker connection
+    GracefulShutdownTimeout: 60000 # ms, default '30s' if not config, means interrupt or kill server will max waiting for received request process
+    LogConfigFile: log.xml # default 'log.xml 'with the startup binary file int the same dir, if not config
+    Env: dev # dev、test、prd
   DB:
     DBType: mysql
-    ConnectionString: root:yicai.liu@tcp(39.99.150.175:3306)/api_gateway?charset=utf8&parseTime=True
+    ConnectionString: root:8nwKPMRARufYxu02@tcp(rm-3ns48658225f72864.mysql.rds.aliyuncs.com:3306)/api_gateway?charset=utf8&parseTime=True
     LogMode: true
     MaxOpenConns: 10
     MaxIdleConns: 5
-    ConnMaxIdleTime: 30000
+    ConnMaxIdleTime: 30000 # ms
   Redis:
-    Mode: node
-    Address: localhost:6379
-    Password:
-    DetectAliveInterval: 1000
+    Mode: cluster
+    Address: zains-dev-bm.redis.rds.aliyuncs.com:6379
+    Password: zains_dev_bm:yCd0Fxm8gz0aC4
+    DetectAliveInterval: 1000 # ms
   Rate:
     Enable: true # default 'true' if not config, means api rate limit control
     Mode: server # server - limit the server actually rate; client - limit the tenant caller rate
   Routing:
-    RequestTimeout: 5000 # default no timeout if not config
-    LoadBalanceStrategies: Random  # default "Random" if not config
+    RequestTimeout: 30000 # default no timeout if not config
+    MaxConnsPerHost: 20000
+    MaxIdleConnsPerHost: 200
+    MaxIdleConns: 1000
+    IdleConnTimeout: 60000 # ms
   Monitor:
     LogDir: # default "" if not config , means current dir
     LogFileName: # default monitor.log if not config

@@ -2,6 +2,7 @@ package monitor
 
 import (
 	"github.com/gitstliu/log4go"
+	"strings"
 	"github.com/wuxins/api-gateway/config"
 )
 
@@ -17,9 +18,13 @@ func Init(monitor config.Monitor) log4go.Logger {
 	rotateMaxLines := monitor.LogRotateMaxLines
 	if len(fileDir) <= 0 {
 		fileDir = ""
+	} else {
+		if !strings.HasSuffix(fileDir, "/") {
+			fileDir = fileDir + "/"
+		}
 	}
 	if len(fileName) <= 0 {
-		fileDir = "monitor.log"
+		fileName = "monitor.log"
 	}
 	if rotateSize <= 0 {
 		rotateSize = 100

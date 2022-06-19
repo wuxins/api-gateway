@@ -5,7 +5,6 @@ import (
 	"github.com/gitstliu/log4go"
 	"github.com/wuxins/api-gateway/common"
 	"github.com/wuxins/api-gateway/config"
-	"github.com/wuxins/api-gateway/idgenerator"
 	"github.com/wuxins/api-gateway/monitor"
 	"github.com/wuxins/api-gateway/ratelimiter"
 	"github.com/wuxins/api-gateway/redisclient"
@@ -20,7 +19,7 @@ import (
 
 func CommonHandler(w http.ResponseWriter, r *http.Request) {
 
-	requestId := idgenerator.GenSnowflakeId()
+	requestId := common.GenSnowflakeId()
 	r.Header.Set(common.HEADER_REQUEST_ID, requestId.String())
 	r.Header.Set(common.HEADER_REQUEST_TIME, strconv.FormatInt(common.UnixMilliseconds(time.Now()), 10))
 
@@ -84,10 +83,11 @@ func routeWithRateLimit(w http.ResponseWriter, r *http.Request, regularPath *reg
 			RedisAlive: redisclient.Alive(),
 			RequestId:  requestId,
 		}
-		acquireOk, err := ratelimiter.GetRateLimiter().TryAcquire(reteCtx)
-		defer ratelimiter.GetRateLimiter().Release(reteCtx)
+		acquireOk, err := ratelimiter.GetRateLimiter(config.GetConfigure().Rate.Mode).TryAcquire(reteCtx)
+		defer ratelimiter.GetRateLimiter(config.GetConfigure().Rate.Mode).Release(reteCtx)
 		if err != nil {
 			writeResponse(w, 200, common.SYS_ERROR_MSG, r, regularPath)
+			return
 		}
 		if !acquireOk {
 			writeResponse(w, 200, common.RATE_LIMiT_MSG, r, regularPath)

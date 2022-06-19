@@ -1,18 +1,20 @@
 package config
 
 import (
+	"flag"
 	"github.com/bwmarrin/snowflake"
 	"github.com/gitstliu/log4go"
 	"github.com/wuxins/api-gateway/common"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"time"
 )
 
 type Conf struct {
-	Mode string `yaml:"Mode"`
-	Env  string `yaml:"Env"`
+	Mode        string `yaml:"Mode"`
+	LocalLoaded bool
 }
 
 type Nacos struct {
@@ -44,6 +46,7 @@ type Sysconf struct {
 	ServerKeepalive         int64  `yaml:"ServerKeepalive"`
 	GracefulShutdownTimeout int64  `yaml:"GracefulShutdownTimeout"`
 	LogConfigFile           string `yaml:"LogConfigFile"`
+	Env                     string `yaml:"Env"`
 }
 
 type DB struct {
@@ -56,23 +59,20 @@ type DB struct {
 }
 
 type Redis struct {
-	Addresses           string `yaml:"Addresses"`
+	Address             string `yaml:"Address"`
+	Mode                string `yaml:"Mode"`
 	Password            string `yaml:"Password"`
-	DB                  int    `yaml:"DB"`
-	PoolSize            int    `yaml:"PoolSize"`
-	DialTimeout         int64  `yaml:"DialTimeout"`
-	ReadTimeout         int64  `yaml:"ReadTimeout"`
-	WriteTimeout        int64  `yaml:"WriteTimeout"`
-	IdleTimeout         int64  `yaml:"IdleTimeout"`
-	MinIdleConns        int    `yaml:"MinIdleConns"`
-	MaxRetries          int    `yaml:"MaxRetries"`
 	DetectAliveInterval int    `yaml:"DetectAliveInterval"`
 }
 
 type Routing struct {
-	RequestTimeout        int64  `yaml:"RequestTimeout"`
-	LoadBalanceStrategies string `yaml:"LoadBalanceStrategies"`
-	Transport             http.RoundTripper
+	RequestTimeout      int64 `yaml:"RequestTimeout"`
+	MaxConnsPerHost     int   `yaml:"MaxConnsPerHost"`
+	MaxIdleConns        int   `yaml:"MaxIdleConns"`
+	MaxIdleConnsPerHost int   `yaml:"MaxIdleConnsPerHost"`
+	IdleConnTimeout     int64 `yaml:"IdleConnTimeout"`
+
+	Transport http.RoundTripper
 }
 
 type Rate struct {
@@ -88,7 +88,6 @@ type Monitor struct {
 }
 
 type Configure struct {
-	Env           string   `yaml:"Env"`
 	Sysconf       *Sysconf `yaml:"Sysconf"`
 	DB            *DB      `yaml:"DB"`
 	Routing       *Routing `yaml:"Routing"`
@@ -130,45 +129,66 @@ func getConfigureLoader(mode string) ConfigureLoader {
 // Example on program arguments startup: -NACOSADDRESS=127.0.0.1:8888 -NAMESPACE=dev -DATAID=testDataId -GROUP=DEFAULT_GROUP
 func init() {
 
-	file, err := ioutil.ReadFile("config.yaml")
-	if err != nil {
-		log4go.Info("Read config.yaml fail, %v", err)
-		panic(err)
-		return
-	}
+	configMode := flag.String(common.CONF_LOAD_MODE, "", "config mode")
+	flag.Parse()
 
-	var config Config
-	err = yaml.Unmarshal(file, &config)
-	if err != nil {
-		log4go.Info("Parse config.yaml fail,%v", err)
-		panic(err)
-		return
+	config := Config{}
+	config.Nacos = &Nacos{}
+	config.Conf = &Conf{}
+	config.Local = &Local{}
+	if len(*configMode) <= 0 {
+		*configMode = os.Getenv(common.CONF_LOAD_MODE)
+	}
+	if len(*configMode) > 0 {
+		config.Conf.Mode = *configMode
+	} else {
+		file, err := ioutil.ReadFile("config.yaml")
+		if err != nil {
+			log4go.Info("Read config.yaml fail, %v", err)
+			panic(err)
+			return
+		}
+		err = yaml.Unmarshal(file, &config)
+		if err != nil {
+			log4go.Info("Parse config.yaml fail,%v", err)
+			panic(err)
+			return
+		}
+		config.Conf.LocalLoaded = true
 	}
 
 	log4go.Info("Config mode: %v", config.Conf.Mode)
-	if err != getConfigureLoader(config.Conf.Mode).load(config) {
+	if len(config.Conf.Mode) <= 0 {
+		panic("Config mode can not be nil")
+		return
+	}
+	err := getConfigureLoader(config.Conf.Mode).load(config)
+	if err != nil {
 		log4go.Info("Config Load Error", err.Error())
 		panic(err)
 		return
 	}
 
-	routingReadTimeout := configure.Routing.RequestTimeout
-	if routingReadTimeout > 0 {
-		// MyTransport need to define static, run time init will cause connection pool leakage
-		configure.Routing.Transport = &http.Transport{
-			Proxy:                 http.ProxyFromEnvironment,
-			ResponseHeaderTimeout: time.Duration(routingReadTimeout) * time.Millisecond,
-		}
-	} else {
-		configure.Routing.Transport = http.DefaultTransport
+	responseHeaderTimeout := configure.Routing.RequestTimeout
+	idleConnTimeout := configure.Routing.IdleConnTimeout
+	maxIdleConns := configure.Routing.MaxIdleConns
+	maxIdleConnsPerHost := configure.Routing.MaxIdleConnsPerHost
+	maxConnsPerHost := configure.Routing.MaxConnsPerHost
+	// MyTransport need to define static, run time init will cause connection pool leakage
+	configure.Routing.Transport = &http.Transport{
+		Proxy:                 http.ProxyFromEnvironment,
+		ResponseHeaderTimeout: time.Duration(responseHeaderTimeout) * time.Millisecond,
+		MaxIdleConnsPerHost:   maxIdleConnsPerHost,
+		MaxIdleConns:          maxIdleConns,
+		IdleConnTimeout:       time.Duration(idleConnTimeout) * time.Millisecond,
+		MaxConnsPerHost:       maxConnsPerHost,
 	}
-
 	if len(configure.Sysconf.LogConfigFile) <= 0 {
 		configure.Sysconf.LogConfigFile = "log.xml" // default with the startup binary file int the same dir
 	}
-	configure.Env = config.Conf.Env
-	if len(configure.Env) <= 0 {
+	if len(configure.Sysconf.Env) <= 0 {
 		panic("Config env can not be nil")
+		return
 	}
 
 	log4go.Info("Config Load Success!")

@@ -21,6 +21,15 @@ import (
 
 func CommonHandler(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set(common.AccessControlAllowOrigin, "*")
+	w.Header().Set(common.AccessControlAllowMethods, config.GetConfigure().Sysconf.AccessControlAllowMethods)
+	w.Header().Set(common.AccessControlAllowHeaders, config.GetConfigure().Sysconf.AccessControlAllowHeaders)
+
+	if strings.EqualFold("OPTIONS", strings.ToUpper(r.Method)) {
+		w.WriteHeader(200)
+		return
+	}
+
 	requestId := idgenerator.GenSnowflakeId()
 	r.Header.Set(common.HeaderRequestId, requestId.String())
 	r.Header.Set(common.HeaderRequestTime, strconv.FormatInt(common.UnixMilliseconds(time.Now()), 10))

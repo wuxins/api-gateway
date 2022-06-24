@@ -20,6 +20,10 @@ var HeaderRequestId = "G-Req-Id"
 var HeaderRequestTime = "G-Req-Time"
 var HeaderContentEncoding = "Content-Encoding"
 
+var AccessControlAllowOrigin = "Access-Control-Allow-Origin"
+var AccessControlAllowMethods = "Access-Control-Allow-Methods"
+var AccessControlAllowHeaders = "Access-Control-Allow-Headers"
+
 var WelcomeMsg = "{\"code\":\"00\",\"msg\":\"Welcome!\",\"success\":true}"
 var UnauthorizedMsg = "{\"code\":\"50000\",\"msg\":\"Unauthorized access!\",\"success\":false}"
 var SysErrorMsg = "{\"code\":\"50001\",\"msg\":\"System Error!\",\"success\":false}"

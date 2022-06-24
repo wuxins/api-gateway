@@ -7,9 +7,7 @@ import (
 	"github.com/wuxins/api-gateway/common"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
-	"net/http"
 	"os"
-	"time"
 )
 
 type Conf struct {
@@ -40,13 +38,16 @@ type Config struct {
 }
 
 type Sysconf struct {
-	ServicePort             int    `yaml:"ServicePort"`
-	FlushPathMapSpan        int64  `yaml:"FlushPathMapSpan"`
-	ServerReadTimeout       int64  `yaml:"ServerReadTimeout"`
-	ServerKeepalive         int64  `yaml:"ServerKeepalive"`
-	GracefulShutdownTimeout int64  `yaml:"GracefulShutdownTimeout"`
-	LogConfigFile           string `yaml:"LogConfigFile"`
-	Env                     string `yaml:"Env"`
+	ServicePort               int    `yaml:"ServicePort"`
+	FlushPathMapSpan          int64  `yaml:"FlushPathMapSpan"`
+	ServerReadTimeout         int64  `yaml:"ServerReadTimeout"`
+	ServerKeepalive           int64  `yaml:"ServerKeepalive"`
+	AccessControlAllowOrigin  string `yaml:"AccessControlAllowOrigin"`
+	AccessControlAllowMethods string `yaml:"AccessControlAllowMethods"`
+	AccessControlAllowHeaders string `yaml:"AccessControlAllowHeaders"`
+	GracefulShutdownTimeout   int64  `yaml:"GracefulShutdownTimeout"`
+	LogConfigFile             string `yaml:"LogConfigFile"`
+	Env                       string `yaml:"Env"`
 }
 
 type DB struct {
@@ -78,8 +79,6 @@ type Routing struct {
 	MaxIdleConns        int   `yaml:"MaxIdleConns"`
 	MaxIdleConnsPerHost int   `yaml:"MaxIdleConnsPerHost"`
 	IdleConnTimeout     int64 `yaml:"IdleConnTimeout"`
-
-	Transport http.RoundTripper
 }
 
 type Rate struct {
@@ -176,20 +175,6 @@ func init() {
 		return
 	}
 
-	responseHeaderTimeout := configure.Routing.RequestTimeout
-	idleConnTimeout := configure.Routing.IdleConnTimeout
-	maxIdleConns := configure.Routing.MaxIdleConns
-	maxIdleConnsPerHost := configure.Routing.MaxIdleConnsPerHost
-	maxConnsPerHost := configure.Routing.MaxConnsPerHost
-	// MyTransport need to define static, run time init will cause connection pool leakage
-	configure.Routing.Transport = &http.Transport{
-		Proxy:                 http.ProxyFromEnvironment,
-		ResponseHeaderTimeout: time.Duration(responseHeaderTimeout) * time.Millisecond,
-		MaxIdleConnsPerHost:   maxIdleConnsPerHost,
-		MaxIdleConns:          maxIdleConns,
-		IdleConnTimeout:       time.Duration(idleConnTimeout) * time.Millisecond,
-		MaxConnsPerHost:       maxConnsPerHost,
-	}
 	if len(configure.Sysconf.LogConfigFile) <= 0 {
 		configure.Sysconf.LogConfigFile = "log.xml" // default with the startup binary file int the same dir
 	}

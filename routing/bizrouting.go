@@ -3,7 +3,6 @@ package routing
 import (
 	"bytes"
 	"github.com/wuxins/api-gateway/common"
-	"github.com/wuxins/api-gateway/config"
 	"github.com/wuxins/api-gateway/monitor"
 	"github.com/wuxins/api-gateway/regularpath"
 	"io/ioutil"
@@ -29,7 +28,7 @@ func Routing(w http.ResponseWriter, r *http.Request, regularPath *regularpath.Re
 		return err
 	}
 	proxy := httputil.NewSingleHostReverseProxy(remote)
-	proxy.Transport = config.GetConfigure().Routing.Transport
+	proxy.Transport = regularPath.Transport
 
 	if regularPath.NeedMonitor {
 		bodyBytes, _ := ioutil.ReadAll(r.Body)

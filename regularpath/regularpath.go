@@ -4,9 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gitstliu/log4go"
+	"github.com/wuxins/api-gateway/config"
+	"github.com/wuxins/api-gateway/dao/dto"
+	"net/http"
 	"regexp"
 	"strings"
-	"github.com/wuxins/api-gateway/dao/dto"
+	"time"
 )
 
 type RegularPath struct {
@@ -31,6 +34,7 @@ type RegularPath struct {
 	NeedMonitor    bool
 	ReadTimeout    int64
 	Tenants        []dto.Tenant
+	Transport      http.RoundTripper
 }
 
 type RegularPathTree struct {
@@ -166,6 +170,14 @@ func urlsToPath(api dto.Api) (RegularPath, error) {
 		path.NeedMonitor = true
 	} else {
 		path.NeedMonitor = false
+	}
+	path.Transport = &http.Transport{
+		Proxy:                 http.ProxyFromEnvironment,
+		ResponseHeaderTimeout: time.Duration(path.ReadTimeout) * time.Millisecond,
+		MaxIdleConnsPerHost:   config.GetConfigure().Routing.MaxIdleConnsPerHost,
+		MaxIdleConns:          config.GetConfigure().Routing.MaxIdleConns,
+		IdleConnTimeout:       time.Duration(config.GetConfigure().Routing.IdleConnTimeout) * time.Millisecond,
+		MaxConnsPerHost:       config.GetConfigure().Routing.MaxConnsPerHost,
 	}
 	log4go.Debug("urlsToPath results: %v", path)
 	return path, nil

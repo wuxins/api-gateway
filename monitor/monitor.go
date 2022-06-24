@@ -2,8 +2,8 @@ package monitor
 
 import (
 	"github.com/gitstliu/log4go"
-	"strings"
 	"github.com/wuxins/api-gateway/config"
+	"strings"
 )
 
 var monitorLogger = log4go.Logger{}

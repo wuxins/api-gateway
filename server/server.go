@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"runtime"
 	"strconv"
 	"sync"
 	"syscall"
@@ -16,6 +17,7 @@ import (
 
 func Start() {
 
+	log4go.Info("Server cpu info :%v", runtime.NumCPU())
 	serverPort := config.GetConfigure().Sysconf.ServicePort
 	if serverPort <= 0 {
 		log4go.Error("Server start without port, exit !")

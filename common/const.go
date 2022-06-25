@@ -28,8 +28,7 @@ var WelcomeMsg = "{\"code\":\"00\",\"msg\":\"Welcome!\",\"success\":true}"
 var UnauthorizedMsg = "{\"code\":\"50000\",\"msg\":\"Unauthorized access!\",\"success\":false}"
 var SysErrorMsg = "{\"code\":\"50001\",\"msg\":\"System Error!\",\"success\":false}"
 var PathErrorMsg = "{\"code\":\"50002\",\"msg\":\"Path can not be decoded!\",\"success\":false}"
-var ReqMethodUnsupportedMsg = "{\"code\":\"50003\",\"msg\":\"Request method not supported!\",\"success\":false}"
-var ChannelUnsupportedMsg = "{\"code\":\"50004\",\"msg\":\"Request channel not supported!\",\"success\":false}"
+var ChannelUnsupportedMsg = "{\"code\":\"50004\",\"msg\":\"Tenant not supported!\",\"success\":false}"
 var RateLimitMsg = "{\"code\":\"50005\",\"msg\":\"Rate limited!\",\"success\":false}"
 
 //SELECT

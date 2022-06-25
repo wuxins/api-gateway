@@ -48,14 +48,9 @@ func CommonHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	regularPath := regularpath.CheckURLMatch(currUrl)
+	regularPath := regularpath.CheckURLMatch(currUrl, r.Method)
 	if regularPath == nil {
 		writeResponse(w, 200, common.UnauthorizedMsg, r, initRegularPath)
-		return
-	}
-
-	if regularPath.Method != r.Method {
-		writeResponse(w, 200, common.ReqMethodUnsupportedMsg, r, regularPath)
 		return
 	}
 

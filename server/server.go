@@ -17,7 +17,7 @@ import (
 
 func Start() {
 
-	log4go.Info("Server cpu info :%v", runtime.NumCPU())
+	log4go.Info("Server cpu num :%v", runtime.NumCPU())
 	serverPort := config.GetConfigure().Sysconf.ServicePort
 	if serverPort <= 0 {
 		log4go.Error("Server start without port, exit !")

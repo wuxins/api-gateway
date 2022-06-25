@@ -43,71 +43,55 @@ type RegularPathTree struct {
 	Child  map[string]*RegularPathTree
 }
 
-//var regexpString = "{{[u4e00-\u9fa5_a-zA-Z\\d^\?]+}}"
-//var regexpStringUnshell = "[a-zA-Z\\d]+"
-//[u4e00-\u9fa5_a-zA-Z\\d]+^\?
-
-//"\u4e00-\u9fa5"
-//var regexpString = "{{[u4e00-\u9fa5_a-zA-Z\\d^]+}}"
-//var regexpString = "{{[a-zA-Z0-9_]+}}"
-//var regexpStringUnshell = "[a-zA-Z0-9_]+"
-
-var regexpString = "{{[a-zA-Z\\d]+}}"
 var regexpStringUnshell = "[a-zA-Z\\d]+"
-
+var regexpString = "{{[a-zA-Z\\d]+}}"
 var placeHolderRegexp = regexp.MustCompile(regexpString)
 
-var pathMap = map[string]RegularPath{}
-var pathTreeRoot = &RegularPathTree{}
-
-func buildPathTree(srcRegularPath map[string]RegularPath) {
-	tempRoot := &RegularPathTree{}
-
-	for _, currRegularPath := range srcRegularPath {
-		currRegularPathTree := tempRoot
-		for _, currUrlSplitPath := range currRegularPath.SrcSplitURL {
-			paramStart := strings.Contains(currUrlSplitPath, "{{")
-			paramEnd := strings.Contains(currUrlSplitPath, "}}")
-			nextKey := ""
-
-			if paramStart && paramEnd {
-				currRegularPathTree.IsPath = false
-				nextKey = "{{}}"
-			} else {
-				currRegularPathTree.IsPath = true
-				nextKey = currUrlSplitPath
-			}
-
-			nextItem := &RegularPathTree{}
-			if currRegularPathTree.Child == nil {
-				currRegularPathTree.Child = map[string]*RegularPathTree{}
-			}
-
-			if _, isExit := currRegularPathTree.Child[nextKey]; isExit {
-				currRegularPathTree = currRegularPathTree.Child[nextKey]
-			} else {
-				currRegularPathTree.Child[nextKey] = nextItem
-				currRegularPathTree = nextItem
-			}
-		}
-		currRegularPathTree.Value = currRegularPath
-	}
-
-	pathTreeRoot = tempRoot
-}
+var requestMethodApiPathTree = map[string]*RegularPathTree{}
 
 func FlushPathMapByDtos(apis []dto.Api) error {
 
-	tempPathMap := map[string]RegularPath{}
+	requestMethodWithApis := map[string][]RegularPath{}
 	for _, api := range apis {
 		path, pathErr := urlsToPath(api)
 		if pathErr != nil {
 			return pathErr
 		}
-		tempPathMap[path.URL] = path
+		requestMethodWithApis[api.Method] = append(requestMethodWithApis[api.Method], path)
 	}
-	pathMap = tempPathMap
-	buildPathTree(pathMap)
+
+	for method, itemApis := range requestMethodWithApis { // GET、POST、PUT、DELETE
+		tempRoot := &RegularPathTree{}
+		for _, currRegularPath := range itemApis { // each api info
+			currRegularPathTree := tempRoot
+			for _, currUrlSplitPath := range currRegularPath.SrcSplitURL { // api path analysis
+				nextKey := ""
+				if strings.Contains(currUrlSplitPath, "{{") && strings.Contains(currUrlSplitPath, "}}") {
+					currRegularPathTree.IsPath = false
+					nextKey = "{{}}"
+				} else {
+					currRegularPathTree.IsPath = true
+					nextKey = currUrlSplitPath
+				}
+
+				nextItem := &RegularPathTree{}
+				if currRegularPathTree.Child == nil {
+					currRegularPathTree.Child = map[string]*RegularPathTree{}
+				}
+
+				if _, isExit := currRegularPathTree.Child[nextKey]; isExit {
+					currRegularPathTree = currRegularPathTree.Child[nextKey]
+				} else {
+					currRegularPathTree.Child[nextKey] = nextItem
+					currRegularPathTree = nextItem
+				}
+			}
+			currRegularPathTree.Value = currRegularPath
+		}
+
+		requestMethodApiPathTree[method] = tempRoot
+	}
+
 	return nil
 }
 
@@ -204,9 +188,15 @@ func urlToParamMap(url string) (map[string]int, map[int]string) {
 	return result, indexResult
 }
 
-func CheckURLMatch(url string) *RegularPath {
+func CheckURLMatch(url string, method string) *RegularPath {
 
-	tempRoot := pathTreeRoot.Child[""]
+	requestTreeRoot := requestMethodApiPathTree[method]
+
+	if requestTreeRoot == nil {
+		return nil
+	}
+
+	tempRoot := requestTreeRoot.Child[""]
 	urlMeta := strings.Split(url, "/")[1:]
 	for _, urlMetaValue := range urlMeta {
 		if tempRoot == nil {

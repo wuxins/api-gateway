@@ -9,6 +9,9 @@ import (
 	"github.com/wuxins/api-gateway/redisclient"
 	"github.com/wuxins/api-gateway/server"
 	"github.com/wuxins/api-gateway/task"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 func main() {
@@ -34,5 +37,20 @@ func main() {
 	go task.StartFlushPathMap()
 
 	// start proxy server
-	server.Start()
+	httpServ := server.NewHttpServer()
+	go func() {
+		httpServ.Start()
+	}()
+	httpsServ := server.NewHttpsServer()
+	go func() {
+		httpsServ.Start()
+	}()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	httpServ.Stop()
+	httpsServ.Stop()
+
 }

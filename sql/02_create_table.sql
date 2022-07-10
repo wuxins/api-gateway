@@ -64,7 +64,7 @@ CREATE TABLE `api`
     `name`         varchar(32)  NOT NULL COMMENT 'api name',
     `api_code`     varchar(32)  NOT NULL COMMENT 'api code',
     `method`       varchar(8)   NOT NULL COMMENT 'api request method',
-    `service_code` varchar(8)   NOT NULL COMMENT 'api service code',
+    `service_code` varchar(32)  NOT NULL COMMENT 'api service code',
     `src_url`      varchar(64)  NOT NULL COMMENT 'api request origin url',
     `des_url`      varchar(128) NOT NULL COMMENT 'api proxy forwarding url',
     `maintainer`   varchar(64)  NOT NULL COMMENT 'api who maintain',
@@ -121,11 +121,9 @@ CREATE TABLE `api_tenant`
 drop table if exists `api_version`;
 CREATE TABLE `api_version`
 (
-    `id`              bigint       NOT NULL AUTO_INCREMENT COMMENT 'primary key',
-    `api_code`        varchar(32)  NOT NULL COMMENT 'api code',
-    `env`             varchar(32)  NOT NULL COMMENT 'api env',
-    `tenant_code`     varchar(32)  NOT NULL COMMENT 'api tenant, if (*) means common rules, other wise special tenant',
-    `upstream_host`   varchar(128) NOT NULL COMMENT 'api upstream server host',
+    `id`              bigint      NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+    `api_code`        varchar(32) NOT NULL COMMENT 'api code',
+    `env`             varchar(32) NOT NULL COMMENT 'api env',
     `need_rate_limit` char(1)       DEFAULT 'N' COMMENT 'rate limit switch',
     `rate_limit`      int           DEFAULT NULL COMMENT 'rate limit size',
     `need_fallback`   char(1)       DEFAULT 'N' COMMENT 'fallback switch',

@@ -10,7 +10,7 @@ Local:
     AccessControlAllowHeaders: G-tenant,channel,agentChannel,token,did,lang,securityToken,deviceRam,userToken
     GracefulShutdownTimeout: 60000 # ms, default '30s' if not config, means interrupt or kill server will max waiting for received request process
     LogConfigFile: log.xml # default 'log.xml 'with the startup binary file int the same dir, if not config
-    Env: dev # dev、test、prd
+    Env: local # dev、test、prd
   DB:
     DBType: mysql
     ConnectionString: root:yicai.liu@tcp(39.99.150.175:3306)/api_gateway?charset=utf8&parseTime=True
@@ -30,17 +30,17 @@ Local:
     MinIdleConns: 8
     MaxRetries: 0
     DetectAliveInterval: 1000 # ms
-    Rate:
-      Enable: true # default 'true' if not config, means api rate limit control
-      LocalRateDownPercent: 20
-    Routing:
-      RequestTimeout: 30000 # default no timeout if not config
-      MaxConnsPerHost: 20000
-      MaxIdleConnsPerHost: 200
-      MaxIdleConns: 1000
-      IdleConnTimeout: 60000 # ms
-    Monitor:
-      LogDir: # default "" if not config , means current dir
-      LogFileName: # default monitor.log if not config
-      LogRotateMaxsize:  # unit(M), default 100M if not config
-      LogRotateMaxLines: # default 50W if not config
+  Rate:
+    Enable: true # default 'true' if not config, means api rate limit control
+    LocalRateDownPercent: 20
+  Routing:
+    RequestTimeout: 30000 # default no timeout if not config
+    MaxConnsPerHost: 20000
+    MaxIdleConnsPerHost: 200
+    MaxIdleConns: 1000
+    IdleConnTimeout: 60000 # ms
+  Monitor:
+    LogDir: # default "" if not config , means current dir
+    LogFileName: # default monitor.log if not config
+    LogRotateMaxsize:  # unit(M), default 100M if not config
+    LogRotateMaxLines: # default 50W if not config

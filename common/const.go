@@ -24,12 +24,12 @@ var AccessControlAllowOrigin = "Access-Control-Allow-Origin"
 var AccessControlAllowMethods = "Access-Control-Allow-Methods"
 var AccessControlAllowHeaders = "Access-Control-Allow-Headers"
 
-var WelcomeMsg = "{\"code\":\"00\",\"msg\":\"Welcome!\",\"success\":true}"
-var UnauthorizedMsg = "{\"code\":\"50000\",\"msg\":\"Unauthorized access!\",\"success\":false}"
-var SysErrorMsg = "{\"code\":\"50001\",\"msg\":\"System Error!\",\"success\":false}"
-var PathErrorMsg = "{\"code\":\"50002\",\"msg\":\"Path can not be decoded!\",\"success\":false}"
-var ChannelUnsupportedMsg = "{\"code\":\"50004\",\"msg\":\"Tenant not supported!\",\"success\":false}"
-var RateLimitMsg = "{\"code\":\"50005\",\"msg\":\"Rate limited!\",\"success\":false}"
+var WelcomeMsg = "Welcome!"
+var UnauthorizedMsg = "Unauthorized access!"
+var SysErrorMsg = "System Error!"
+var PathErrorMsg = "Path can not be decoded!"
+var ChannelUnsupportedMsg = "Tenant not supported!"
+var RateLimitMsg = "Rate limited!"
 
 //SELECT
 //	a.id,

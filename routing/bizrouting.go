@@ -5,6 +5,7 @@ import (
 	"github.com/wuxins/api-gateway/common"
 	"github.com/wuxins/api-gateway/monitor"
 	"github.com/wuxins/api-gateway/regularpath"
+	"github.com/wuxins/api-gateway/utils"
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
@@ -64,6 +65,12 @@ func Routing(w http.ResponseWriter, r *http.Request, regularPath *regularpath.Re
 			}
 			res.Body = ioutil.NopCloser(bytes.NewBuffer(respBody))
 			return respErr
+		}
+	}
+
+	proxy.ErrorHandler = func(writer http.ResponseWriter, request *http.Request, routeErr error) {
+		if routeErr != nil {
+			utils.WriteHttpResponse(writer, http.StatusBadGateway, routeErr.Error(), r, regularPath)
 		}
 	}
 

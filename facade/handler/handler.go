@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"bytes"
 	"github.com/bwmarrin/snowflake"
 	"github.com/wuxins/api-gateway/common"
 	"github.com/wuxins/api-gateway/config"
@@ -11,7 +10,7 @@ import (
 	"github.com/wuxins/api-gateway/redisclient"
 	"github.com/wuxins/api-gateway/regularpath"
 	"github.com/wuxins/api-gateway/routing"
-	"io/ioutil"
+	"github.com/wuxins/api-gateway/utils"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -26,7 +25,7 @@ func CommonHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set(common.AccessControlAllowHeaders, config.GetConfigure().Sysconf.AccessControlAllowHeaders)
 
 	if strings.EqualFold("OPTIONS", strings.ToUpper(r.Method)) {
-		w.WriteHeader(200)
+		w.WriteHeader(http.StatusOK)
 		return
 	}
 
@@ -40,17 +39,17 @@ func CommonHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	currUrl, decodeErr := url.PathUnescape(r.URL.Path)
 	if currUrl == "/" {
-		writeResponse(w, 200, common.WelcomeMsg, r, initRegularPath)
+		utils.WriteHttpResponse(w, http.StatusOK, common.WelcomeMsg, r, initRegularPath)
 		return
 	}
 	if decodeErr != nil {
-		writeResponse(w, 200, common.PathErrorMsg, r, initRegularPath)
+		utils.WriteHttpResponse(w, http.StatusInternalServerError, common.PathErrorMsg, r, initRegularPath)
 		return
 	}
 
 	regularPath := regularpath.CheckURLMatch(currUrl, r.Method)
 	if regularPath == nil {
-		writeResponse(w, 200, common.UnauthorizedMsg, r, initRegularPath)
+		utils.WriteHttpResponse(w, http.StatusUnauthorized, common.UnauthorizedMsg, r, initRegularPath)
 		return
 	}
 
@@ -66,12 +65,12 @@ func CommonHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !isTenantSupport {
-		writeResponse(w, 200, common.ChannelUnsupportedMsg, r, regularPath)
+		utils.WriteHttpResponse(w, http.StatusForbidden, common.ChannelUnsupportedMsg, r, regularPath)
 		return
 	}
 
 	if regularPath.NeedFallback {
-		writeResponse(w, 200, regularPath.Fallback, r, regularPath)
+		utils.WriteHttpResponse(w, http.StatusOK, regularPath.Fallback, r, regularPath)
 		return
 	}
 
@@ -91,11 +90,11 @@ func routeWithRateLimit(w http.ResponseWriter, r *http.Request, regularPath *reg
 		acquireOk, err := ratelimiter.GetRateLimiter().TryAcquire(reteCtx)
 		defer ratelimiter.GetRateLimiter().Release(reteCtx)
 		if err != nil {
-			writeResponse(w, 200, common.SysErrorMsg, r, regularPath)
+			utils.WriteHttpResponse(w, http.StatusInternalServerError, common.SysErrorMsg, r, regularPath)
 			return
 		}
 		if !acquireOk {
-			writeResponse(w, 200, common.RateLimitMsg, r, regularPath)
+			utils.WriteHttpResponse(w, http.StatusInternalServerError, common.RateLimitMsg, r, regularPath)
 			return
 		}
 	}
@@ -109,48 +108,7 @@ func routeWithRateLimit(w http.ResponseWriter, r *http.Request, regularPath *reg
 			Key:        strconv.FormatInt(int64(requestId), 10),
 			Content:    routingErr.Error(),
 		})
-		writeResponse(w, 200, common.SysErrorMsg, r, regularPath)
-		return
-	}
-}
-
-func writeResponse(w http.ResponseWriter, status int, body string, r *http.Request, regularPath *regularpath.RegularPath) {
-
-	value := r.Header[common.HeaderContentEncoding]
-	IsGzipEncode := value != nil && strings.EqualFold(value[0], "gzip")
-	var bodyBytes []byte
-	if IsGzipEncode {
-		bodyBytes = common.EncodeGzipBytes(common.StringToBytes(body))
-	} else {
-		bodyBytes = common.StringToBytes(body)
-	}
-	w.WriteHeader(status)
-	if regularPath.NeedMonitor {
-		requestBody, _ := ioutil.ReadAll(r.Body)
-		r.Body = ioutil.NopCloser(bytes.NewBuffer(requestBody))
-		requestStartTime, _ := strconv.ParseInt(r.Header[common.HeaderRequestTime][0], 10, 64)
-		now := time.Now()
-		monitor.Report(monitor.Event{
-			Metric:     monitor.MetricApi,
-			MetricType: monitor.MetricApiAccLog,
-			Time:       now.Format(common.DateFormatMs),
-			Key:        r.Header[common.HeaderRequestId][0],
-			Content: monitor.ApiTransportMetric{
-				Url:        r.URL.Path,
-				Method:     r.Method,
-				ReqHeader:  r.Header,
-				ReqBody:    string(requestBody),
-				Status:     status,
-				RespHeader: w.Header(),
-				RespBody:   body,
-				StartTime:  requestStartTime,
-				EndTime:    common.UnixMilliseconds(now),
-				Cost:       common.UnixMilliseconds(now) - requestStartTime,
-			},
-		})
-	}
-	_, err := w.Write(bodyBytes)
-	if err != nil {
+		utils.WriteHttpResponse(w, 200, common.SysErrorMsg, r, regularPath)
 		return
 	}
 }

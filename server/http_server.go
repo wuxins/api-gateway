@@ -4,20 +4,20 @@ import (
 	"context"
 	"github.com/gitstliu/log4go"
 	"github.com/wuxins/api-gateway/config"
-	"github.com/wuxins/api-gateway/facade/handler"
+	"github.com/wuxins/api-gateway/routing"
 	"net/http"
 	"strconv"
 	"time"
 )
 
 var (
-	httpsServerHandler *http.Server
+	httpServerHandler *http.Server
 )
 
-type httpsServer struct {
+type httpServer struct {
 }
 
-func (s *httpsServer) Start() {
+func (s *httpServer) Start() {
 	serverPort := config.GetConfigure().Sysconf.ServicePort
 	if serverPort <= 0 {
 		log4go.Error("Server start without port, exit !")
@@ -25,18 +25,17 @@ func (s *httpsServer) Start() {
 	}
 	httpServerHandler = &http.Server{
 		Addr:        ":" + strconv.Itoa(serverPort),
-		Handler:     nil,
+		Handler:     routing.NewRouterHandler(),
 		ReadTimeout: time.Duration(config.GetConfigure().Sysconf.ServerReadTimeout) * time.Millisecond,
 		IdleTimeout: time.Duration(config.GetConfigure().Sysconf.ServerKeepalive) * time.Millisecond,
 	}
-	http.HandleFunc("/", handler.CommonHandler)
 	log4go.Info("Server started at %v", serverPort)
 	if err := httpServerHandler.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log4go.Error("Server started error %v", err)
 	}
 }
 
-func (s *httpsServer) Stop() {
+func (s *httpServer) Stop() {
 	shutdownTimeout := config.GetConfigure().Sysconf.GracefulShutdownTimeout
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(shutdownTimeout)*time.Millisecond)
 	defer cancel()

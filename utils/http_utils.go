@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"github.com/wuxins/api-gateway/common"
 	"github.com/wuxins/api-gateway/monitor"
-	"github.com/wuxins/api-gateway/regularpath"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -12,7 +11,7 @@ import (
 	"time"
 )
 
-func WriteHttpResponse(w http.ResponseWriter, status int, body string, r *http.Request, regularPath *regularpath.RegularPath) {
+func WriteHttpResponse(w http.ResponseWriter, status int, body string, r *http.Request, enableMonitor bool) {
 
 	value := r.Header[common.HeaderContentEncoding]
 	IsGzipEncode := value != nil && strings.EqualFold(value[0], "gzip")
@@ -23,7 +22,7 @@ func WriteHttpResponse(w http.ResponseWriter, status int, body string, r *http.R
 		bodyBytes = common.StringToBytes(body)
 	}
 	w.WriteHeader(status)
-	if regularPath.NeedMonitor {
+	if enableMonitor {
 		requestBody, _ := ioutil.ReadAll(r.Body)
 		r.Body = ioutil.NopCloser(bytes.NewBuffer(requestBody))
 		requestStartTime, _ := strconv.ParseInt(r.Header[common.HeaderRequestTime][0], 10, 64)

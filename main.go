@@ -41,16 +41,16 @@ func main() {
 	go func() {
 		httpServ.Start()
 	}()
-	httpsServ := server.NewHttpsServer()
+	/*httpsServ := server.NewHttpsServer()
 	go func() {
 		httpsServ.Start()
-	}()
+	}()*/
 
 	quit := make(chan os.Signal)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 
 	httpServ.Stop()
-	httpsServ.Stop()
+	//httpsServ.Stop()
 
 }

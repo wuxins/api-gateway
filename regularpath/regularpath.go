@@ -129,7 +129,7 @@ func urlsToPath(api dto.Api) (RegularPath, error) {
 	path.Method = api.Method
 	path.ReadTimeout = api.ReadTimeout
 	path.Tenants = api.Tenants
-	path.UpstreamHost = api.UpstreamHost
+	path.UpstreamHost = api.Addresses
 	path.URL = placeHolderRegexp.ReplaceAllString(api.SrcUrl, regexpStringUnshell)
 	path.SrcURL = api.SrcUrl
 	path.DesURL = api.DesUrl

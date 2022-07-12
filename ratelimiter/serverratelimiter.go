@@ -60,7 +60,7 @@ func (rateLimiter *ServerRateLimiter) TryAcquire(info RateLimiterCtx) (bool, err
 				rate,
 				strconv.FormatInt(common.UnixMilliseconds(from), 10),
 				strconv.FormatInt(common.UnixMilliseconds(to), 10),
-				requestId.String(),
+				requestId,
 			}).Result()
 		// Lua boolean false -> r Nil bulk reply
 		if err == redis.Nil {
@@ -68,7 +68,7 @@ func (rateLimiter *ServerRateLimiter) TryAcquire(info RateLimiterCtx) (bool, err
 				Metric:     monitor.MetricApi,
 				MetricType: monitor.MetricApiRateLimited,
 				Time:       time.Now().Format(common.DateFormatMs),
-				Key:        strconv.FormatInt(int64(requestId), 10),
+				Key:        requestId,
 				Content: monitor.ApiRateLimitedInfo{
 					RateMode:  "redis",
 					ApiCode:   info.Key,
@@ -99,7 +99,7 @@ func (rateLimiter *ServerRateLimiter) TryAcquire(info RateLimiterCtx) (bool, err
 			Metric:     monitor.MetricApi,
 			MetricType: monitor.MetricApiRateLimited,
 			Time:       time.Now().Format(common.DateFormatMs),
-			Key:        strconv.FormatInt(int64(requestId), 10),
+			Key:        requestId,
 			Content: monitor.ApiRateLimitedInfo{
 				RateMode:  "local",
 				ApiCode:   info.Key,
@@ -118,7 +118,7 @@ func (rateLimiter *ServerRateLimiter) Release(info RateLimiterCtx) {
 	var apiCode = info.Key
 	if info.RedisAlive {
 		key := common.ServerRatePrefix + apiCode
-		remCount, err := redisclient.GetInstance().ZRem(redisclient.BackgroundCtx, key, int64(info.RequestId)).Result()
+		remCount, err := redisclient.GetInstance().ZRem(redisclient.BackgroundCtx, key, info.RequestId).Result()
 		if err != nil {
 			// Err occurs, It will be released by the next time api visited (Method - FlushLimiter). The impact of the fault is small.
 			monitor.Report(monitor.Event{

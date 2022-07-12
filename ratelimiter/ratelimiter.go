@@ -1,12 +1,10 @@
 package ratelimiter
 
-import "github.com/bwmarrin/snowflake"
-
 type RateLimiterCtx struct {
 	Key                  string
 	Rate                 int
 	RedisAlive           bool
-	RequestId            snowflake.ID
+	RequestId            string
 	LocalRateDownPercent int
 }
 

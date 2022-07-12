@@ -5,7 +5,7 @@ type Api struct {
 	Name          string `gorm:"name"`
 	ApiCode       string `gorm:"api_code"`
 	Method        string `gorm:"method"`
-	UpstreamHost  string `gorm:"upstream_host"`
+	Addresses     string `gorm:"addresses"`
 	SrcUrl        string `gorm:"src_url"`
 	DesUrl        string `gorm:"des_url"`
 	NeedRateLimit string `gorm:"need_rate_limit"`

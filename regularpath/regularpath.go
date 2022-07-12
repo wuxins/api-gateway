@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/gitstliu/log4go"
 	"github.com/wuxins/api-gateway/config"
-	"github.com/wuxins/api-gateway/dao/dto"
+	dto2 "github.com/wuxins/api-gateway/dto"
 	"net/http"
 	"regexp"
 	"strings"
@@ -33,7 +33,7 @@ type RegularPath struct {
 	Fallback       string
 	NeedMonitor    bool
 	ReadTimeout    int64
-	Tenants        []dto.Tenant
+	Tenants        []dto2.Tenant
 	Transport      http.RoundTripper
 }
 
@@ -49,7 +49,7 @@ var placeHolderRegexp = regexp.MustCompile(regexpString)
 
 var requestMethodApiPathTree = map[string]*RegularPathTree{}
 
-func FlushPathMapByDtos(apis []dto.Api) error {
+func FlushPathMapByDtos(apis []dto2.Api) error {
 
 	requestMethodWithApis := map[string][]RegularPath{}
 	for _, api := range apis {
@@ -95,7 +95,7 @@ func FlushPathMapByDtos(apis []dto.Api) error {
 	return nil
 }
 
-func urlsToPath(api dto.Api) (RegularPath, error) {
+func urlsToPath(api dto2.Api) (RegularPath, error) {
 
 	srcMeta := placeHolderRegexp.FindAllString(api.SrcUrl, -1)
 	desMeta := placeHolderRegexp.FindAllString(api.DesUrl, -1)

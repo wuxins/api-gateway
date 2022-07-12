@@ -2,7 +2,7 @@ package loadbalance
 
 import (
 	"errors"
-	"github.com/wuxins/api-gateway/dao/dto"
+	"github.com/wuxins/api-gateway/dto"
 	"math/rand"
 )
 

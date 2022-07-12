@@ -1,6 +1,8 @@
 package loadbalance
 
-import "github.com/wuxins/api-gateway/dao/dto"
+import (
+	"github.com/wuxins/api-gateway/dto"
+)
 
 type LoadBalancer interface {
 	Select(servers []dto.UpstreamServer) (string, error)

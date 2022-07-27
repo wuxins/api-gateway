@@ -4,6 +4,7 @@ TRUNCATE `api_gateway`.`group`;
 TRUNCATE `api_gateway`.`api_group`;
 TRUNCATE `api_gateway`.`tenant`;
 TRUNCATE `api_gateway`.`api_tenant`;
+TRUNCATE `api_gateway`.`upstream_service`;
 
 INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00001', 'life-policy', 'GET', '/life-policy/policies', '/life-policy/outer/policies', 'N','System');
 INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00002', 'life-policy', 'GET', '/life-policy/policies/{{policyNo}}', '/life-policy/outer/policies/{{policyNo}}', 'N','System');
@@ -191,15 +192,15 @@ INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A0004
 INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00045', 'bling');
 INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00045', 'website');
 
-INSERT INTO `api_gateway`.`service`(`name`, `service_code`, addresses) VALUES ('保单', 'life-policy', 'http://127.0.0.1:8080/');
-INSERT INTO `api_gateway`.`service`(`name`, `service_code`, addresses) VALUES ('登录', 'life-login', 'http://127.0.0.1:8080/');
-INSERT INTO `api_gateway`.`service`(`name`, `service_code`, addresses) VALUES ('投保单', 'life-insure', 'http://127.0.0.1:8080/');
-INSERT INTO `api_gateway`.`service`(`name`, `service_code`, addresses) VALUES ('账单', 'life-bill', 'http://127.0.0.1:8080/');
-INSERT INTO `api_gateway`.`service`(`name`, `service_code`, addresses) VALUES ('字典', 'life-dict', 'http://127.0.0.1:8080/');
-INSERT INTO `api_gateway`.`service`(`name`, `service_code`, addresses) VALUES ('订单', 'life-order', 'http://127.0.0.1:8080/');
-INSERT INTO `api_gateway`.`service`(`name`, `service_code`, addresses) VALUES ('客户', 'life-customer', 'http://127.0.0.1:8080/');
-INSERT INTO `api_gateway`.`service`(`name`, `service_code`, addresses) VALUES ('理赔', 'life-claim', 'http://127.0.0.1:8080/');
-INSERT INTO `api_gateway`.`service`(`name`, `service_code`, addresses) VALUES ('营销', 'life-market', 'http://127.0.0.1:8080/');
+INSERT INTO `api_gateway`.`upstream_service`(`name`, `service_code`, host) VALUES ('保单', 'life-policy', 'http://127.0.0.1:8080/');
+INSERT INTO `api_gateway`.`upstream_service`(`name`, `service_code`, host) VALUES ('登录', 'life-login', 'http://127.0.0.1:8080/');
+INSERT INTO `api_gateway`.`upstream_service`(`name`, `service_code`, host) VALUES ('投保单', 'life-insure', 'http://127.0.0.1:8080/');
+INSERT INTO `api_gateway`.`upstream_service`(`name`, `service_code`, host) VALUES ('账单', 'life-bill', 'http://127.0.0.1:8080/');
+INSERT INTO `api_gateway`.`upstream_service`(`name`, `service_code`, host) VALUES ('字典', 'life-dict', 'http://127.0.0.1:8080/');
+INSERT INTO `api_gateway`.`upstream_service`(`name`, `service_code`, host) VALUES ('订单', 'life-order', 'http://127.0.0.1:8080/');
+INSERT INTO `api_gateway`.`upstream_service`(`name`, `service_code`, host) VALUES ('客户', 'life-customer', 'http://127.0.0.1:8080/');
+INSERT INTO `api_gateway`.`upstream_service`(`name`, `service_code`, host) VALUES ('理赔', 'life-claim', 'http://127.0.0.1:8080/');
+INSERT INTO `api_gateway`.`upstream_service`(`name`, `service_code`, host) VALUES ('营销', 'life-market', 'http://127.0.0.1:8080/');
 
 INSERT INTO `api_gateway`.`group`(`name`, `group_code`) VALUES ('保单', 'life-policy');
 INSERT INTO `api_gateway`.`group`(`name`, `group_code`) VALUES ('登录', 'life-login');

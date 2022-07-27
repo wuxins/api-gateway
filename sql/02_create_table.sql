@@ -1,13 +1,13 @@
 use api_gateway;
 
 
-drop table if exists `service`;
-CREATE TABLE `service`
+drop table if exists `upstream_service`;
+CREATE TABLE `upstream_service`
 (
     `id`           bigint       NOT NULL AUTO_INCREMENT COMMENT 'primary key',
     `name`         varchar(32)  NOT NULL COMMENT 'service name',
     `service_code` varchar(32)  NOT NULL COMMENT 'service code',
-    `addresses`    varchar(512) NOT NULL COMMENT 'service addresses',
+    `host`        varchar(512) NOT NULL COMMENT 'service addresses',
     `created_time` datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record created time',
     `updated_time` datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record updated time',
     `created_by`   varchar(255) DEFAULT 'system' COMMENT 'who created the record',
@@ -23,14 +23,16 @@ CREATE TABLE `service`
 drop table if exists `tenant`;
 CREATE TABLE `tenant`
 (
-    `id`           bigint      NOT NULL AUTO_INCREMENT COMMENT 'primary key',
-    `name`         varchar(32) NOT NULL COMMENT 'api tenant name',
-    `tenant_code`  varchar(32) NOT NULL COMMENT 'api tenant code',
-    `created_time` datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record created time',
-    `updated_time` datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record updated time',
-    `created_by`   varchar(255) DEFAULT 'system' COMMENT 'who created the record',
-    `updated_by`   varchar(255) DEFAULT 'system' COMMENT 'who updated the record',
-    `is_deleted`   char(1)      DEFAULT 'N' COMMENT 'logical delete identifier(Y-effective,N-ineffective)',
+    `id`            bigint      NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+    `name`          varchar(32) NOT NULL COMMENT 'api tenant name',
+    `tenant_code`   varchar(32) NOT NULL COMMENT 'api tenant code',
+    `need_api_auth` char(1)      DEFAULT 'Y' COMMENT 'api auth switch',
+    `api_auth_type` char(1)      DEFAULT '0' COMMENT 'api auth type',
+    `created_time`  datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record created time',
+    `updated_time`  datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record updated time',
+    `created_by`    varchar(255) DEFAULT 'system' COMMENT 'who created the record',
+    `updated_by`    varchar(255) DEFAULT 'system' COMMENT 'who updated the record',
+    `is_deleted`    char(1)      DEFAULT 'N' COMMENT 'logical delete identifier(Y-effective,N-ineffective)',
     PRIMARY KEY (`id`) USING BTREE,
     KEY `idx_code` (`tenant_code`)
 ) ENGINE = InnoDB

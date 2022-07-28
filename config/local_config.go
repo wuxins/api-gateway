@@ -29,5 +29,7 @@ func (loader *LocalLoader) load(config Config) error {
 	configure.Routing = config.Local.Routing
 	configure.Rate = config.Local.Rate
 	configure.Monitor = config.Local.Monitor
+	configure.Http = config.Local.Http
+	configure.Https = config.Local.Https
 	return nil
 }

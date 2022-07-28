@@ -44,13 +44,13 @@ var RateLimitMsg = "Rate limited!"
 //	av.need_monitor,
 //	av.need_fallback,
 //	av.fallback,
-//	s.addresses
+//	s.host
 //FROM api_version av
-//	JOIN api a ON a.api_code = av.api_code
-//	JOIN service s ON s.service_code = a.service_code
+//JOIN api a ON a.api_code = av.api_code
+//JOIN upstream_service s ON s.service_code = a.service_code
 //WHERE av.env = ? AND av.is_deleted = 'N' AND a.is_deleted = 'N' AND s.is_deleted = 'N'
 
-var ApiSql = "SELECT\n    a.id,\n    a.name,\n    a.api_code,\n    a.method,\n    a.src_url,\n    a.des_url,\n    av.read_timeout,\n    av.need_rate_limit,\n    av.rate_limit,\n    av.need_monitor,\n    av.need_fallback,\n    av.fallback,\n    s.addresses\nFROM api_version av\n         JOIN api a ON a.api_code = av.api_code\n         JOIN service s ON s.service_code = a.service_code\nWHERE av.env = ? AND av.is_deleted = 'N' AND a.is_deleted = 'N' AND s.is_deleted = 'N'"
+var ApiSql = "SELECT\n\ta.id,\n\ta.name,\n\ta.api_code,\n\ta.method,\n\ta.src_url,\n\ta.des_url,\n\tav.read_timeout,\n\tav.need_rate_limit,\n\tav.rate_limit,\n\tav.need_monitor,\n\tav.need_fallback,\n\tav.fallback,\n\ts.host\nFROM api_version av\n\tJOIN api a ON a.api_code = av.api_code\n\tJOIN upstream_service s ON s.service_code = a.service_code\nWHERE av.env = ? AND av.is_deleted = 'N' AND a.is_deleted = 'N' AND s.is_deleted = 'N'"
 
 //SELECT
 //    apt.api_code, t.tenant_code, t.name

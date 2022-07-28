@@ -5,13 +5,7 @@ Local:
     FlushPathMapSpan: 60000 # ms, flush db api configuration to local process memory per interval
     LogConfigFile: log.xml # default 'log.xml 'with the startup binary file int the same dir, if not config
     Env: dev # dev、test、prd
-    ServicePort: 7777
-    ServerReadTimeout: 1000 # ms, proxy server keepalive the tenant invoker connection
-    ServerKeepalive: 3000 # ms, proxy server keepalive the tenant invoker connection
-    AccessControlAllowMethods: POST, GET, OPTIONS, PUT, DELETE
-    AccessControlAllowHeaders: G-tenant,channel,agentChannel,token,did,lang,securityToken,deviceRam,userToken
-    GracefulShutdownTimeout: 60000 # ms, default '30s' if not config, means interrupt or kill server will max waiting for received request process
-  http:
+  Http:
     ServicePort: 7777
     ServerReadTimeout: 1000 # ms, proxy server keepalive the tenant invoker connection
     ServerKeepalive: 3000 # ms, proxy server keepalive the tenant invoker connection

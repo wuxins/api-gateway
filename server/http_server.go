@@ -12,13 +12,15 @@ import (
 
 var (
 	httpServerHandler *http.Server
+	httpConf          *config.Http
 )
 
 type httpServer struct {
 }
 
 func (s *httpServer) Start() {
-	serverPort := config.GetConfigure().Sysconf.ServicePort
+	httpConf = config.GetConfigure().Http
+	serverPort := httpConf.ServicePort
 	if serverPort <= 0 {
 		log4go.Error("Server start without port, exit !")
 		return
@@ -26,8 +28,8 @@ func (s *httpServer) Start() {
 	httpServerHandler = &http.Server{
 		Addr:        ":" + strconv.Itoa(serverPort),
 		Handler:     routing.NewRouterHandler(),
-		ReadTimeout: time.Duration(config.GetConfigure().Sysconf.ServerReadTimeout) * time.Millisecond,
-		IdleTimeout: time.Duration(config.GetConfigure().Sysconf.ServerKeepalive) * time.Millisecond,
+		ReadTimeout: time.Duration(httpConf.ServerReadTimeout) * time.Millisecond,
+		IdleTimeout: time.Duration(httpConf.ServerKeepalive) * time.Millisecond,
 	}
 	log4go.Info("Server started at %v", serverPort)
 	if err := httpServerHandler.ListenAndServe(); err != nil && err != http.ErrServerClosed {
@@ -36,8 +38,7 @@ func (s *httpServer) Start() {
 }
 
 func (s *httpServer) Stop() {
-	shutdownTimeout := config.GetConfigure().Sysconf.GracefulShutdownTimeout
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(shutdownTimeout)*time.Millisecond)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(httpConf.GracefulShutdownTimeout)*time.Millisecond)
 	defer cancel()
 	err := httpServerHandler.Shutdown(ctx)
 	if err != nil {

@@ -29,6 +29,8 @@ type Local struct {
 	Redis   *Redis   `yaml:"Redis"`
 	Rate    *Rate    `yaml:"Rate"`
 	Monitor *Monitor `yaml:"Monitor"`
+	Http    *Http    `yaml:"Http"`
+	Https   *Https   `yaml:"Https"`
 }
 
 type Config struct {
@@ -48,6 +50,26 @@ type Sysconf struct {
 	GracefulShutdownTimeout   int64  `yaml:"GracefulShutdownTimeout"`
 	LogConfigFile             string `yaml:"LogConfigFile"`
 	Env                       string `yaml:"Env"`
+}
+
+type Http struct {
+	ServicePort               int    `yaml:"ServicePort"`
+	ServerReadTimeout         int64  `yaml:"ServerReadTimeout"`
+	ServerKeepalive           int64  `yaml:"ServerKeepalive"`
+	AccessControlAllowOrigin  string `yaml:"AccessControlAllowOrigin"`
+	AccessControlAllowMethods string `yaml:"AccessControlAllowMethods"`
+	AccessControlAllowHeaders string `yaml:"AccessControlAllowHeaders"`
+	GracefulShutdownTimeout   int64  `yaml:"GracefulShutdownTimeout"`
+}
+
+type Https struct {
+	ServicePort               int    `yaml:"ServicePort"`
+	ServerReadTimeout         int64  `yaml:"ServerReadTimeout"`
+	ServerKeepalive           int64  `yaml:"ServerKeepalive"`
+	AccessControlAllowOrigin  string `yaml:"AccessControlAllowOrigin"`
+	AccessControlAllowMethods string `yaml:"AccessControlAllowMethods"`
+	AccessControlAllowHeaders string `yaml:"AccessControlAllowHeaders"`
+	GracefulShutdownTimeout   int64  `yaml:"GracefulShutdownTimeout"`
 }
 
 type DB struct {
@@ -98,6 +120,8 @@ type Configure struct {
 	DB            *DB      `yaml:"DB"`
 	Routing       *Routing `yaml:"Routing"`
 	Redis         *Redis   `yaml:"Redis"`
+	Http          *Http    `yaml:"Http"`
+	Https         *Https   `yaml:"Https"`
 	Rate          *Rate    `yaml:"Rate"`
 	Monitor       *Monitor `yaml:"Monitor"`
 	SnowflakeNode *snowflake.Node

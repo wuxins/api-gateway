@@ -10,8 +10,8 @@ func AccessControlPlugin() func(c *RouterContext) {
 	return func(c *RouterContext) {
 		w := c.Rw
 		w.Header().Set(common.AccessControlAllowOrigin, "*")
-		w.Header().Set(common.AccessControlAllowMethods, config.GetConfigure().Sysconf.AccessControlAllowMethods)
-		w.Header().Set(common.AccessControlAllowHeaders, config.GetConfigure().Sysconf.AccessControlAllowHeaders)
+		w.Header().Set(common.AccessControlAllowMethods, config.GetConfigure().Http.AccessControlAllowMethods)
+		w.Header().Set(common.AccessControlAllowHeaders, config.GetConfigure().Http.AccessControlAllowHeaders)
 		c.Next()
 	}
 }

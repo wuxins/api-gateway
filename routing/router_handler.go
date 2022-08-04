@@ -2,7 +2,6 @@ package routing
 
 import (
 	"context"
-	"github.com/wuxins/api-gateway/common"
 	"github.com/wuxins/api-gateway/regularpath"
 	"math"
 	"net/http"
@@ -114,14 +113,15 @@ func NewRouterHandler() *RouterHandler {
 
 	router := NewRouter()
 
-	router.Group("/ping").Use(func(c *RouterContext) {
-		c.Rw.WriteHeader(http.StatusOK)
-		c.Rw.Write(common.StringToBytes("pong"))
-	})
-
-	router.Group("/").Use(
+	// oauth2.0 token endpoint
+	router.Group("/oauth/tokens").Use(
 		AccessControlPlugin(),
+		OauthTokenPlugin())
+
+	// reverse proxy router
+	router.Group("/").Use(
 		UrlCheckPlugin(),
+		AccessControlPlugin(),
 		TenantCheckPlugin(),
 		RateLimiterPlugin(),
 		ReverseProxyPlugin())

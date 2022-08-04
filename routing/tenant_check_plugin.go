@@ -25,7 +25,7 @@ func TenantCheckPlugin() func(c *RouterContext) {
 		}
 
 		if !isTenantSupport {
-			utils.WriteHttpResponse(w, http.StatusForbidden, common.ChannelUnsupportedMsg, r, true)
+			utils.WriteHttpResponse(w, http.StatusForbidden, common.TenantUnsupportedMsg, r, true)
 			c.Abort()
 			return
 		}

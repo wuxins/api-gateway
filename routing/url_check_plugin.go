@@ -2,14 +2,11 @@ package routing
 
 import (
 	"github.com/wuxins/api-gateway/common"
-	"github.com/wuxins/api-gateway/idgenerator"
 	"github.com/wuxins/api-gateway/regularpath"
 	"github.com/wuxins/api-gateway/utils"
 	"net/http"
 	"net/url"
-	"strconv"
 	"strings"
-	"time"
 )
 
 func UrlCheckPlugin() func(c *RouterContext) {
@@ -25,17 +22,20 @@ func UrlCheckPlugin() func(c *RouterContext) {
 		}
 
 		currUrl, decodeErr := url.PathUnescape(r.URL.Path)
-		if currUrl == "/" {
+		// health check endpoint
+		if currUrl == "/ping" {
 			w.WriteHeader(http.StatusOK)
-			w.Write(common.StringToBytes(common.WelcomeMsg))
+			_, _ = w.Write(common.StringToBytes(common.HeartbeatMsg))
 			c.Abort()
 			return
 		}
 
-		requestId := idgenerator.GenSnowflakeId()
-		requestTime := common.UnixMilliseconds(time.Now())
-		r.Header.Set(common.HeaderRequestId, requestId.String())
-		r.Header.Set(common.HeaderRequestTime, strconv.FormatInt(requestTime, 10))
+		if currUrl == "/" {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write(common.StringToBytes(common.WelcomeMsg))
+			c.Abort()
+			return
+		}
 
 		if decodeErr != nil {
 			utils.WriteHttpResponse(w, http.StatusInternalServerError, common.PathErrorMsg, r, true)

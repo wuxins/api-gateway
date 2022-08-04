@@ -12,6 +12,8 @@ var ServerRatePrefix = "GW_SR_"
 var SnowflakeNodeKey = "GW_SN_ND"
 
 var DelimiterComma = ","
+var DelimiterBlank = " "
+var DelimiterSemicolon = ":"
 
 var DateFormatMs = "2006-01-02 15:04:05.000"
 
@@ -25,11 +27,14 @@ var AccessControlAllowMethods = "Access-Control-Allow-Methods"
 var AccessControlAllowHeaders = "Access-Control-Allow-Headers"
 
 var WelcomeMsg = "Welcome!"
+var HeartbeatMsg = "pong!"
 var UnauthorizedMsg = "Unauthorized access!"
 var SysErrorMsg = "System Error!"
 var PathErrorMsg = "Path can not be decoded!"
-var ChannelUnsupportedMsg = "Tenant not supported!"
+var TenantUnsupportedMsg = "Tenant not supported!"
 var RateLimitMsg = "Rate limited!"
+
+var JwtSignKey = "my_sign_key"
 
 //SELECT
 //	a.id,
@@ -63,3 +68,5 @@ var ApiSql = "SELECT\n\ta.id,\n\ta.name,\n\ta.api_code,\n\ta.method,\n\ta.src_ur
 //        AND apt.is_deleted = 'N'
 
 var ApiTenantSql = "SELECT \n    apt.api_code, t.tenant_code, t.name\nFROM\n    tenant t\n        JOIN\n    api_tenant apt ON apt.tenant_code = t.tenant_code\nWHERE\n    t.is_deleted = 'N'\n        AND apt.is_deleted = 'N'"
+
+var TenantSql = "select name,tenant_code,need_api_auth,api_auth_type,secret,token_expire_time from tenant"

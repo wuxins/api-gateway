@@ -7,7 +7,7 @@ CREATE TABLE `upstream_service`
     `id`           bigint       NOT NULL AUTO_INCREMENT COMMENT 'primary key',
     `name`         varchar(32)  NOT NULL COMMENT 'service name',
     `service_code` varchar(32)  NOT NULL COMMENT 'service code',
-    `host`        varchar(512) NOT NULL COMMENT 'service addresses',
+    `host`         varchar(512) NOT NULL COMMENT 'service addresses',
     `created_time` datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record created time',
     `updated_time` datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record updated time',
     `created_by`   varchar(255) DEFAULT 'system' COMMENT 'who created the record',
@@ -23,16 +23,18 @@ CREATE TABLE `upstream_service`
 drop table if exists `tenant`;
 CREATE TABLE `tenant`
 (
-    `id`            bigint      NOT NULL AUTO_INCREMENT COMMENT 'primary key',
-    `name`          varchar(32) NOT NULL COMMENT 'api tenant name',
-    `tenant_code`   varchar(32) NOT NULL COMMENT 'api tenant code',
-    `need_api_auth` char(1)      DEFAULT 'Y' COMMENT 'api auth switch',
-    `api_auth_type` char(1)      DEFAULT '0' COMMENT 'api auth type',
-    `created_time`  datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record created time',
-    `updated_time`  datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record updated time',
-    `created_by`    varchar(255) DEFAULT 'system' COMMENT 'who created the record',
-    `updated_by`    varchar(255) DEFAULT 'system' COMMENT 'who updated the record',
-    `is_deleted`    char(1)      DEFAULT 'N' COMMENT 'logical delete identifier(Y-effective,N-ineffective)',
+    `id`                bigint      NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+    `name`              varchar(32) NOT NULL COMMENT 'api tenant name',
+    `tenant_code`       varchar(32) NOT NULL COMMENT 'api tenant api id',
+    `need_api_auth`     char(1)      DEFAULT 'Y' COMMENT 'api auth switch',
+    `api_auth_type`     char(1)      DEFAULT '0' COMMENT 'api auth type: 01 (Client mode)',
+    `secret`            varchar(255) COMMENT 'api auth api secret',
+    `token_expire_time` int          DEFAULT 0 COMMENT 'api token expire time',
+    `created_time`      datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record created time',
+    `updated_time`      datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record updated time',
+    `created_by`        varchar(255) DEFAULT 'system' COMMENT 'who created the record',
+    `updated_by`        varchar(255) DEFAULT 'system' COMMENT 'who updated the record',
+    `is_deleted`        char(1)      DEFAULT 'N' COMMENT 'logical delete identifier(Y-effective,N-ineffective)',
     PRIMARY KEY (`id`) USING BTREE,
     KEY `idx_code` (`tenant_code`)
 ) ENGINE = InnoDB
@@ -82,7 +84,6 @@ CREATE TABLE `api`
   AUTO_INCREMENT = 100000000
   DEFAULT CHARSET = utf8
   ROW_FORMAT = COMPACT COMMENT ='Api define';
-
 
 drop table if exists `api_group`;
 CREATE TABLE `api_group`

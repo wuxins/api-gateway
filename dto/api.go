@@ -14,5 +14,5 @@ type Api struct {
 	Fallback      string `gorm:"fallback"`
 	NeedMonitor   string `gorm:"need_monitor"`
 	ReadTimeout   int64  `gorm:"read_timeout"`
-	Tenants       []Tenant
+	Tenants       []ApiTenant
 }

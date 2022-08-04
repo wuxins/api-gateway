@@ -33,7 +33,7 @@ type RegularPath struct {
 	Fallback       string
 	NeedMonitor    bool
 	ReadTimeout    int64
-	Tenants        []dto2.Tenant
+	Tenants        []dto2.ApiTenant
 	Transport      http.RoundTripper
 }
 

@@ -27,7 +27,7 @@ func OauthTokenPlugin() func(c *RouterContext) {
 			return
 		}
 
-		var tokenInput dto.TokensInput
+		var tokenInput dto.TokensRequest
 		if err = json.Unmarshal(body, &tokenInput); err != nil {
 			fail(c, w, common.UnauthorizedMsg, r)
 			return
@@ -74,7 +74,7 @@ func OauthTokenPlugin() func(c *RouterContext) {
 			resp, _ := json.Marshal(&dto.Response{
 				Code: "00",
 				Msg:  "Success",
-				Data: &dto.TokensOutput{
+				Data: &dto.TokensResponse{
 					ExpiresIn:   item.TokenExpireIn,
 					TokenType:   "Bearer",
 					AccessToken: token,

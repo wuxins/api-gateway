@@ -40,10 +40,9 @@ func TenantCheckPlugin() func(c *RouterContext) {
 							fail(c, w, common.UnauthorizedMsg, r)
 							return
 						}
-						break
+						c.Next()
+						return
 					}
-					c.Next()
-					return
 				}
 			}
 		}

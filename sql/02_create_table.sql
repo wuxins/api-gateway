@@ -29,7 +29,7 @@ CREATE TABLE `tenant`
     `need_api_auth`     char(1)      DEFAULT 'Y' COMMENT 'api auth switch',
     `api_auth_type`     char(1)      DEFAULT '0' COMMENT 'api auth type: 01 (Client mode)',
     `secret`            varchar(255) COMMENT 'api auth api secret',
-    `token_expire_time` int          DEFAULT 0 COMMENT 'api token expire time',
+    `token_expire_in`   int          DEFAULT 0 COMMENT 'api token expire time',
     `created_time`      datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record created time',
     `updated_time`      datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record updated time',
     `created_by`        varchar(255) DEFAULT 'system' COMMENT 'who created the record',

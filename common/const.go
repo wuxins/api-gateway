@@ -57,16 +57,20 @@ var JwtSignKey = "my_sign_key"
 
 var ApiSql = "SELECT\n\ta.id,\n\ta.name,\n\ta.api_code,\n\ta.method,\n\ta.src_url,\n\ta.des_url,\n\tav.read_timeout,\n\tav.need_rate_limit,\n\tav.rate_limit,\n\tav.need_monitor,\n\tav.need_fallback,\n\tav.fallback,\n\ts.host\nFROM api_version av\n\tJOIN api a ON a.api_code = av.api_code\n\tJOIN upstream_service s ON s.service_code = a.service_code\nWHERE av.env = ? AND av.is_deleted = 'N' AND a.is_deleted = 'N' AND s.is_deleted = 'N'"
 
-//SELECT
-//    apt.api_code, t.tenant_code, t.name
-//FROM
-//    tenant t
+//SELECT apt.api_code,
+//      t.name,
+//      t.tenant_code,
+//      t.need_api_auth,
+//      t.api_auth_type,
+//      t.secret,
+//      t.token_expire_in
+//FROM tenant t
 //        JOIN
 //    api_tenant apt ON apt.tenant_code = t.tenant_code
-//WHERE
-//    t.is_deleted = 'N'
-//        AND apt.is_deleted = 'N'
+//WHERE t.is_deleted = 'N'
+// AND apt.is_deleted = 'N'
 
-var ApiTenantSql = "SELECT \n    apt.api_code, t.tenant_code, t.name\nFROM\n    tenant t\n        JOIN\n    api_tenant apt ON apt.tenant_code = t.tenant_code\nWHERE\n    t.is_deleted = 'N'\n        AND apt.is_deleted = 'N'"
+var ApiTenantSql = "SELECT apt.api_code,\n      t.name,\n      t.tenant_code,\n      t.need_api_auth,\n      t.api_auth_type,\n      t.secret,\n      t.token_expire_in\nFROM tenant t\n        JOIN\n    api_tenant apt ON apt.tenant_code = t.tenant_code\nWHERE t.is_deleted = 'N'\n AND apt.is_deleted = 'N'"
 
-var TenantSql = "select name,tenant_code,need_api_auth,api_auth_type,secret,token_expire_time from tenant"
+var TenantSql = "select name,tenant_code,need_api_auth,api_auth_type,secret,token_expire_in from tenant"
+

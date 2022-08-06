@@ -5,6 +5,7 @@ import (
 	"compress/gzip"
 	"errors"
 	"github.com/dgrijalva/jwt-go"
+	"strings"
 	"time"
 
 	"github.com/gitstliu/log4go"
@@ -85,22 +86,43 @@ func UnixMilliseconds(t time.Time) int64 {
 	return t.UnixNano() / 1e6
 }
 
-func JwtDecode(tokenString string) (*jwt.StandardClaims, error) {
+func JwtDecode(tokenString string, signKey string) (*jwt.StandardClaims, error) {
+
+	if strings.TrimSpace(signKey) == DelimiterEmpty {
+		signKey = JwtSignKey
+	}
+
 	token, err := jwt.ParseWithClaims(tokenString, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(JwtSignKey), nil
+		return []byte(signKey), nil
 	})
+
 	if err != nil {
 		return nil, err
 	}
+
 	if claims, ok := token.Claims.(*jwt.StandardClaims); ok {
 		return claims, nil
-	} else {
-		return nil, errors.New("token is not jwt.StandardClaims")
 	}
+
+	return nil, errors.New("token is not jwt.StandardClaims")
 }
 
-func JwtEncode(claims jwt.StandardClaims) (string, error) {
-	mySigningKey := []byte(JwtSignKey)
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(mySigningKey)
+func JwtEncode(claims jwt.StandardClaims, signKey string, signMethod string) (string, error) {
+
+	if strings.TrimSpace(signKey) == DelimiterEmpty {
+		signKey = JwtSignKey
+	}
+
+	var token *jwt.Token
+	if signMethod == "HS256" {
+		token = jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	} else if signMethod == "HS512" {
+		token = jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
+	} else if signMethod == "HS384" {
+		token = jwt.NewWithClaims(jwt.SigningMethodHS384, claims)
+	} else {
+		return DelimiterEmpty, errors.New("Unsupported sign method ")
+	}
+
+	return token.SignedString([]byte(signKey))
 }

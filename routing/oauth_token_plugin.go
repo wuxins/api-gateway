@@ -18,18 +18,17 @@ func OauthTokenPlugin() func(c *RouterContext) {
 
 	return func(c *RouterContext) {
 
-		w := c.Rw
 		r := c.Req
 
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			fail(c, w, common.SysErrorMsg, r)
+			fail(c, http.StatusInternalServerError, err.Error())
 			return
 		}
 
 		var tokenInput dto.TokensRequest
 		if err = json.Unmarshal(body, &tokenInput); err != nil {
-			fail(c, w, common.UnauthorizedMsg, r)
+			fail(c, http.StatusInternalServerError, err.Error())
 			return
 		}
 		tenants := dao.Tenants
@@ -38,14 +37,14 @@ func OauthTokenPlugin() func(c *RouterContext) {
 		authMsg := r.Header["Authorization"][0]
 		splitAuthMsg := strings.Split(authMsg, common.DelimiterBlank)
 		if len(splitAuthMsg) != 2 {
-			fail(c, w, common.UnauthorizedMsg, r)
+			fail(c, http.StatusInternalServerError, "Authorization info invalid"+authMsg)
 			return
 		}
 
 		// admin:123456
 		decodeAuthMsg, err := base64.StdEncoding.DecodeString(splitAuthMsg[1])
 		if err != nil {
-			fail(c, w, err.Error(), r)
+			fail(c, http.StatusInternalServerError, err.Error())
 			return
 		}
 
@@ -65,9 +64,10 @@ func OauthTokenPlugin() func(c *RouterContext) {
 				ExpiresAt: time.Now().Add(time.Duration(item.TokenExpireIn) * time.Second).In(time.Local).Unix(),
 			}
 
-			token, err := common.JwtEncode(claims)
+			token, err := common.JwtEncode(claims, item.TokenSignKey, item.TokenSignMethod)
+
 			if err != nil {
-				fail(c, w, common.UnauthorizedMsg, r)
+				fail(c, http.StatusInternalServerError, err.Error())
 				return
 			}
 
@@ -82,20 +82,20 @@ func OauthTokenPlugin() func(c *RouterContext) {
 				},
 			})
 
-			success(c, w, string(resp), r)
+			success(c, string(resp))
 			return
 		}
-		fail(c, w, common.UnauthorizedMsg, r)
+		fail(c, http.StatusForbidden, common.TenantUnsupportedMsg)
 		return
 	}
 }
 
-func success(c *RouterContext, w http.ResponseWriter, data string, r *http.Request) {
-	utils.WriteHttpResponse(w, http.StatusOK, data, r, true)
+func success(c *RouterContext, data string) {
+	utils.WriteHttpResponse(c.Rw, http.StatusOK, data, c.Req, false)
 	c.Abort()
 }
 
-func fail(c *RouterContext, w http.ResponseWriter, data string, r *http.Request) {
-	utils.WriteHttpResponse(w, http.StatusInternalServerError, data, r, true)
+func fail(c *RouterContext, status int, data string) {
+	utils.WriteHttpResponse(c.Rw, status, data, c.Req, true)
 	c.Abort()
 }

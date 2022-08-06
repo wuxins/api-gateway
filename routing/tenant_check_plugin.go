@@ -1,10 +1,13 @@
 package routing
 
 import (
+	"encoding/json"
 	"github.com/wuxins/api-gateway/common"
+	"github.com/wuxins/api-gateway/dto"
 	"github.com/wuxins/api-gateway/utils"
 	"net/http"
 	"strings"
+	"time"
 )
 
 func TenantCheckPlugin() func(c *RouterContext) {
@@ -22,22 +25,32 @@ func TenantCheckPlugin() func(c *RouterContext) {
 					if item.NeedApiAuth == "Y" {
 						// currently , support oauth2.0 client_credentials only
 						if item.ApiAuthType != "0" {
-							fail(c, w, common.UnauthorizedMsg, r)
+							fail(c, http.StatusInternalServerError, common.UnauthorizedMsg)
 							return
 						}
 						// expireSec := item.TokenExpireIn
-						token := strings.ReplaceAll(r.Header["Authorization"][0], "Bearer ", "")
-						if strings.TrimSpace(token) == "" {
-							fail(c, w, common.UnauthorizedMsg, r)
+						token := strings.ReplaceAll(r.Header["Authorization"][0], "Bearer ", common.DelimiterEmpty)
+						if strings.TrimSpace(token) == common.DelimiterEmpty {
+							fail(c, http.StatusInternalServerError, "Token Invalid : Empty !")
 							return
 						}
-						claims, err := common.JwtDecode(token)
+						claims, err := common.JwtDecode(token, item.TokenSignKey)
 						if err != nil {
-							fail(c, w, common.UnauthorizedMsg, r)
+							fail(c, http.StatusInternalServerError, err.Error())
 							return
 						}
 						if item.TenantCode != claims.Issuer {
-							fail(c, w, common.UnauthorizedMsg, r)
+							fail(c, http.StatusInternalServerError, "Token Invalid : Issuer error !")
+							return
+						}
+
+						// client need request /oauth/tokens - get a new token
+						if !claims.VerifyExpiresAt(time.Now().Unix(), false) {
+							resp, _ := json.Marshal(&dto.Response{
+								Code: item.TokenExpireCode,
+								Msg:  "Token Invalid : expire !",
+							})
+							fail(c, http.StatusUnauthorized, string(resp))
 							return
 						}
 						c.Next()
@@ -47,6 +60,7 @@ func TenantCheckPlugin() func(c *RouterContext) {
 			}
 		}
 
+		fail(c, http.StatusUnauthorized, common.TenantUnsupportedMsg)
 		utils.WriteHttpResponse(w, http.StatusForbidden, common.TenantUnsupportedMsg, r, true)
 		c.Abort()
 		return

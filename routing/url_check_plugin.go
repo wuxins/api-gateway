@@ -22,6 +22,7 @@ func UrlCheckPlugin() func(c *RouterContext) {
 		}
 
 		currUrl, decodeErr := url.PathUnescape(r.URL.Path)
+
 		// health check endpoint
 		if currUrl == "/ping" {
 			w.WriteHeader(http.StatusOK)
@@ -45,7 +46,7 @@ func UrlCheckPlugin() func(c *RouterContext) {
 
 		regularPath := regularpath.CheckURLMatch(currUrl, r.Method)
 		if regularPath == nil {
-			utils.WriteHttpResponse(w, http.StatusUnauthorized, common.UnauthorizedMsg, r, true)
+			utils.WriteHttpResponse(w, http.StatusForbidden, common.UnauthorizedMsg, r, true)
 			c.Abort()
 			return
 		}

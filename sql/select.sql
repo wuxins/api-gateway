@@ -1,9 +1,12 @@
-select * from api;
-select * from `group`;
-select * from tenant;
-select * from api_group;
-select * from api_tenant;
-select * from api_version;
+SELECT * FROM api_gateway.environment;
+SELECT * FROM api_gateway.tenant;
+SELECT * FROM api_gateway.tenant_env;
+SELECT * FROM api_gateway.upstream_service;
+SELECT * FROM api_gateway.upstream_service_env;
+
+select count(1) from api_gateway.api;
+SELECT count(1) FROM api_gateway.api_tenant;
+select count(1) from api_gateway.api_env;
 
 
 SELECT a.id,

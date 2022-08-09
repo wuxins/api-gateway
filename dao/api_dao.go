@@ -12,17 +12,17 @@ var Tenants []dto.Tenant
 func InitAllTenant() {
 
 	var tenants []dto.Tenant
-	dbclient.GetDB().Raw(common.TenantSql).Scan(&tenants)
+	dbclient.GetDB().Raw(common.TenantSql, config.GetConfigure().Sysconf.Env).Scan(&tenants)
 	Tenants = tenants
 }
 
 func GetAllApi() []dto.Api {
 
 	var apis []dto.Api
-	dbclient.GetDB().Raw(common.ApiSql, config.GetConfigure().Sysconf.Env).Scan(&apis)
+	dbclient.GetDB().Raw(common.ApiSql, config.GetConfigure().Sysconf.Env, config.GetConfigure().Sysconf.Env).Scan(&apis)
 
 	var apiTenants []dto.ApiTenant
-	dbclient.GetDB().Raw(common.ApiTenantSql).Scan(&apiTenants)
+	dbclient.GetDB().Raw(common.ApiTenantSql, config.GetConfigure().Sysconf.Env).Scan(&apiTenants)
 
 	for idx, _ := range apis {
 		var tenants []dto.ApiTenant

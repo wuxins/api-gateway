@@ -127,8 +127,8 @@ CREATE TABLE `upstream_service_env`
     `id`           bigint       NOT NULL AUTO_INCREMENT COMMENT 'primary key',
     `service_code` varchar(32)  NOT NULL COMMENT 'service code',
     `env`          varchar(8)   NOT NULL COMMENT 'environment code',
-    `host`         varchar(512) NOT NULL COMMENT 'service addresses',
-    `gray_host`    varchar(512) NOT NULL COMMENT 'gray service addresses',
+    `address`      varchar(512) NOT NULL COMMENT 'service addresses',
+    `gray_address` varchar(512) NOT NULL COMMENT 'gray service addresses',
     `created_time` datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record created time',
     `updated_time` datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record updated time',
     `created_by`   varchar(255) DEFAULT 'system' COMMENT 'who created the record',
@@ -201,14 +201,13 @@ CREATE TABLE `api_group`
   DEFAULT CHARSET = utf8
   ROW_FORMAT = COMPACT COMMENT ='Api group mapping';
 
-drop table if exists `api_version_changelog`;
-CREATE TABLE `api_version_changelog`
+drop table if exists `change_log`;
+CREATE TABLE `change_log`
 (
-    `id`           bigint      NOT NULL AUTO_INCREMENT COMMENT 'primary key',
-    `api_id`       varchar(32) NOT NULL COMMENT 'api code',
-    `before`       varchar(32) NOT NULL COMMENT 'before content',
-    `after`        varchar(32) NOT NULL COMMENT 'after content',
-    `tenant_code`  varchar(32) NOT NULL COMMENT 'api tenant, if (*) means common rules, other wise special tenant',
+    `id`           bigint        NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+    `type`         varchar(8)    NOT NULL COMMENT 'change type',
+    `change_id`    bigint        NOT NULL COMMENT 'change item id',
+    `content`      varchar(2048) NOT NULL COMMENT 'change content',
     `created_time` datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record created time',
     `updated_time` datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record updated time',
     `created_by`   varchar(255) DEFAULT 'system' COMMENT 'who created the record',
@@ -218,4 +217,4 @@ CREATE TABLE `api_version_changelog`
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 100000000
   DEFAULT CHARSET = utf8
-  ROW_FORMAT = COMPACT COMMENT ='Api version change log';
+  ROW_FORMAT = COMPACT COMMENT ='change log';

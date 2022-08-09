@@ -128,6 +128,7 @@ CREATE TABLE `upstream_service_env`
     `service_code` varchar(32)  NOT NULL COMMENT 'service code',
     `env`          varchar(8)   NOT NULL COMMENT 'environment code',
     `host`         varchar(512) NOT NULL COMMENT 'service addresses',
+    `gray_host`    varchar(512) NOT NULL COMMENT 'gray service addresses',
     `created_time` datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record created time',
     `updated_time` datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record updated time',
     `created_by`   varchar(255) DEFAULT 'system' COMMENT 'who created the record',

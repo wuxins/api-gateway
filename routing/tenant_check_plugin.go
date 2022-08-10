@@ -13,7 +13,6 @@ func TenantCheckPlugin() func(c *RouterContext) {
 
 	return func(c *RouterContext) {
 
-		w := c.Rw
 		r := c.Req
 		regularPath := c.RegularPath
 		tenant := r.Header[common.HeaderTenant]

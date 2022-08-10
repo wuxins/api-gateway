@@ -41,6 +41,7 @@ func flushPathMap() {
 
 	if flushErr != nil {
 		log4go.Error("Flush Error : %v", flushErr)
+		return
 	}
 	log4go.Info("FlushPathMap Success!")
 }

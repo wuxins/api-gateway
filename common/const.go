@@ -37,63 +37,83 @@ var RateLimitMsg = "Rate limited!"
 
 var JwtSignKey = "my_sign_key"
 
-//SELECT
-//	a.id,
-//	a.name,
-//	a.api_code,
-//	a.method,
-//	a.src_url,
-//	a.des_url,
-//	av.read_timeout,
-//	av.need_rate_limit,
-//	av.rate_limit,
-//	av.need_monitor,
-//	av.need_fallback,
-//	av.fallback,
-//	se.address,
-//	se.gray_address
-//FROM api_env av
-//JOIN api a ON a.api_code = av.api_code and av.env = ?
-//JOIN upstream_service s ON s.service_code = a.service_code
-//join upstream_service_env se on se.service_code = s.service_code and se.env = ?
-//WHERE av.is_deleted = 'N' AND a.is_deleted = 'N' AND s.is_deleted = 'N' AND se.is_deleted = 'N'
+/**
+SELECT
+	a.id,
+	a.NAME,
+	a.api_code,
+	a.method,
+	a.src_url,
+	a.des_url,
+	av.read_timeout,
+	av.need_rate_limit,
+	av.rate_limit,
+	av.need_monitor,
+	av.need_fallback,
+	av.fallback,
+	se.address,
+	se.gray_address
+FROM
+	api_env av
+	JOIN api a ON a.api_code = av.api_code
+	AND av.env = ?
+	JOIN upstream_service s ON s.service_code = a.service_code
+	JOIN upstream_service_env se ON se.service_code = s.service_code
+	AND se.env = ?
+WHERE
+	av.is_deleted = 'N'
+	AND a.is_deleted = 'N'
+	AND s.is_deleted = 'N'
+	AND se.is_deleted = 'N'
+*/
 
-var ApiSql = "SELECT\n\ta.id,\n\ta.name,\n\ta.api_code,\n\ta.method,\n\ta.src_url,\n\ta.des_url,\n\tav.read_timeout,\n\tav.need_rate_limit,\n\tav.rate_limit,\n\tav.need_monitor,\n\tav.need_fallback,\n\tav.fallback,\n\tse.address,\n\tse.gray_address\nFROM api_env av\nJOIN api a ON a.api_code = av.api_code and av.env = ?\nJOIN upstream_service s ON s.service_code = a.service_code\njoin upstream_service_env se on se.service_code = s.service_code and se.env = ?\nWHERE av.is_deleted = 'N' AND a.is_deleted = 'N' AND s.is_deleted = 'N' AND se.is_deleted = 'N'"
+var ApiSql = "SELECT\n\ta.id,\n\ta.NAME,\n\ta.api_code,\n\ta.method,\n\ta.src_url,\n\ta.des_url,\n\tav.read_timeout,\n\tav.need_rate_limit,\n\tav.rate_limit,\n\tav.need_monitor,\n\tav.need_fallback,\n\tav.fallback,\n\tse.address,\n\tse.gray_address\nFROM\n\tapi_env av\n\tJOIN api a ON a.api_code = av.api_code\n\tAND av.env = ?\n\tJOIN upstream_service s ON s.service_code = a.service_code\n\tJOIN upstream_service_env se ON se.service_code = s.service_code\n\tAND se.env = ?\nWHERE\n\tav.is_deleted = 'N'\n\tAND a.is_deleted = 'N'\n\tAND s.is_deleted = 'N'\n\tAND se.is_deleted = 'N'"
 
-//SELECT apt.api_code,
-//	t.name,
-//	t.tenant_code,
-//	te.need_api_auth,
-//	te.api_auth_type,
-//	te.secret,
-//	te.token_expire_in,
-//	te.token_sign_key,
-//	te.token_sign_method,
-//	te.token_expire_code
-//	FROM tenant t,
-//	api_tenant apt,
-//	tenant_env te
-//WHERE t.tenant_code = apt.tenant_code
-//	and apt.tenant_code = te.tenant_code
-//	and t.is_deleted = 'N'
-//	AND apt.is_deleted = 'N'
-//	AND te.is_deleted = 'N'
-//	and te.env = ?
+/**
+SELECT
+	apt.api_code,
+	t.NAME,
+	t.tenant_code,
+	te.need_api_auth,
+	te.api_auth_type,
+	te.secret,
+	te.token_expire_in,
+	te.token_sign_key,
+	te.token_sign_method,
+	te.token_expire_code
+FROM
+	tenant t,
+	api_tenant apt,
+	tenant_env te
+WHERE
+	t.tenant_code = apt.tenant_code
+	AND apt.tenant_code = te.tenant_code
+	AND t.is_deleted = 'N'
+	AND apt.is_deleted = 'N'
+	AND te.is_deleted = 'N'
+	AND te.env = ?
+*/
 
-var ApiTenantSql = "SELECT apt.api_code,\n\tt.name,\n\tt.tenant_code,\n\tte.need_api_auth,\n\tte.api_auth_type,\n\tte.secret,\n\tte.token_expire_in,\n\tte.token_sign_key,\n\tte.token_sign_method,\n\tte.token_expire_code\n\tFROM tenant t,\n\tapi_tenant apt,\n\ttenant_env te\nWHERE t.tenant_code = apt.tenant_code\n\tand apt.tenant_code = te.tenant_code\n\tand t.is_deleted = 'N'\n\tAND apt.is_deleted = 'N'\n\tAND te.is_deleted = 'N'\n\tand te.env = ?"
+var ApiTenantSql = "SELECT\n\tapt.api_code,\n\tt.NAME,\n\tt.tenant_code,\n\tte.need_api_auth,\n\tte.api_auth_type,\n\tte.secret,\n\tte.token_expire_in,\n\tte.token_sign_key,\n\tte.token_sign_method,\n\tte.token_expire_code\nFROM\n\ttenant t,\n\tapi_tenant apt,\n\ttenant_env te\nWHERE\n\tt.tenant_code = apt.tenant_code\n\tAND apt.tenant_code = te.tenant_code\n\tAND t.is_deleted = 'N'\n\tAND apt.is_deleted = 'N'\n\tAND te.is_deleted = 'N'\n\tAND te.env = ?"
 
-//select t.name,
-//	t.tenant_code,
-//	te.need_api_auth,
-//	te.api_auth_type,
-//	te.secret,
-//	te.token_sign_key,
-//	te.token_sign_method,
-//	te.token_expire_in,
-//	te.token_expire_code
-//	from tenant t
-//	join tenant_env te on t.tenant_code = te.tenant_code and te.env = ?
-//WHERE te.is_deleted = 'N'
-//AND t.is_deleted = 'N'
+/**
+SELECT
+	t.NAME,
+	t.tenant_code,
+	te.need_api_auth,
+	te.api_auth_type,
+	te.secret,
+	te.token_sign_key,
+	te.token_sign_method,
+	te.token_expire_in,
+	te.token_expire_code
+FROM
+	tenant t
+	JOIN tenant_env te ON t.tenant_code = te.tenant_code
+	AND te.env = ?
+WHERE
+	te.is_deleted = 'N'
+	AND t.is_deleted = 'N'
+*/
 
-var TenantSql = "select t.name,\n\tt.tenant_code,\n\tte.need_api_auth,\n\tte.api_auth_type,\n\tte.secret,\n\tte.token_sign_key,\n\tte.token_sign_method,\n\tte.token_expire_in,\n\tte.token_expire_code\n\tfrom tenant t\n\tjoin tenant_env te on t.tenant_code = te.tenant_code and te.env = ?\nWHERE te.is_deleted = 'N'\nAND t.is_deleted = 'N'"
+var TenantSql = "SELECT\n\tt.NAME,\n\tt.tenant_code,\n\tte.need_api_auth,\n\tte.api_auth_type,\n\tte.secret,\n\tte.token_sign_key,\n\tte.token_sign_method,\n\tte.token_expire_in,\n\tte.token_expire_code\nFROM\n\ttenant t\n\tJOIN tenant_env te ON t.tenant_code = te.tenant_code\n\tAND te.env = ?\nWHERE\n\tte.is_deleted = 'N'\n\tAND t.is_deleted = 'N'"

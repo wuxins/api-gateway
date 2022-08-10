@@ -1,6 +1,7 @@
 package task
 
 import (
+	"encoding/json"
 	"github.com/gitstliu/log4go"
 	"github.com/wuxins/api-gateway/config"
 	"github.com/wuxins/api-gateway/dao"
@@ -24,7 +25,8 @@ func flushPathMap() {
 
 	dao.InitAllTenant()
 	apis := dao.GetAllApi()
-	log4go.Info("GetAllApi : %v", apis)
+	marshal, _ := json.Marshal(apis)
+	log4go.Info("GetAllApi : %v", string(marshal))
 
 	flushErr := regularpath.FlushPathMapByDtos(apis)
 
@@ -38,11 +40,7 @@ func flushPathMap() {
 	}
 
 	if flushErr != nil {
-		err := log4go.Error("Flush Error : %v", flushErr)
-		if err != nil {
-			return
-		}
-	} else {
-		log4go.Info("FlushPathMap Success!")
+		log4go.Error("Flush Error : %v", flushErr)
 	}
+	log4go.Info("FlushPathMap Success!")
 }

@@ -31,10 +31,18 @@ func TenantCheckPlugin() func(c *RouterContext) {
 						fail(c, http.StatusInternalServerError, common.UnauthorizedMsg)
 						return
 					}
+					unauthorizedResp, _ := json.Marshal(&dto.Response{
+						Code: item.TokenExpireCode,
+					})
 					// expireSec := item.TokenExpireIn
-					token := strings.ReplaceAll(r.Header["Authorization"][0], "Bearer ", common.DelimiterEmpty)
+					authInfo := r.Header["Authorization"]
+					if nil == authInfo {
+						fail(c, http.StatusUnauthorized, string(unauthorizedResp))
+						return
+					}
+					token := strings.ReplaceAll(authInfo[0], "Bearer ", common.DelimiterEmpty)
 					if strings.TrimSpace(token) == common.DelimiterEmpty {
-						fail(c, http.StatusInternalServerError, "Token Invalid : Empty !")
+						fail(c, http.StatusUnauthorized, string(unauthorizedResp))
 						return
 					}
 					claims, err := common.JwtDecode(token, item.TokenSignKey)
@@ -49,11 +57,7 @@ func TenantCheckPlugin() func(c *RouterContext) {
 
 					// client need request /oauth/tokens - get a new token
 					if !claims.VerifyExpiresAt(time.Now().Unix(), false) {
-						resp, _ := json.Marshal(&dto.Response{
-							Code: item.TokenExpireCode,
-							Msg:  "Token Invalid : expire !",
-						})
-						fail(c, http.StatusUnauthorized, string(resp))
+						fail(c, http.StatusUnauthorized, string(unauthorizedResp))
 						return
 					}
 					c.Next()

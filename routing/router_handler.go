@@ -124,6 +124,7 @@ func NewRouterHandler() *RouterHandler {
 		AccessControlPlugin(),
 		TenantCheckPlugin(),
 		RateLimiterPlugin(),
+		GrayStrategyPlugin(),
 		ReverseProxyPlugin())
 
 	return &RouterHandler{

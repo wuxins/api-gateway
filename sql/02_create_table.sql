@@ -201,13 +201,14 @@ CREATE TABLE `api_group`
   DEFAULT CHARSET = utf8
   ROW_FORMAT = COMPACT COMMENT ='Api group mapping';
 
-drop table if exists `change_log`;
-CREATE TABLE `change_log`
+drop table if exists `audit_apply_info`;
+CREATE TABLE `audit_apply_info`
 (
     `id`           bigint        NOT NULL AUTO_INCREMENT COMMENT 'primary key',
-    `type`         varchar(8)    NOT NULL COMMENT 'change type',
-    `change_id`    bigint        NOT NULL COMMENT 'change item id',
-    `content`      varchar(2048) NOT NULL COMMENT 'change content',
+    `type`         varchar(8)    NOT NULL COMMENT 'apply type',
+    `apply_id`     bigint        NOT NULL COMMENT 'apply item id',
+    `content`      varchar(2048) NOT NULL COMMENT 'apply content',
+    `status`       char(1)       NOT NULL COMMENT 'apply status(0-submit,1-effective,2-cancel)',
     `created_time` datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record created time',
     `updated_time` datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record updated time',
     `created_by`   varchar(255) DEFAULT 'system' COMMENT 'who created the record',
@@ -217,4 +218,4 @@ CREATE TABLE `change_log`
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 100000000
   DEFAULT CHARSET = utf8
-  ROW_FORMAT = COMPACT COMMENT ='change log';
+  ROW_FORMAT = COMPACT COMMENT ='apply audit info';

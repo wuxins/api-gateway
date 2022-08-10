@@ -17,33 +17,37 @@ import (
 func ReverseProxyPlugin() func(c *RouterContext) {
 
 	return func(c *RouterContext) {
-		w := c.Rw
-		r := c.Req
-		regularPath := c.RegularPath
 		// route
-		routingErr := BizRouting(w, r, regularPath)
+		routingErr := BizRouting(c)
 		if routingErr != nil {
-			utils.WriteHttpResponse(w, http.StatusInternalServerError, common.SysErrorMsg, r, true)
+			utils.WriteHttpResponse(c.Rw, http.StatusInternalServerError, common.SysErrorMsg, c.Req, true)
 		}
 		c.Abort()
 		return
 	}
 }
 
-func BizRouting(w http.ResponseWriter, r *http.Request, regularPath *regularpath.RegularPath) error {
+func BizRouting(c *RouterContext) error {
+
+	w := c.Rw
+	r := c.Req
+	regularPath := c.RegularPath
 
 	tranPath, tranErr := regularpath.GetTranURL(r.URL.Path, regularPath)
 	if tranErr != nil {
 		return tranErr
 	}
+
 	remoteUrlMeta, urlParseMetaErr := url.Parse(tranPath)
 	if urlParseMetaErr != nil {
 		return urlParseMetaErr
 	}
-	remote, err := url.Parse(regularPath.UpstreamHost)
+
+	remote, err := url.Parse(c.Get("upstreamAddress").(string))
 	if err != nil {
 		return err
 	}
+
 	proxy := httputil.NewSingleHostReverseProxy(remote)
 	proxy.Transport = regularPath.Transport
 

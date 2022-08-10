@@ -21,6 +21,7 @@ var DateFormatMs = "2006-01-02 15:04:05.000"
 var HeaderTenant = "G-Tenant"
 var HeaderRequestId = "G-Req-Id"
 var HeaderRequestTime = "G-Req-Time"
+var HeaderGrayTag = "G-Gray-Tag"
 var HeaderContentEncoding = "Content-Encoding"
 
 var AccessControlAllowOrigin = "Access-Control-Allow-Origin"

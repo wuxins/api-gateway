@@ -1,259 +1,46 @@
 TRUNCATE `api_gateway`.`api`;
-TRUNCATE `api_gateway`.`api_version`;
-TRUNCATE `api_gateway`.`group`;
-TRUNCATE `api_gateway`.`api_group`;
-TRUNCATE `api_gateway`.`tenant`;
+TRUNCATE `api_gateway`.`api_env`;
 TRUNCATE `api_gateway`.`api_tenant`;
+TRUNCATE `api_gateway`.`environment`;
+TRUNCATE `api_gateway`.`tenant`;
+TRUNCATE `api_gateway`.`tenant_env`;
 TRUNCATE `api_gateway`.`upstream_service`;
+TRUNCATE `api_gateway`.`upstream_service_env`;
+TRUNCATE `api_gateway`.`change_log`;
 
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00001', 'life-policy', 'GET', '/life-policy/policies', '/life-policy/outer/policies', 'N','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00002', 'life-policy', 'GET', '/life-policy/policies/{{policyNo}}', '/life-policy/outer/policies/{{policyNo}}', 'N','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00003', 'life-policy', 'GET', '/life-policy/pos/validation', '/life-policy/outer/pos/validation', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00004', 'life-policy', 'POST', '/life-policy/pos/application', '/life-policy/outer/pos/application', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00005', 'life-policy', 'GET', '/life-policy/pos/calculation', '/life-policy/outer/pos/calculation', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00006', 'life-policy', 'GET', '/life-policy/pos/customer/applications', '/life-policy/outer/pos/customer/applications', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00007', 'life-policy', 'GET', '/life-policy/pos/applications/search', '/life-policy/outer/pos/applications/search', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00008', 'life-policy', 'GET', '/life-policy/pos/{{applyNo}}', '/life-policy/outer/pos/{{applyNo}}', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00009', 'life-policy', 'GET', '/life-policy/pos/changeReason', '/life-policy/outer/pos/changeReason', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00010', 'life-login', 'POST', '/life-login/login', '/life-login/outer/login', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00011', 'life-login', 'POST', '/life-login/isLogin', '/life-login/outer/isLogin', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00012', 'life-policy', 'POST', '/life-insure/insures', '/life-insure/outer/insures', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00013', 'life-insure', 'GET', '/life-insure/insures/{{insureNo}}', '/life-insure/outer/insures/{{insureNo}}', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00014', 'life-insure', 'PUT', '/life-insure/insures/{{insureNo}}/status', '/life-insure/outer/insures/{{insureNo}}/status', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00015', 'life-insure', 'POST', '/life-insure/insures/searches', '/life-insure/outer/insures/searches', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00016', 'life-bill', 'POST', '/life-bill/bill/search', '/life-bill/outer/bill/search', 'N','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00017', 'life-dict', 'GET', '/life-dict/dicts/keys/{{key}}', '/life-dict/outer/dicts/keys/{{key}}', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00018', 'life-order', 'GET', '/life-order/orders/{{orderNo}}', '/life-order/outer/orders/{{orderNo}}', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00019', 'life-order', 'POST', '/life-order/orders/{{orderNo}}/payments', '/life-order/outer/orders/{{orderNo}}/payments', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00020', 'life-order', 'GET', '/life-order/orders/{{orderNo}}/payments/{{paymentNo}}', '/life-order/outer/orders/{{orderNo}}/payments/{{paymentNo}}', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00021', 'life-order', 'GET', '/life-order/orders/cards', '/life-order/outer/orders/cards', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00022', 'life-customer', 'POST', '/life-customer/customers/verification-code', '/life-customer/outer/customers/verification-code', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00023', 'life-customer', 'POST', '/life-customer/customers/verification-code/checkout', '/life-customer/outer/customers/verification-code/checkout', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00024', 'life-customer', 'PUT', '/life-customer/customers/changes', '/life-customer/outer/customers/changes', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00025', 'life-customer', 'GET', '/life-customer/customers/insureds/searches', '/life-customer/outer/customers/insureds/searches', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00026', 'life-customer', 'GET', '/life-customer/customer', '/life-customer/outer/customer', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00027', 'life-claim', 'POST', '/life-claim/claims/fileSrcNo/operate', '/life-claim/outer/claims/fileSrcNo/operate', 'N','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00028', 'life-claim', 'POST', '/life-claim/claims/file/key', '/life-claim/outer/claims/file/key', 'N','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00029', 'life-claim', 'GET', '/life-claim/claims/public/hospitals', '/life-claim/outer/claims/public/hospitals', '100','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00030', 'life-claim', 'GET', '/life-claim/claims/private/hospitals', '/life-claim/outer/claims/private/hospitals', '100','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00031', 'life-claim', 'POST', '/life-claim/claims/dynamic/detail', '/life-claim/outer/claims/dynamic/detail', 'N','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00032', 'life-claim', 'GET', '/life-claim/claims/{{fileCode}}', '/life-claim/outer/claims/{{fileCode}}', '100','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00033', 'life-claim', 'POST', '/life-claim/claims/file/fileSrcNo', '/life-claim/outer/claims/file/fileSrcNo', '100','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00034', 'life-claim', 'POST', '/life-claim/claims/mobile/download', '/life-claim/outer/claims/mobile/download', '100','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00035', 'life-claim', 'POST', '/life-claim/claims/mobile/upload', '/life-claim/outer/claims/mobile/upload', '100','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00036', 'life-claim', 'GET', '/life-claim/claims/applications/{{claimId}}', '/life-claim/outer/claims/applications/{{claimId}}', '100','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00037', 'life-claim', 'GET', '/life-claim/claims/insureds', '/life-claim/outer/claims/insureds', '100','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00038', 'life-claim', 'POST', '/life-claim/claims/draft', '/life-claim/outer/claims/draft', '100','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00039', 'life-claim', 'POST', '/life-claim/h5/fileSrcNo/operate', '/life-claim/outer/h5/fileSrcNo/operate', '100','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00040', 'life-claim', 'POST', '/life-claim/claims/evidence', '/life-claim/outer/claims/evidence', '100','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00041', 'life-market', 'GET', '/life-market/{{goodsCode}}/trial-factors/ranges', '/life-market/outer/{{goodsCode}}/trial-factors/ranges', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00042', 'life-market', 'POST', '/life-market/calculators/trial', '/life-market/outer/calculators/trial', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00043', 'life-market', 'GET', '/life-market/goods-code/trial-factors', '/life-market/outer/goods-code/trial-factors', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00044', 'life-market', 'GET', '/life-market/goods/{{goodsCode}}/struct', '/life-market/outer/goods/{{goodsCode}}/struct', 'TODO','System');
-INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `service_code`, `method`, `src_url`, `des_url`, `description`,`maintainer`) VALUES ('TODO', 'A00045', 'life-market', 'GET', '/life-market/{{goodsCode}}/factors', '/life-market/outer/{{goodsCode}}/factors', 'TODO','System');
+INSERT INTO api_gateway.environment (name, env)
+VALUES ('开发环境', 'dev'),
+       ('测试环境', 'test');
 
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00001', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00002', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00003', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00004', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00005', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00006', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00007', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00008', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00009', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00010', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00011', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00012', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00013', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00014', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00015', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00016', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00017', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00018', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00019', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00020', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00021', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00022', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00023', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00024', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00025', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00026', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00027', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00028', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00029', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00030', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00031', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00032', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00033', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00034', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00035', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00036', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00037', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00038', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00039', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00040', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00041', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00042', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00043', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00044', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
-INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`, `need_monitor`, `read_timeout`) VALUES ('A00045', 'dev', 'Y', '100', 'N', '{"success":"true}', 'Y', '10000');
+INSERT INTO api_gateway.tenant (name, tenant_code)
+VALUES ('银行', 'bling'),
+       ('官网', 'website'),
+       ('代理人', 'agent');
 
-INSERT INTO `api_gateway`.`tenant`(`name`, `tenant_code`) VALUES ('银保', 'bling');
-INSERT INTO `api_gateway`.`tenant`(`name`, `tenant_code`) VALUES ('官网', 'website');
+INSERT INTO api_gateway.upstream_service (name, service_code)
+VALUES ('保单服务', 'life-policy'),
+       ('订单服务', 'life-order');
 
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00001', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00001', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00002', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00002', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00003', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00003', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00004', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00004', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00005', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00005', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00006', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00006', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00007', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00007', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00008', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00008', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00009', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00009', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00010', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00010', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00011', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00011', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00012', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00012', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00013', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00013', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00014', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00014', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00015', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00015', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00016', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00016', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00017', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00017', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00018', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00018', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00019', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00019', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00020', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00020', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00021', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00021', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00022', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00022', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00023', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00023', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00024', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00024', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00025', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00025', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00026', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00026', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00027', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00027', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00028', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00028', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00029', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00029', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00030', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00030', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00031', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00031', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00032', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00032', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00033', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00033', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00034', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00034', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00035', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00035', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00036', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00036', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00037', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00037', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00038', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00038', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00039', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00039', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00040', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00040', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00041', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00041', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00042', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00042', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00043', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00043', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00044', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00044', 'website');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00045', 'bling');
-INSERT INTO `api_gateway`.`api_tenant`(`api_code`, `tenant_code`) VALUES ('A00045', 'website');
+INSERT INTO api_gateway.api (name, api_code, method, service_code, src_url, des_url, maintainer, description)
+VALUES ('获取保单列表', 'A00001', 'GET', 'life-policy', '/life-policy/policies', '/life-policy/outer/policies', '野区蔡徐坤', '获取保单列表'),
+       ('获取保单详情', 'A00002', 'GET', 'life-policy', '/life-policy/policies/{{policyNo}}', '/life-policy/outer/policies/{{policyNo}}', '中单川建国', '获取保单详情'),
+       ('获取订单列表', 'A00003', 'GET', 'life-order', '/life-order/orders', '/life-order/outer/orders', '对抗郭德纲', '获取订单列表');
 
-INSERT INTO `api_gateway`.`upstream_service`(`name`, `service_code`, host) VALUES ('保单', 'life-policy', 'http://127.0.0.1:8080/');
-INSERT INTO `api_gateway`.`upstream_service`(`name`, `service_code`, host) VALUES ('登录', 'life-login', 'http://127.0.0.1:8080/');
-INSERT INTO `api_gateway`.`upstream_service`(`name`, `service_code`, host) VALUES ('投保单', 'life-insure', 'http://127.0.0.1:8080/');
-INSERT INTO `api_gateway`.`upstream_service`(`name`, `service_code`, host) VALUES ('账单', 'life-bill', 'http://127.0.0.1:8080/');
-INSERT INTO `api_gateway`.`upstream_service`(`name`, `service_code`, host) VALUES ('字典', 'life-dict', 'http://127.0.0.1:8080/');
-INSERT INTO `api_gateway`.`upstream_service`(`name`, `service_code`, host) VALUES ('订单', 'life-order', 'http://127.0.0.1:8080/');
-INSERT INTO `api_gateway`.`upstream_service`(`name`, `service_code`, host) VALUES ('客户', 'life-customer', 'http://127.0.0.1:8080/');
-INSERT INTO `api_gateway`.`upstream_service`(`name`, `service_code`, host) VALUES ('理赔', 'life-claim', 'http://127.0.0.1:8080/');
-INSERT INTO `api_gateway`.`upstream_service`(`name`, `service_code`, host) VALUES ('营销', 'life-market', 'http://127.0.0.1:8080/');
+INSERT INTO api_gateway.api_tenant (api_code, tenant_code)
+VALUES ('A00001', 'bling'),
+       ('A00001', 'website'),
+       ('A00001', 'agent'),
+       ('A00002', 'bling'),
+       ('A00002', 'website'),
+       ('A00002', 'agent'),
+       ('A00003', 'bling'),
+       ('A00003', 'website'),
+       ('A00003', 'agent');
 
-INSERT INTO `api_gateway`.`group`(`name`, `group_code`) VALUES ('保单', 'life-policy');
-INSERT INTO `api_gateway`.`group`(`name`, `group_code`) VALUES ('登录', 'life-login');
-INSERT INTO `api_gateway`.`group`(`name`, `group_code`) VALUES ('投保单', 'life-insure');
-INSERT INTO `api_gateway`.`group`(`name`, `group_code`) VALUES ('账单', 'life-bill');
-INSERT INTO `api_gateway`.`group`(`name`, `group_code`) VALUES ('字典', 'life-dict');
-INSERT INTO `api_gateway`.`group`(`name`, `group_code`) VALUES ('订单', 'life-order');
-INSERT INTO `api_gateway`.`group`(`name`, `group_code`) VALUES ('客户', 'life-customer');
-INSERT INTO `api_gateway`.`group`(`name`, `group_code`) VALUES ('理赔', 'life-claim');
-INSERT INTO `api_gateway`.`group`(`name`, `group_code`) VALUES ('营销', 'life-market');
-
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00001', 'life-policy');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00002', 'life-policy');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00003', 'life-policy');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00004', 'life-policy');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00005', 'life-policy');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00006', 'life-policy');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00007', 'life-policy');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00008', 'life-policy');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00009', 'life-policy');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00010', 'life-login');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00011', 'life-login');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00012', 'life-insure');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00013', 'life-insure');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00014', 'life-insure');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00015', 'life-insure');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00016', 'life-bill');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00017', 'life-dict');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00018', 'life-order');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00019', 'life-order');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00020', 'life-order');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00021', 'life-order');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00022', 'life-customer');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00023', 'life-customer');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00024', 'life-customer');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00025', 'life-customer');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00026', 'life-customer');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00027', 'life-claim');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00028', 'life-claim');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00029', 'life-claim');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00030', 'life-claim');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00031', 'life-claim');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00032', 'life-claim');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00033', 'life-claim');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00034', 'life-claim');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00035', 'life-claim');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00036', 'life-claim');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00037', 'life-claim');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00038', 'life-claim');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00039', 'life-claim');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00040', 'life-claim');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00041', 'life-claim');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00042', 'life-market');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00043', 'life-market');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00044', 'life-market');
-INSERT INTO `api_gateway`.`api_group`(`api_code`, `group_code`) VALUES ('A00045', 'life-market');
+INSERT INTO api_gateway.api_env (api_code, env, need_rate_limit, rate_limit, need_fallback, fallback, need_monitor, read_timeout)
+VALUES ('A00001', 'dev', 'Y', 100, 'N', null, 'Y', 10000),
+       ('A00002', 'dev', 'Y', 100, 'N', null, 'Y', 10000),
+       ('A00003', 'dev', 'Y', 100, 'N', null, 'Y', 10000),
+       ('A00001', 'test', 'Y', 300, 'N', null, 'Y', 10000),
+       ('A00002', 'test', 'Y', 300, 'N', null, 'Y', 10000),
+       ('A00003', 'test', 'Y', 300, 'N', null, 'Y', 10000);

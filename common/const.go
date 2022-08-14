@@ -53,7 +53,8 @@ SELECT
 	av.need_fallback,
 	av.fallback,
 	se.address,
-	se.gray_address
+	se.need_gray,
+	se.gray_content
 FROM
 	api_env av
 	JOIN api a ON a.api_code = av.api_code
@@ -68,20 +69,16 @@ WHERE
 	AND se.is_deleted = 'N'
 */
 
-var ApiSql = "SELECT\n\ta.id,\n\ta.NAME,\n\ta.api_code,\n\ta.method,\n\ta.src_url,\n\ta.des_url,\n\tav.read_timeout,\n\tav.need_rate_limit,\n\tav.rate_limit,\n\tav.need_monitor,\n\tav.need_fallback,\n\tav.fallback,\n\tse.address,\n\tse.gray_address\nFROM\n\tapi_env av\n\tJOIN api a ON a.api_code = av.api_code\n\tAND av.env = ?\n\tJOIN upstream_service s ON s.service_code = a.service_code\n\tJOIN upstream_service_env se ON se.service_code = s.service_code\n\tAND se.env = ?\nWHERE\n\tav.is_deleted = 'N'\n\tAND a.is_deleted = 'N'\n\tAND s.is_deleted = 'N'\n\tAND se.is_deleted = 'N'"
+var ApiSql = "SELECT\n\ta.id,\n\ta.NAME,\n\ta.api_code,\n\ta.method,\n\ta.src_url,\n\ta.des_url,\n\tav.read_timeout,\n\tav.need_rate_limit,\n\tav.rate_limit,\n\tav.need_monitor,\n\tav.need_fallback,\n\tav.fallback,\n\tse.address,\n\tse.need_gray,\n\tse.gray_content\nFROM\n\tapi_env av\n\tJOIN api a ON a.api_code = av.api_code\n\tAND av.env = ?\n\tJOIN upstream_service s ON s.service_code = a.service_code\n\tJOIN upstream_service_env se ON se.service_code = s.service_code\n\tAND se.env = ?\nWHERE\n\tav.is_deleted = 'N'\n\tAND a.is_deleted = 'N'\n\tAND s.is_deleted = 'N'\n\tAND se.is_deleted = 'N'"
 
 /**
 SELECT
 	apt.api_code,
 	t.NAME,
 	t.tenant_code,
+	te.access_control_content,
 	te.need_api_auth,
-	te.api_auth_type,
-	te.secret,
-	te.token_expire_in,
-	te.token_sign_key,
-	te.token_sign_method,
-	te.token_expire_code
+	te.api_auth_content
 FROM
 	tenant t,
 	api_tenant apt,
@@ -95,19 +92,15 @@ WHERE
 	AND te.env = ?
 */
 
-var ApiTenantSql = "SELECT\n\tapt.api_code,\n\tt.NAME,\n\tt.tenant_code,\n\tte.need_api_auth,\n\tte.api_auth_type,\n\tte.secret,\n\tte.token_expire_in,\n\tte.token_sign_key,\n\tte.token_sign_method,\n\tte.token_expire_code\nFROM\n\ttenant t,\n\tapi_tenant apt,\n\ttenant_env te\nWHERE\n\tt.tenant_code = apt.tenant_code\n\tAND apt.tenant_code = te.tenant_code\n\tAND t.is_deleted = 'N'\n\tAND apt.is_deleted = 'N'\n\tAND te.is_deleted = 'N'\n\tAND te.env = ?"
+var ApiTenantSql = "SELECT\n\tapt.api_code,\n\tt.NAME,\n\tt.tenant_code,\n\tte.access_control_content,\n\tte.need_api_auth,\n\tte.api_auth_content\nFROM\n\ttenant t,\n\tapi_tenant apt,\n\ttenant_env te\nWHERE\n\tt.tenant_code = apt.tenant_code\n\tAND apt.tenant_code = te.tenant_code\n\tAND t.is_deleted = 'N'\n\tAND apt.is_deleted = 'N'\n\tAND te.is_deleted = 'N'\n\tAND te.env = ?"
 
 /**
 SELECT
 	t.NAME,
 	t.tenant_code,
+	te.access_control_content,
 	te.need_api_auth,
-	te.api_auth_type,
-	te.secret,
-	te.token_sign_key,
-	te.token_sign_method,
-	te.token_expire_in,
-	te.token_expire_code
+	te.api_auth_content
 FROM
 	tenant t
 	JOIN tenant_env te ON t.tenant_code = te.tenant_code
@@ -117,4 +110,4 @@ WHERE
 	AND t.is_deleted = 'N'
 */
 
-var TenantSql = "SELECT\n\tt.NAME,\n\tt.tenant_code,\n\tte.need_api_auth,\n\tte.api_auth_type,\n\tte.secret,\n\tte.token_sign_key,\n\tte.token_sign_method,\n\tte.token_expire_in,\n\tte.token_expire_code\nFROM\n\ttenant t\n\tJOIN tenant_env te ON t.tenant_code = te.tenant_code\n\tAND te.env = ?\nWHERE\n\tte.is_deleted = 'N'\n\tAND t.is_deleted = 'N'"
+var TenantSql = "SELECT\n\tt.NAME,\n\tt.tenant_code,\n\tte.access_control_content,\n\tte.need_api_auth,\n\tte.api_auth_content\nFROM\n\ttenant t\n\tJOIN tenant_env te ON t.tenant_code = te.tenant_code\n\tAND te.env = ?\nWHERE\n\tte.is_deleted = 'N'\n\tAND t.is_deleted = 'N'"

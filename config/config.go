@@ -40,36 +40,23 @@ type Config struct {
 }
 
 type Sysconf struct {
-	ServicePort               int    `yaml:"ServicePort"`
-	FlushPathMapSpan          int64  `yaml:"FlushPathMapSpan"`
-	ServerReadTimeout         int64  `yaml:"ServerReadTimeout"`
-	ServerKeepalive           int64  `yaml:"ServerKeepalive"`
-	AccessControlAllowOrigin  string `yaml:"AccessControlAllowOrigin"`
-	AccessControlAllowMethods string `yaml:"AccessControlAllowMethods"`
-	AccessControlAllowHeaders string `yaml:"AccessControlAllowHeaders"`
-	GracefulShutdownTimeout   int64  `yaml:"GracefulShutdownTimeout"`
-	LogConfigFile             string `yaml:"LogConfigFile"`
-	Env                       string `yaml:"Env"`
+	FlushPathMapSpan int64  `yaml:"FlushPathMapSpan"`
+	LogConfigFile    string `yaml:"LogConfigFile"`
+	Env              string `yaml:"Env"`
 }
 
 type Http struct {
-	ServicePort               int    `yaml:"ServicePort"`
-	ServerReadTimeout         int64  `yaml:"ServerReadTimeout"`
-	ServerKeepalive           int64  `yaml:"ServerKeepalive"`
-	AccessControlAllowOrigin  string `yaml:"AccessControlAllowOrigin"`
-	AccessControlAllowMethods string `yaml:"AccessControlAllowMethods"`
-	AccessControlAllowHeaders string `yaml:"AccessControlAllowHeaders"`
-	GracefulShutdownTimeout   int64  `yaml:"GracefulShutdownTimeout"`
+	ServicePort             int   `yaml:"ServicePort"`
+	ServerReadTimeout       int64 `yaml:"ServerReadTimeout"`
+	ServerKeepalive         int64 `yaml:"ServerKeepalive"`
+	GracefulShutdownTimeout int64 `yaml:"GracefulShutdownTimeout"`
 }
 
 type Https struct {
-	ServicePort               int    `yaml:"ServicePort"`
-	ServerReadTimeout         int64  `yaml:"ServerReadTimeout"`
-	ServerKeepalive           int64  `yaml:"ServerKeepalive"`
-	AccessControlAllowOrigin  string `yaml:"AccessControlAllowOrigin"`
-	AccessControlAllowMethods string `yaml:"AccessControlAllowMethods"`
-	AccessControlAllowHeaders string `yaml:"AccessControlAllowHeaders"`
-	GracefulShutdownTimeout   int64  `yaml:"GracefulShutdownTimeout"`
+	ServicePort             int   `yaml:"ServicePort"`
+	ServerReadTimeout       int64 `yaml:"ServerReadTimeout"`
+	ServerKeepalive         int64 `yaml:"ServerKeepalive"`
+	GracefulShutdownTimeout int64 `yaml:"GracefulShutdownTimeout"`
 }
 
 type DB struct {

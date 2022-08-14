@@ -9,8 +9,6 @@ Local:
     ServicePort: 7777
     ServerReadTimeout: 1000 # ms, proxy server keepalive the tenant invoker connection
     ServerKeepalive: 3000 # ms, proxy server keepalive the tenant invoker connection
-    AccessControlAllowMethods: POST, GET, OPTIONS, PUT, DELETE
-    AccessControlAllowHeaders: G-tenant,channel,agentChannel,token,did,lang,securityToken,deviceRam,userToken
     GracefulShutdownTimeout: 60000 # ms, default '30s' if not config, means interrupt or kill server will max waiting for received request process
   DB:
     DBType: mysql

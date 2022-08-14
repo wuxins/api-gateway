@@ -1,6 +1,7 @@
 package dao
 
 import (
+	jsoniter "github.com/json-iterator/go"
 	"github.com/wuxins/api-gateway/common"
 	"github.com/wuxins/api-gateway/config"
 	"github.com/wuxins/api-gateway/dbclient"
@@ -13,6 +14,10 @@ func InitAllTenant() {
 
 	var tenants []dto.Tenant
 	dbclient.GetDB().Raw(common.TenantSql, config.GetConfigure().Sysconf.Env).Scan(&tenants)
+	for index, _ := range tenants {
+		_ = jsoniter.UnmarshalFromString(tenants[index].ApiAuthContent, &tenants[index].ApiAuth)
+		tenants[index].ApiAuthContent = common.DelimiterEmpty
+	}
 	Tenants = tenants
 }
 
@@ -29,10 +34,16 @@ func GetAllApi() []dto.Api {
 		for index := range apiTenants {
 			apiTenant := apiTenants[index]
 			if apis[idx].ApiCode == apiTenant.ApiCode {
+				_ = jsoniter.UnmarshalFromString(apiTenant.ApiAuthContent, &apiTenant.ApiAuth)
+				_ = jsoniter.UnmarshalFromString(apiTenant.AccessControlContent, &apiTenant.AccessControl)
+				apiTenant.ApiAuthContent = common.DelimiterEmpty
+				apiTenant.AccessControlContent = common.DelimiterEmpty
 				tenants = append(tenants, apiTenant)
 			}
 		}
 		apis[idx].Tenants = tenants
+		_ = jsoniter.UnmarshalFromString(apis[idx].GrayContent, &apis[idx].GrayStrategy)
+		apis[idx].GrayContent = common.DelimiterEmpty
 	}
 
 	return apis

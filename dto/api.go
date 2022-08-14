@@ -6,7 +6,7 @@ type Api struct {
 	ApiCode       string `gorm:"api_code"`
 	Method        string `gorm:"method"`
 	Address       string `gorm:"address"`
-	GrayAddress   string `gorm:"gray_address"`
+	GrayContent   string `gorm:"gray_content"`
 	SrcUrl        string `gorm:"src_url"`
 	DesUrl        string `gorm:"des_url"`
 	NeedRateLimit string `gorm:"need_rate_limit"`
@@ -16,4 +16,6 @@ type Api struct {
 	NeedMonitor   string `gorm:"need_monitor"`
 	ReadTimeout   int64  `gorm:"read_timeout"`
 	Tenants       []ApiTenant
+	NeedGray      string `gorm:"need_gray"`
+	GrayStrategy  GrayStrategy
 }

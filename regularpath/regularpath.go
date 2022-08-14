@@ -13,31 +13,30 @@ import (
 )
 
 type RegularPath struct {
-	ApiId           int64
-	ApiName         string
-	ApiCode         string
-	Method          string
-	URL             string
-	Address         string
-	GrayAddress     string
-	NeedMassRelease bool
-	MassReleaseRate int
-	SrcURL          string
-	DesURL          string
-	SrcParams       map[string]int
-	SrcParamsIndex  map[int]string
-	DesParams       map[string]int
-	DesParamsIndex  map[int]string
-	SrcSplitURL     []string
-	DesSplitURL     []string
-	NeedRateLimit   bool
-	RateLimit       int
-	NeedFallback    bool
-	Fallback        string
-	NeedMonitor     bool
-	ReadTimeout     int64
-	Tenants         []dto2.ApiTenant
-	Transport       http.RoundTripper
+	ApiId          int64
+	ApiName        string
+	ApiCode        string
+	Method         string
+	URL            string
+	Address        string
+	SrcURL         string
+	DesURL         string
+	SrcParams      map[string]int
+	SrcParamsIndex map[int]string
+	DesParams      map[string]int
+	DesParamsIndex map[int]string
+	SrcSplitURL    []string
+	DesSplitURL    []string
+	NeedRateLimit  bool
+	RateLimit      int
+	NeedFallback   bool
+	Fallback       string
+	NeedMonitor    bool
+	ReadTimeout    int64
+	Tenants        []dto2.ApiTenant
+	NeedGray       bool
+	GrayStrategy   dto2.GrayStrategy
+	Transport      http.RoundTripper
 }
 
 type RegularPathTree struct {
@@ -133,7 +132,7 @@ func urlsToPath(api dto2.Api) (RegularPath, error) {
 	path.ReadTimeout = api.ReadTimeout
 	path.Tenants = api.Tenants
 	path.Address = api.Address
-	path.GrayAddress = api.GrayAddress
+	path.GrayStrategy = api.GrayStrategy
 	path.URL = placeHolderRegexp.ReplaceAllString(api.SrcUrl, regexpStringUnshell)
 	path.SrcURL = api.SrcUrl
 	path.DesURL = api.DesUrl

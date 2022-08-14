@@ -37,7 +37,7 @@ func OauthTokenPlugin() func(c *RouterContext) {
 		authMsg := r.Header["Authorization"][0]
 		splitAuthMsg := strings.Split(authMsg, common.DelimiterBlank)
 		if len(splitAuthMsg) != 2 {
-			fail(c, http.StatusInternalServerError, "Authorization info invalid"+authMsg)
+			fail(c, http.StatusInternalServerError, "Authorization info invalid:"+authMsg)
 			return
 		}
 
@@ -55,17 +55,25 @@ func OauthTokenPlugin() func(c *RouterContext) {
 
 		for _, item := range tenants {
 
-			if item.TenantCode != tenantAuthMsg[0] || item.Secret != tenantAuthMsg[1] {
+			if item.TenantCode != tenantAuthMsg[0] {
 				continue
 			}
 
-			claims := jwt.StandardClaims{
-				Issuer:    item.TenantCode,
-				ExpiresAt: time.Now().Add(time.Duration(item.TokenExpireIn) * time.Second).In(time.Local).Unix(),
+			if item.ApiAuth.ApiAuthType != "0" {
+				fail(c, http.StatusUnauthorized, "Authorization info invalid: api auth type not supported!")
+				return
 			}
 
-			token, err := common.JwtEncode(claims, item.TokenSignKey, item.TokenSignMethod)
+			if item.ApiAuth.Secret != tenantAuthMsg[1] {
+				fail(c, http.StatusUnauthorized, "Authorization info invalid: api auth secret incorrect!")
+				return
+			}
+			claims := jwt.StandardClaims{
+				Issuer:    item.TenantCode,
+				ExpiresAt: time.Now().Add(time.Duration(item.ApiAuth.TokenExpireIn) * time.Second).In(time.Local).Unix(),
+			}
 
+			token, err := common.JwtEncode(claims, item.ApiAuth.TokenSignKey, item.ApiAuth.TokenSignMethod)
 			if err != nil {
 				fail(c, http.StatusInternalServerError, err.Error())
 				return
@@ -75,7 +83,7 @@ func OauthTokenPlugin() func(c *RouterContext) {
 				Code: "00",
 				Msg:  "Success",
 				Data: &dto.TokensResponse{
-					ExpiresIn:   item.TokenExpireIn,
+					ExpiresIn:   item.ApiAuth.TokenExpireIn,
 					TokenType:   "Bearer",
 					AccessToken: token,
 					Scope:       "read_write",

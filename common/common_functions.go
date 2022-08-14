@@ -96,15 +96,13 @@ func JwtDecode(tokenString string, signKey string) (*jwt.StandardClaims, error) 
 		return []byte(signKey), nil
 	})
 
-	if err != nil {
-		return nil, err
+	if token != nil {
+		if claims, ok := token.Claims.(*jwt.StandardClaims); ok {
+			return claims, nil
+		}
+		return nil, errors.New("token is not jwt.StandardClaims")
 	}
-
-	if claims, ok := token.Claims.(*jwt.StandardClaims); ok {
-		return claims, nil
-	}
-
-	return nil, errors.New("token is not jwt.StandardClaims")
+	return nil, err
 }
 
 func JwtEncode(claims jwt.StandardClaims, signKey string, signMethod string) (string, error) {

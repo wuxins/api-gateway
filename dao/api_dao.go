@@ -35,9 +35,7 @@ func GetAllApi() []dto.Api {
 			apiTenant := apiTenants[index]
 			if apis[idx].ApiCode == apiTenant.ApiCode {
 				_ = jsoniter.UnmarshalFromString(apiTenant.ApiAuthContent, &apiTenant.ApiAuth)
-				_ = jsoniter.UnmarshalFromString(apiTenant.AccessControlContent, &apiTenant.AccessControl)
 				apiTenant.ApiAuthContent = common.DelimiterEmpty
-				apiTenant.AccessControlContent = common.DelimiterEmpty
 				tenants = append(tenants, apiTenant)
 			}
 		}

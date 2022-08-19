@@ -2,6 +2,7 @@ package routing
 
 import (
 	"context"
+	"github.com/wuxins/api-gateway/common"
 	"github.com/wuxins/api-gateway/regularpath"
 	"math"
 	"net/http"
@@ -118,10 +119,18 @@ func NewRouterHandler() *RouterHandler {
 		AccessControlPlugin(),
 		OauthTokenPlugin())
 
+	// heartbeat endpoint
+	router.Group("/ping").Use(func(routerContext *RouterContext) {
+		routerContext.Rw.WriteHeader(http.StatusOK)
+		_, _ = routerContext.Rw.Write(common.StringToBytes(common.HeartbeatMsg))
+		routerContext.Abort()
+		return
+	})
+
 	// reverse proxy router
 	router.Group("/").Use(
-		UrlCheckPlugin(),
 		AccessControlPlugin(),
+		UrlCheckPlugin(),
 		TenantCheckPlugin(),
 		RateLimiterPlugin(),
 		GrayStrategyPlugin(),

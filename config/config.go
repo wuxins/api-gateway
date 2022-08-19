@@ -25,6 +25,7 @@ type Nacos struct {
 type Local struct {
 	Sysconf *Sysconf `yaml:"Sysconf"`
 	DB      *DB      `yaml:"DB"`
+	CORS    *CORS    `yaml:"CORS"`
 	Routing *Routing `yaml:"Routing"`
 	Redis   *Redis   `yaml:"Redis"`
 	Rate    *Rate    `yaml:"Rate"`
@@ -57,6 +58,12 @@ type Https struct {
 	ServerReadTimeout       int64 `yaml:"ServerReadTimeout"`
 	ServerKeepalive         int64 `yaml:"ServerKeepalive"`
 	GracefulShutdownTimeout int64 `yaml:"GracefulShutdownTimeout"`
+}
+
+type CORS struct {
+	AccessControlAllowOrigin  string `yaml:"AccessControlAllowOrigin"`
+	AccessControlAllowMethods string `yaml:"AccessControlAllowMethods"`
+	AccessControlAllowHeaders string `yaml:"AccessControlAllowHeaders"`
 }
 
 type DB struct {
@@ -105,6 +112,7 @@ type Monitor struct {
 type Configure struct {
 	Sysconf       *Sysconf `yaml:"Sysconf"`
 	DB            *DB      `yaml:"DB"`
+	CORS          *CORS    `yaml:"CORS"`
 	Routing       *Routing `yaml:"Routing"`
 	Redis         *Redis   `yaml:"Redis"`
 	Http          *Http    `yaml:"Http"`

@@ -25,6 +25,7 @@ func (loader *LocalLoader) load(config Config) error {
 	configure = &Configure{}
 	configure.Sysconf = config.Local.Sysconf
 	configure.DB = config.Local.DB
+	configure.CORS = config.Local.CORS
 	configure.Redis = config.Local.Redis
 	configure.Routing = config.Local.Routing
 	configure.Rate = config.Local.Rate

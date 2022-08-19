@@ -13,7 +13,6 @@ func TenantCheckPlugin() func(c *RouterContext) {
 	return func(c *RouterContext) {
 
 		r := c.Req
-		w := c.Rw
 		regularPath := c.RegularPath
 
 		tenant := r.Header[common.HeaderTenant]
@@ -26,9 +25,6 @@ func TenantCheckPlugin() func(c *RouterContext) {
 			if tenant[0] != item.TenantCode {
 				continue
 			}
-			w.Header().Set(common.AccessControlAllowOrigin, item.AccessControl.AllowOrigin)
-			w.Header().Set(common.AccessControlAllowMethods, item.AccessControl.AllowMethods)
-			w.Header().Set(common.AccessControlAllowHeaders, item.AccessControl.AllowHeaders)
 
 			if item.NeedApiAuth != "Y" {
 				c.Next()

@@ -76,7 +76,6 @@ SELECT
 	apt.api_code,
 	t.NAME,
 	t.tenant_code,
-	te.access_control_content,
 	te.need_api_auth,
 	te.api_auth_content
 FROM
@@ -92,13 +91,12 @@ WHERE
 	AND te.env = ?
 */
 
-var ApiTenantSql = "SELECT\n\tapt.api_code,\n\tt.NAME,\n\tt.tenant_code,\n\tte.access_control_content,\n\tte.need_api_auth,\n\tte.api_auth_content\nFROM\n\ttenant t,\n\tapi_tenant apt,\n\ttenant_env te\nWHERE\n\tt.tenant_code = apt.tenant_code\n\tAND apt.tenant_code = te.tenant_code\n\tAND t.is_deleted = 'N'\n\tAND apt.is_deleted = 'N'\n\tAND te.is_deleted = 'N'\n\tAND te.env = ?"
+var ApiTenantSql = "SELECT\n\tapt.api_code,\n\tt.NAME,\n\tt.tenant_code,\n\tte.need_api_auth,\n\tte.api_auth_content\nFROM\n\ttenant t,\n\tapi_tenant apt,\n\ttenant_env te\nWHERE\n\tt.tenant_code = apt.tenant_code\n\tAND apt.tenant_code = te.tenant_code\n\tAND t.is_deleted = 'N'\n\tAND apt.is_deleted = 'N'\n\tAND te.is_deleted = 'N'\n\tAND te.env = ?"
 
 /**
 SELECT
 	t.NAME,
 	t.tenant_code,
-	te.access_control_content,
 	te.need_api_auth,
 	te.api_auth_content
 FROM
@@ -110,4 +108,4 @@ WHERE
 	AND t.is_deleted = 'N'
 */
 
-var TenantSql = "SELECT\n\tt.NAME,\n\tt.tenant_code,\n\tte.access_control_content,\n\tte.need_api_auth,\n\tte.api_auth_content\nFROM\n\ttenant t\n\tJOIN tenant_env te ON t.tenant_code = te.tenant_code\n\tAND te.env = ?\nWHERE\n\tte.is_deleted = 'N'\n\tAND t.is_deleted = 'N'"
+var TenantSql = "SELECT\n\tt.NAME,\n\tt.tenant_code,\n\tte.need_api_auth,\n\tte.api_auth_content\nFROM\n\ttenant t\n\tJOIN tenant_env te ON t.tenant_code = te.tenant_code\n\tAND te.env = ?\nWHERE\n\tte.is_deleted = 'N'\n\tAND t.is_deleted = 'N'"

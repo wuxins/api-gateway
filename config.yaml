@@ -5,6 +5,10 @@ Local:
     FlushPathMapSpan: 60000 # ms, flush db api configuration to local process memory per interval
     LogConfigFile: log.xml # default 'log.xml 'with the startup binary file int the same dir, if not config
     Env: dev # dev、test、prd
+  CORS:
+    AccessControlAllowOrigin: '*'
+    AccessControlAllowMethods: POST, GET, OPTIONS, PUT, DELETE
+    AccessControlAllowHeaders: G-tenant,channel,agentChannel,token,did,lang,securityToken,deviceRam,userToken
   Http:
     ServicePort: 7777
     ServerReadTimeout: 1000 # ms, proxy server keepalive the tenant invoker connection

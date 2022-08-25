@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func WriteHttpResponse(w http.ResponseWriter, status int, body string, r *http.Request, enableMonitor bool) {
+func WriteHttpResponse(w http.ResponseWriter, status int, body string, requestId string, requestTime string, r *http.Request, enableMonitor bool) {
 
 	value := r.Header[common.HeaderContentEncoding]
 	IsGzipEncode := value != nil && strings.EqualFold(value[0], "gzip")
@@ -25,13 +25,13 @@ func WriteHttpResponse(w http.ResponseWriter, status int, body string, r *http.R
 	if enableMonitor {
 		requestBody, _ := ioutil.ReadAll(r.Body)
 		r.Body = ioutil.NopCloser(bytes.NewBuffer(requestBody))
-		requestStartTime, _ := strconv.ParseInt(r.Header[common.HeaderRequestTime][0], 10, 64)
+		requestStartTime, _ := strconv.ParseInt(requestTime, 10, 64)
 		now := time.Now()
 		monitor.Report(monitor.Event{
 			Metric:     monitor.MetricApi,
 			MetricType: monitor.MetricApiAccLog,
 			Time:       now.Format(common.DateFormatMs),
-			Key:        r.Header[common.HeaderRequestId][0],
+			Key:        requestId,
 			Content: monitor.ApiTransportMetric{
 				Url:        r.URL.Path,
 				Method:     r.Method,

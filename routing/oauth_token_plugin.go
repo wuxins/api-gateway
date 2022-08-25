@@ -7,7 +7,6 @@ import (
 	"github.com/wuxins/api-gateway/common"
 	"github.com/wuxins/api-gateway/dao"
 	"github.com/wuxins/api-gateway/dto"
-	"github.com/wuxins/api-gateway/utils"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -93,17 +92,7 @@ func OauthTokenPlugin() func(c *RouterContext) {
 			success(c, string(resp))
 			return
 		}
+
 		fail(c, http.StatusForbidden, common.TenantUnsupportedMsg)
-		return
 	}
-}
-
-func success(c *RouterContext, data string) {
-	utils.WriteHttpResponse(c.Rw, http.StatusOK, data, c.Req, false)
-	c.Abort()
-}
-
-func fail(c *RouterContext, status int, data string) {
-	utils.WriteHttpResponse(c.Rw, status, data, c.Req, true)
-	c.Abort()
 }

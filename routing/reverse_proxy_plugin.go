@@ -17,13 +17,14 @@ import (
 func ReverseProxyPlugin() func(c *RouterContext) {
 
 	return func(c *RouterContext) {
-		// route
+
 		routingErr := BizRouting(c)
 		if routingErr != nil {
-			utils.WriteHttpResponse(c.Rw, http.StatusInternalServerError, common.SysErrorMsg, c.Req, true)
+			fail(c, http.StatusInternalServerError, common.SysErrorMsg)
+			return
 		}
+
 		c.Abort()
-		return
 	}
 }
 
@@ -43,7 +44,7 @@ func BizRouting(c *RouterContext) error {
 		return urlParseMetaErr
 	}
 
-	remote, err := url.Parse(c.Get("upstreamAddress").(string))
+	remote, err := url.Parse(c.RequestUpstreamAddress)
 	if err != nil {
 		return err
 	}
@@ -59,13 +60,13 @@ func BizRouting(c *RouterContext) error {
 			if respErr != nil {
 				return respErr
 			}
-			requestStartTime, _ := strconv.ParseInt(r.Header[common.HeaderRequestTime][0], 10, 64)
+			requestStartTime, _ := strconv.ParseInt(c.RequestTime, 10, 64)
 			now := time.Now()
 			monitor.Report(monitor.Event{
 				Metric:     monitor.MetricApi,
 				MetricType: monitor.MetricApiAccLog,
 				Time:       now.Format(common.DateFormatMs),
-				Key:        r.Header[common.HeaderRequestId][0],
+				Key:        c.RequestId,
 				Content: monitor.ApiTransportMetric{
 					Url:        regularPath.SrcURL,
 					Method:     r.Method,
@@ -90,7 +91,7 @@ func BizRouting(c *RouterContext) error {
 
 	proxy.ErrorHandler = func(writer http.ResponseWriter, request *http.Request, routeErr error) {
 		if routeErr != nil {
-			utils.WriteHttpResponse(writer, http.StatusBadGateway, routeErr.Error(), r, true)
+			utils.WriteHttpResponse(writer, http.StatusBadGateway, routeErr.Error(), c.RequestId, c.RequestTime, r, true)
 		}
 	}
 

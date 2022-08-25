@@ -26,6 +26,8 @@ func TenantCheckPlugin() func(c *RouterContext) {
 				continue
 			}
 
+			c.RequestTenant = item
+
 			if item.NeedApiAuth != "Y" {
 				c.Next()
 				return

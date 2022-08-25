@@ -1,7 +1,6 @@
 package routing
 
 import (
-	"github.com/wuxins/api-gateway/common"
 	"math/rand"
 	"time"
 )
@@ -36,13 +35,12 @@ func GrayStrategyPlugin() func(c *RouterContext) {
 		}
 
 		if hitGray {
-			r.Header.Set(common.HeaderGrayTag, "true")
-			c.Set("upstreamAddress", grayStrategy.Address)
+			r.Header.Set(grayStrategy.TagHeaderKey, grayStrategy.TagHeaderValue)
+			c.RequestUpstreamAddress = grayStrategy.Address
 		} else {
-			c.Set("upstreamAddress", regularPath.Address)
+			c.RequestUpstreamAddress = regularPath.Address
 		}
 
 		c.Next()
-		return
 	}
 }

@@ -19,6 +19,8 @@ package dto
 
 type GrayStrategy struct {
 	Address        string
+	TagHeaderKey   string
+	TagHeaderValue string
 	ScaleRelease   ScaleRelease
 	FeatureRelease FeatureRelease
 }

@@ -4,8 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gitstliu/log4go"
+	"github.com/wuxins/api-gateway/common"
 	"github.com/wuxins/api-gateway/config"
-	dto2 "github.com/wuxins/api-gateway/dto"
+	"github.com/wuxins/api-gateway/dto"
 	"net/http"
 	"regexp"
 	"strings"
@@ -13,30 +14,32 @@ import (
 )
 
 type RegularPath struct {
-	ApiId          int64
-	ApiName        string
-	ApiCode        string
-	Method         string
-	URL            string
-	Address        string
-	SrcURL         string
-	DesURL         string
-	SrcParams      map[string]int
-	SrcParamsIndex map[int]string
-	DesParams      map[string]int
-	DesParamsIndex map[int]string
-	SrcSplitURL    []string
-	DesSplitURL    []string
-	NeedRateLimit  bool
-	RateLimit      int
-	NeedFallback   bool
-	Fallback       string
-	NeedMonitor    bool
-	ReadTimeout    int64
-	Tenants        []dto2.ApiTenant
-	NeedGray       bool
-	GrayStrategy   dto2.GrayStrategy
-	Transport      http.RoundTripper
+	ApiId              int64
+	ApiName            string
+	ApiCode            string
+	Method             string
+	URL                string
+	Address            string
+	SrcURL             string
+	DesURL             string
+	SrcParams          map[string]int
+	SrcParamsIndex     map[int]string
+	DesParams          map[string]int
+	DesParamsIndex     map[int]string
+	SrcSplitURL        []string
+	DesSplitURL        []string
+	NeedRateLimit      bool
+	RateLimit          int
+	NeedFallback       bool
+	Fallback           string
+	NeedMonitor        bool
+	ReadTimeout        int64
+	IgnoreHeaderParams []string
+	IgnoreQueryParams  []string
+	Tenants            []dto.ApiTenant
+	NeedGray           bool
+	GrayStrategy       dto.GrayStrategy
+	Transport          http.RoundTripper
 }
 
 type RegularPathTree struct {
@@ -51,7 +54,7 @@ var placeHolderRegexp = regexp.MustCompile(regexpString)
 
 var requestMethodApiPathTree = map[string]*RegularPathTree{}
 
-func FlushPathMapByDtos(apis []dto2.Api) error {
+func FlushPathMapByDtos(apis []dto.Api) error {
 
 	requestMethodWithApis := map[string][]RegularPath{}
 	for _, api := range apis {
@@ -97,7 +100,7 @@ func FlushPathMapByDtos(apis []dto2.Api) error {
 	return nil
 }
 
-func urlsToPath(api dto2.Api) (RegularPath, error) {
+func urlsToPath(api dto.Api) (RegularPath, error) {
 
 	srcMeta := placeHolderRegexp.FindAllString(api.SrcUrl, -1)
 	desMeta := placeHolderRegexp.FindAllString(api.DesUrl, -1)
@@ -158,6 +161,17 @@ func urlsToPath(api dto2.Api) (RegularPath, error) {
 	} else {
 		path.NeedMonitor = false
 	}
+
+	ignoreQueryParams := api.IgnoreQueryParams
+	if len(ignoreQueryParams) > 0 {
+		path.IgnoreQueryParams = strings.Split(ignoreQueryParams, common.DelimiterComma)
+	}
+
+	ignoreHeaderParams := api.IgnoreHeaderParams
+	if len(ignoreHeaderParams) > 0 {
+		path.IgnoreHeaderParams = strings.Split(ignoreHeaderParams, common.DelimiterComma)
+	}
+
 	path.Transport = &http.Transport{
 		Proxy:                 http.ProxyFromEnvironment,
 		ResponseHeaderTimeout: time.Duration(path.ReadTimeout) * time.Millisecond,

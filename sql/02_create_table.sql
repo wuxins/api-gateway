@@ -12,7 +12,7 @@ CREATE TABLE `environment`
     `updated_by`   varchar(255) DEFAULT 'system' COMMENT 'who updated the record',
     `is_deleted`   char(1)      DEFAULT 'N' COMMENT 'logical delete identifier(Y-effective,N-ineffective)',
     PRIMARY KEY (`id`) USING BTREE,
-    KEY `idx_code` (`env`)
+    KEY            `idx_code` (`env`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 100000000
   DEFAULT CHARSET = utf8
@@ -30,7 +30,7 @@ CREATE TABLE `upstream_service`
     `updated_by`   varchar(255) DEFAULT 'system' COMMENT 'who updated the record',
     `is_deleted`   char(1)      DEFAULT 'N' COMMENT 'logical delete identifier(Y-effective,N-ineffective)',
     PRIMARY KEY (`id`) USING BTREE,
-    KEY `idx_code` (`service_code`)
+    KEY            `idx_code` (`service_code`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 100000000
   DEFAULT CHARSET = utf8
@@ -48,7 +48,7 @@ CREATE TABLE `tenant`
     `updated_by`   varchar(255) DEFAULT 'system' COMMENT 'who updated the record',
     `is_deleted`   char(1)      DEFAULT 'N' COMMENT 'logical delete identifier(Y-effective,N-ineffective)',
     PRIMARY KEY (`id`) USING BTREE,
-    KEY `idx_code` (`tenant_code`)
+    KEY            `idx_code` (`tenant_code`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 100000000
   DEFAULT CHARSET = utf8
@@ -72,7 +72,7 @@ CREATE TABLE `api`
     `updated_by`   varchar(255)  DEFAULT 'system' COMMENT 'who updated the record',
     `is_deleted`   char(1)       DEFAULT 'N' COMMENT 'logical delete identifier(Y-effective,N-ineffective)',
     PRIMARY KEY (`id`) USING BTREE,
-    KEY `idx_code` (`api_code`)
+    KEY            `idx_code` (`api_code`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 100000000
   DEFAULT CHARSET = utf8
@@ -90,7 +90,7 @@ CREATE TABLE `api_tenant`
     `updated_by`   varchar(255) DEFAULT 'system' COMMENT 'who updated the record',
     `is_deleted`   char(1)      DEFAULT 'N' COMMENT 'logical delete identifier(Y-effective,N-ineffective)',
     PRIMARY KEY (`id`) USING BTREE,
-    KEY `idx_api_group` (`api_code`, `tenant_code`)
+    KEY            `idx_api_group` (`api_code`, `tenant_code`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 100000000
   DEFAULT CHARSET = utf8
@@ -99,23 +99,20 @@ CREATE TABLE `api_tenant`
 drop table if exists `tenant_env`;
 CREATE TABLE `tenant_env`
 (
-    `id`                bigint      NOT NULL AUTO_INCREMENT COMMENT 'primary key',
-    `tenant_code`       varchar(32) NOT NULL COMMENT 'api tenant api id',
-    `env`               varchar(8)  NOT NULL COMMENT 'environment code',
-    `need_api_auth`     char(1)      DEFAULT 'Y' COMMENT 'api auth switch',
-    `api_auth_type`     char(1)      DEFAULT '0' COMMENT 'api auth type: 01 (Client mode)',
-    `secret`            varchar(255) COMMENT 'api auth api secret',
-    `token_sign_key`    varchar(64) COMMENT 'api token sign key',
-    `token_sign_method` varchar(8) COMMENT 'api token sign method: (HS256,HS384,HS512)',
-    `token_expire_in`   int COMMENT 'api token expire time',
-    `token_expire_code` varchar(16) COMMENT 'api token expire time',
-    `created_time`      datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record created time',
-    `updated_time`      datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record updated time',
-    `created_by`        varchar(255) DEFAULT 'system' COMMENT 'who created the record',
-    `updated_by`        varchar(255) DEFAULT 'system' COMMENT 'who updated the record',
-    `is_deleted`        char(1)      DEFAULT 'N' COMMENT 'logical delete identifier(Y-effective,N-ineffective)',
+    `id`                   bigint      NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+    `tenant_code`          varchar(32) NOT NULL COMMENT 'api tenant api id',
+    `env`                  varchar(8)  NOT NULL COMMENT 'environment code',
+    `need_api_auth`        char(1)       DEFAULT 'Y' COMMENT 'api auth switch',
+    `api_auth_content`     varchar(2048) DEFAULT NULL COMMENT 'api auth content',
+    `ignore_header_params` varchar(1024) DEFAULT NULL COMMENT 'ignore header params',
+    `ignore_query_params`  varchar(1024) DEFAULT NULL COMMENT 'ignore query params',
+    `created_time`         datetime      DEFAULT CURRENT_TIMESTAMP COMMENT 'record created time',
+    `updated_time`         datetime      DEFAULT CURRENT_TIMESTAMP COMMENT 'record updated time',
+    `created_by`           varchar(255)  DEFAULT 'system' COMMENT 'who created the record',
+    `updated_by`           varchar(255)  DEFAULT 'system' COMMENT 'who updated the record',
+    `is_deleted`           char(1)       DEFAULT 'N' COMMENT 'logical delete identifier(Y-effective,N-ineffective)',
     PRIMARY KEY (`id`) USING BTREE,
-    KEY `idx_code` (`tenant_code`, `env`)
+    KEY                    `idx_code` (`tenant_code`, `env`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 100000000
   DEFAULT CHARSET = utf8
@@ -128,14 +125,15 @@ CREATE TABLE `upstream_service_env`
     `service_code` varchar(32)  NOT NULL COMMENT 'service code',
     `env`          varchar(8)   NOT NULL COMMENT 'environment code',
     `address`      varchar(512) NOT NULL COMMENT 'service addresses',
-    `gray_address` varchar(512) NOT NULL COMMENT 'gray service addresses',
-    `created_time` datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record created time',
-    `updated_time` datetime     DEFAULT CURRENT_TIMESTAMP COMMENT 'record updated time',
-    `created_by`   varchar(255) DEFAULT 'system' COMMENT 'who created the record',
-    `updated_by`   varchar(255) DEFAULT 'system' COMMENT 'who updated the record',
-    `is_deleted`   char(1)      DEFAULT 'N' COMMENT 'logical delete identifier(Y-effective,N-ineffective)',
+    `need_gray`    char(1)       DEFAULT 'N' COMMENT 'service need gray',
+    `gray_content` varchar(2048) DEFAULT NULL COMMENT 'gray service content',
+    `created_time` datetime      DEFAULT CURRENT_TIMESTAMP COMMENT 'record created time',
+    `updated_time` datetime      DEFAULT CURRENT_TIMESTAMP COMMENT 'record updated time',
+    `created_by`   varchar(255)  DEFAULT 'system' COMMENT 'who created the record',
+    `updated_by`   varchar(255)  DEFAULT 'system' COMMENT 'who updated the record',
+    `is_deleted`   char(1)       DEFAULT 'N' COMMENT 'logical delete identifier(Y-effective,N-ineffective)',
     PRIMARY KEY (`id`) USING BTREE,
-    KEY `idx_code` (`service_code`, `env`)
+    KEY            `idx_code` (`service_code`, `env`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 100000000
   DEFAULT CHARSET = utf8
@@ -144,22 +142,24 @@ CREATE TABLE `upstream_service_env`
 drop table if exists `api_env`;
 CREATE TABLE `api_env`
 (
-    `id`              bigint      NOT NULL AUTO_INCREMENT COMMENT 'primary key',
-    `api_code`        varchar(32) NOT NULL COMMENT 'api code',
-    `env`             varchar(8)  NOT NULL COMMENT 'api env',
-    `need_rate_limit` char(1)       DEFAULT 'N' COMMENT 'rate limit switch',
-    `rate_limit`      int           DEFAULT NULL COMMENT 'rate limit size',
-    `need_fallback`   char(1)       DEFAULT 'N' COMMENT 'fallback switch',
-    `fallback`        varchar(2048) DEFAULT NULL COMMENT 'fallback information',
-    `need_monitor`    char(1)       DEFAULT 'Y' COMMENT 'monitor switch',
-    `read_timeout`    int           DEFAULT 0 COMMENT 'api request timeout',
-    `created_time`    datetime      DEFAULT CURRENT_TIMESTAMP COMMENT 'record created time',
-    `updated_time`    datetime      DEFAULT CURRENT_TIMESTAMP COMMENT 'record updated time',
-    `created_by`      varchar(255)  DEFAULT 'system' COMMENT 'who created the record',
-    `updated_by`      varchar(255)  DEFAULT 'system' COMMENT 'who updated the record',
-    `is_deleted`      char(1)       DEFAULT 'N' COMMENT 'logical delete identifier(Y-effective,N-ineffective)',
+    `id`                   bigint      NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+    `api_code`             varchar(32) NOT NULL COMMENT 'api code',
+    `env`                  varchar(8)  NOT NULL COMMENT 'api env',
+    `need_rate_limit`      char(1)       DEFAULT 'N' COMMENT 'rate limit switch',
+    `rate_limit`           int           DEFAULT NULL COMMENT 'rate limit size',
+    `need_fallback`        char(1)       DEFAULT 'N' COMMENT 'fallback switch',
+    `fallback`             varchar(2048) DEFAULT NULL COMMENT 'fallback information',
+    `need_monitor`         char(1)       DEFAULT 'Y' COMMENT 'monitor switch',
+    `read_timeout`         int           DEFAULT 0 COMMENT 'api request timeout',
+    `ignore_header_params` varchar(1024) DEFAULT NULL COMMENT 'ignore header params',
+    `ignore_query_params`  varchar(1024) DEFAULT NULL COMMENT 'ignore query params',
+    `created_time`         datetime      DEFAULT CURRENT_TIMESTAMP COMMENT 'record created time',
+    `updated_time`         datetime      DEFAULT CURRENT_TIMESTAMP COMMENT 'record updated time',
+    `created_by`           varchar(255)  DEFAULT 'system' COMMENT 'who created the record',
+    `updated_by`           varchar(255)  DEFAULT 'system' COMMENT 'who updated the record',
+    `is_deleted`           char(1)       DEFAULT 'N' COMMENT 'logical delete identifier(Y-effective,N-ineffective)',
     PRIMARY KEY (`id`) USING BTREE,
-    KEY `idx_code` (`api_code`)
+    KEY                    `idx_code` (`api_code`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 100000000
   DEFAULT CHARSET = utf8
@@ -177,7 +177,7 @@ CREATE TABLE `group`
     `updated_by`   varchar(255) DEFAULT 'system' COMMENT 'who updated the record',
     `is_deleted`   char(1)      DEFAULT 'N' COMMENT 'logical delete identifier(Y-effective,N-ineffective)',
     PRIMARY KEY (`id`) USING BTREE,
-    KEY `idx_code` (`group_code`)
+    KEY            `idx_code` (`group_code`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 100000000
   DEFAULT CHARSET = utf8
@@ -195,7 +195,7 @@ CREATE TABLE `api_group`
     `updated_by`   varchar(255) DEFAULT 'system' COMMENT 'who updated the record',
     `is_deleted`   char(1)      DEFAULT 'N' COMMENT 'logical delete identifier(Y-effective,N-ineffective)',
     PRIMARY KEY (`id`) USING BTREE,
-    KEY `idx_api_group` (`api_code`, `group_code`)
+    KEY            `idx_api_group` (`api_code`, `group_code`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 100000000
   DEFAULT CHARSET = utf8

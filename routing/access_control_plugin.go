@@ -20,16 +20,19 @@ func AccessControlPlugin() func(c *RouterContext) {
 		w.Header().Set(common.AccessControlAllowOrigin, config.GetConfigure().CORS.AccessControlAllowOrigin)
 		w.Header().Set(common.AccessControlAllowMethods, config.GetConfigure().CORS.AccessControlAllowMethods)
 		w.Header().Set(common.AccessControlAllowHeaders, config.GetConfigure().CORS.AccessControlAllowHeaders)
-		if strings.EqualFold("OPTIONS", strings.ToUpper(r.Method)) {
+		if strings.EqualFold("OPTIONS", strings.ToUpper(c.Req.Method)) {
 			w.WriteHeader(http.StatusOK)
 			c.Abort()
 			return
 		}
 
-		requestId := idgenerator.GenSnowflakeId()
-		requestTime := common.UnixMilliseconds(time.Now())
-		r.Header.Set(common.HeaderRequestId, requestId.String())
-		r.Header.Set(common.HeaderRequestTime, strconv.FormatInt(requestTime, 10))
+		requestId := idgenerator.GenSnowflakeId().String()
+		requestTime := strconv.FormatInt(common.UnixMilliseconds(time.Now()), 10)
+		c.RequestId = requestId
+		c.RequestTime = requestTime
+		r.Header.Set(common.HeaderRequestId, requestId)
+		r.Header.Set(common.HeaderRequestTime, requestTime)
+
 		c.Next()
 	}
 }

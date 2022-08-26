@@ -139,6 +139,7 @@ func NewRouterHandler() *RouterHandler {
 		UrlCheckPlugin(),
 		TenantCheckPlugin(),
 		RateLimiterPlugin(),
+		FallbackPlugin(),
 		GrayStrategyPlugin(),
 		IgnoreParamsPlugin(),
 		ReverseProxyPlugin())

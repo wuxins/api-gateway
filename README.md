@@ -27,23 +27,14 @@
 
 4. 配置修改 & 启动
 
-```
-需要修改MySQL、Redis、Http、限流、监控等系统配置，设计支持多种配置管理：
-```
-
+>需要修改MySQL、Redis、Http、限流、监控等系统配置，设计支持多种配置管理：
 * 本地配置方式
-
-```
-修改config.yaml
-./api-gateway > gateway.log &
-```
+  - 修改config.yaml
+  - ./api-gateway > gateway.log &
 
 * 外部配置中心接入
-
-```
-目前支持Nacos，在nacos配置config.yaml 内容，需要启动时加入nacos配置
-./api-gateway -NACOS_ADDRESS=127.0.0.1:8888 -NACOS_NAMESPACE=dev -NACOS_DATAID=life-gateway -NACOS_GROUP=DEFAULT_GROUP &
-```
+  - 目前支持Nacos，在nacos配置config.yaml 内容，需要启动时加入nacos配置
+  - ./api-gateway -NACOS_ADDRESS=127.0.0.1:8888 -NACOS_NAMESPACE=dev -NACOS_DATAID=life-gateway -NACOS_GROUP=DEFAULT_GROUP &
 
 ### 架构设计
 

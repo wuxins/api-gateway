@@ -26,7 +26,7 @@ func UrlCheckPlugin() func(c *RouterContext) {
 		}
 
 		c.RegularPath = regularPath
-
+		c.RequestUpstreamAddress = regularPath.Address
 		c.Next()
 	}
 }

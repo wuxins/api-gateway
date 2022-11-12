@@ -36,7 +36,6 @@ type RegularPath struct {
 	ReadTimeout        int64
 	IgnoreHeaderParams []string
 	IgnoreQueryParams  []string
-	Tenants            []dto.ApiTenant
 	NeedGray           bool
 	GrayStrategy       dto.GrayStrategy
 	Transport          http.RoundTripper
@@ -133,7 +132,6 @@ func urlsToPath(api dto.Api) (RegularPath, error) {
 	path.ApiCode = api.ApiCode
 	path.Method = api.Method
 	path.ReadTimeout = api.ReadTimeout
-	path.Tenants = api.Tenants
 	path.Address = api.Address
 	path.GrayStrategy = api.GrayStrategy
 	path.URL = placeHolderRegexp.ReplaceAllString(api.SrcUrl, regexpStringUnshell)

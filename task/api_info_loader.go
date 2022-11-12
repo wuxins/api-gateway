@@ -23,7 +23,6 @@ func StartFlushPathMap() {
 
 func flushPathMap() {
 
-	dao.InitAllTenant()
 	apis := dao.GetAllApi()
 	marshal, _ := json.Marshal(apis)
 	log4go.Info("GetAllApi : %v", string(marshal))

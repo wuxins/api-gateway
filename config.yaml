@@ -16,7 +16,7 @@ Local:
     GracefulShutdownTimeout: 60000 # ms, default '30s' if not config, means interrupt or kill server will max waiting for received request process
   DB:
     DBType: mysql
-    ConnectionString: root:yicai.liu@tcp(39.99.150.175:3306)/api_gateway?charset=utf8&parseTime=True
+    ConnectionString: root:yicai.liu@tcp(39.99.150.175:3306)/api_gateway_v2?charset=utf8&parseTime=True
     LogMode: true
     MaxOpenConns: 10
     MaxIdleConns: 5

@@ -26,6 +26,5 @@ func Init(dbInfo config.DB) {
 }
 
 func GetDB() *gorm.DB {
-
 	return db
 }

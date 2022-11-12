@@ -120,11 +120,6 @@ func NewRouterHandler() *RouterHandler {
 
 	router := NewRouter()
 
-	// oauth2.0 token endpoint
-	router.Group("/oauth/tokens").Use(
-		AccessControlPlugin(),
-		OauthTokenPlugin())
-
 	// heartbeat endpoint
 	router.Group("/ping").Use(func(routerContext *RouterContext) {
 		routerContext.Rw.WriteHeader(http.StatusOK)
@@ -137,7 +132,6 @@ func NewRouterHandler() *RouterHandler {
 	router.Group("/").Use(
 		AccessControlPlugin(),
 		UrlCheckPlugin(),
-		TenantCheckPlugin(),
 		RateLimiterPlugin(),
 		FallbackPlugin(),
 		GrayStrategyPlugin(),

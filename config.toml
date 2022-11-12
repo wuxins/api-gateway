@@ -1,0 +1,48 @@
+[System]
+FlushPathMapSpan = 60_000
+Env = "dev"
+
+[Http]
+ServicePort = 7_777
+ServerReadTimeout = 1_000
+ServerKeepalive = 3_000
+GracefulShutdownTimeout = 60_000
+
+[CORS]
+AccessControlAllowOrigin = "*"
+AccessControlAllowMethods = "POST, GET, OPTIONS, PUT, DELETE"
+AccessControlAllowHeaders = "G-tenant,channel,agentChannel,token,did,lang,securityToken,deviceRam,userToken"
+
+[DB]
+DBType = "mysql"
+ConnectionString = "root:yicai.liu@tcp(39.99.150.175:3306)/api_gateway_v2?charset=utf8&parseTime=True"
+LogMode = true
+MaxOpenConns = 10
+MaxIdleConns = 5
+ConnMaxIdleTime = 30_000
+
+[Redis]
+Addresses = "localhost:6379"
+DB = 0
+PoolSize = 0
+DialTimeout = 100
+ReadTimeout = 100
+WriteTimeout = 100
+IdleTimeout = 900_000
+MinIdleConns = 8
+MaxRetries = 0
+DetectAliveInterval = 1_000
+
+[Rate]
+Enable = true
+LocalRateDownPercent = 20
+
+[Routing]
+RequestTimeout = 30_000
+MaxConnsPerHost = 20_000
+MaxIdleConnsPerHost = 200
+MaxIdleConns = 1_000
+IdleConnTimeout = 60_000
+
+[Monitor]
+LogConfigFile = "log.xml"

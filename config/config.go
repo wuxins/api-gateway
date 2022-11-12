@@ -2,45 +2,26 @@ package config
 
 import (
 	"flag"
-	"github.com/bwmarrin/snowflake"
 	"github.com/gitstliu/log4go"
 	"github.com/wuxins/api-gateway/common"
-	"gopkg.in/yaml.v3"
-	"io/ioutil"
 	"os"
 )
 
-type Conf struct {
-	Mode        string `yaml:"Mode"`
-	LocalLoaded bool
-}
-
-type Nacos struct {
-	Address   string `yaml:"Address"`
-	Namespace string `yaml:"Namespace"`
-	DataId    string `yaml:"DataId"`
-	Group     string `yaml:"Group"`
-}
-
-type Local struct {
-	Sysconf *Sysconf `yaml:"Sysconf"`
-	DB      *DB      `yaml:"DB"`
-	CORS    *CORS    `yaml:"CORS"`
-	Routing *Routing `yaml:"Routing"`
-	Redis   *Redis   `yaml:"Redis"`
-	Rate    *Rate    `yaml:"Rate"`
-	Monitor *Monitor `yaml:"Monitor"`
-	Http    *Http    `yaml:"Http"`
-	Https   *Https   `yaml:"Https"`
-}
+var configure *Config
 
 type Config struct {
-	Conf  *Conf  `yaml:"Conf"`
-	Nacos *Nacos `yaml:"Nacos"`
-	Local *Local `yaml:"Local"`
+	System  *System  `yaml:"System"`
+	Http    *Http    `yaml:"Http"`
+	Https   *Https   `yaml:"Https"`
+	CORS    *CORS    `yaml:"CORS"`
+	DB      *DB      `yaml:"DB"`
+	Redis   *Redis   `yaml:"Redis"`
+	Routing *Routing `yaml:"Routing"`
+	Rate    *Rate    `yaml:"Rate"`
+	Monitor *Monitor `yaml:"Monitor"`
 }
 
-type Sysconf struct {
+type System struct {
 	FlushPathMapSpan int64  `yaml:"FlushPathMapSpan"`
 	LogConfigFile    string `yaml:"LogConfigFile"`
 	Env              string `yaml:"Env"`
@@ -109,23 +90,8 @@ type Monitor struct {
 	LogRotateMaxLines int    `yaml:"LogRotateMaxLines"`
 }
 
-type Configure struct {
-	Sysconf       *Sysconf `yaml:"Sysconf"`
-	DB            *DB      `yaml:"DB"`
-	CORS          *CORS    `yaml:"CORS"`
-	Routing       *Routing `yaml:"Routing"`
-	Redis         *Redis   `yaml:"Redis"`
-	Http          *Http    `yaml:"Http"`
-	Https         *Https   `yaml:"Https"`
-	Rate          *Rate    `yaml:"Rate"`
-	Monitor       *Monitor `yaml:"Monitor"`
-	SnowflakeNode *snowflake.Node
-}
-
-var configure *Configure
-
 // GetConfigure export configuration information
-func GetConfigure() *Configure {
+func GetConfigure() *Config {
 	return configure
 }
 
@@ -156,48 +122,26 @@ func init() {
 
 	configMode := flag.String(common.ConfLoadMode, "", "config mode")
 	flag.Parse()
-
 	config := Config{}
-	config.Nacos = &Nacos{}
-	config.Conf = &Conf{}
-	config.Local = &Local{}
 	if len(*configMode) <= 0 {
 		*configMode = os.Getenv(common.ConfLoadMode)
 	}
-	if len(*configMode) > 0 {
-		config.Conf.Mode = *configMode
-	} else {
-		file, err := ioutil.ReadFile("config.yaml")
-		if err != nil {
-			log4go.Info("Read config.yaml fail, %v", err)
-			panic(err)
-			return
-		}
-		err = yaml.Unmarshal(file, &config)
-		if err != nil {
-			log4go.Info("Parse config.yaml fail,%v", err)
-			panic(err)
-			return
-		}
-		config.Conf.LocalLoaded = true
+	if len(*configMode) <= 0 {
+		*configMode = common.ConfLoadModeLocal
 	}
 
-	log4go.Info("Config mode: %v", config.Conf.Mode)
-	if len(config.Conf.Mode) <= 0 {
-		panic("Config mode can not be nil")
-		return
-	}
-	err := getConfigureLoader(config.Conf.Mode).load(config)
+	log4go.Info("Config mode: %v", *configMode)
+	err := getConfigureLoader(*configMode).load(config)
 	if err != nil {
 		log4go.Info("Config Load Error", err.Error())
 		panic(err)
 		return
 	}
 
-	if len(configure.Sysconf.LogConfigFile) <= 0 {
-		configure.Sysconf.LogConfigFile = "log.xml" // default with the startup binary file int the same dir
+	if len(configure.System.LogConfigFile) <= 0 {
+		configure.System.LogConfigFile = "log.xml" // default with the startup binary file int the same dir
 	}
-	if len(configure.Sysconf.Env) <= 0 {
+	if len(configure.System.Env) <= 0 {
 		panic("Config env can not be nil")
 		return
 	}

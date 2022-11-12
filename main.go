@@ -17,7 +17,7 @@ import (
 func main() {
 
 	// log init
-	log4go.LoadConfiguration(config.GetConfigure().Sysconf.LogConfigFile)
+	log4go.LoadConfiguration(config.GetConfigure().System.LogConfigFile)
 	defer log4go.Close()
 
 	// monitor init

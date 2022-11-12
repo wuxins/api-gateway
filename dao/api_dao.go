@@ -10,6 +10,6 @@ import (
 func GetAllApi() []dto.Api {
 
 	var apis []dto.Api
-	dbclient.GetDB().Raw(common.ApiSql, config.GetConfigure().Sysconf.Env).Scan(&apis)
+	dbclient.GetDB().Raw(common.ApiSql, config.GetConfigure().System.Env).Scan(&apis)
 	return apis
 }

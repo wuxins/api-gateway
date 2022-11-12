@@ -35,7 +35,7 @@
 * 外部配置中心接入
   - 目前支持Nacos，在nacos配置config.yaml 内容，需要启动时加入nacos配置
   - ./api-gateway -NACOS_ADDRESS=127.0.0.1:8888 -NACOS_NAMESPACE=dev -NACOS_DATAID=life-gateway -NACOS_GROUP=DEFAULT_GROUP &
-
+    环境变量：CONFIG_MODE=nacos;NACOS_ADDRESS=39.99.150.175:8848;NACOS_NAMESPACE=DEV;NACOS_DATAID=life-gateway;NACOS_GROUP=DEFAULT_GROUP
 ### 架构设计
 
 ##### 架构

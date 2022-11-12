@@ -3,6 +3,7 @@ module github.com/wuxins/api-gateway
 go 1.17
 
 require (
+	github.com/BurntSushi/toml v0.3.1
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gitstliu/log4go v0.0.0-20180109082532-d146e6b86faa

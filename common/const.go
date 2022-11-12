@@ -1,7 +1,8 @@
 package common
 
-var ConfLoadMode = "API_CONFIG_MODE"
+var ConfLoadMode = "CONFIG_MODE"
 var ConfLoadModeNacos = "nacos"
+var ConfLoadModeLocal = "local"
 
 var NacosAddress = "NACOS_ADDRESS"
 var NacosNamespace = "NACOS_NAMESPACE"

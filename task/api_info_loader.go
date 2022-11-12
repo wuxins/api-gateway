@@ -14,7 +14,7 @@ import (
 func StartFlushPathMap() {
 
 	flushPathMap()
-	ticker := time.NewTicker(time.Duration(config.GetConfigure().Sysconf.FlushPathMapSpan) * time.Millisecond)
+	ticker := time.NewTicker(time.Duration(config.GetConfigure().System.FlushPathMapSpan) * time.Millisecond)
 	defer ticker.Stop()
 	for range ticker.C {
 		flushPathMap()

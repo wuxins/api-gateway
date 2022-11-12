@@ -2,12 +2,12 @@ package config
 
 import (
 	"flag"
+	"github.com/BurntSushi/toml"
 	"github.com/nacos-group/nacos-sdk-go/clients"
 	"github.com/nacos-group/nacos-sdk-go/clients/config_client"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/vo"
 	"github.com/wuxins/api-gateway/common"
-	"gopkg.in/yaml.v3"
 	"os"
 	"strconv"
 	"strings"
@@ -26,60 +26,52 @@ func (loader *NacosLoader) load(config Config) error {
 	group := flag.String(common.NacosGroup, "", "Nacos Group")
 	flag.Parse()
 
-	if len(*serviceAddr) > 0 {
-		config.Nacos.Address = *serviceAddr
-	} else {
+	if len(*serviceAddr) <= 0 {
 		envAddr := os.Getenv(common.NacosAddress)
 		if len(envAddr) > 0 {
-			config.Nacos.Address = envAddr
+			*serviceAddr = envAddr
 		}
 	}
 
-	if len(*namespace) > 0 {
-		config.Nacos.Namespace = *namespace
-	} else {
+	if len(*namespace) <= 0 {
 		envNamespace := os.Getenv(common.NacosNamespace)
 		if len(envNamespace) > 0 {
-			config.Nacos.Namespace = envNamespace
+			*namespace = envNamespace
 		}
 	}
 
-	if len(*dataId) > 0 {
-		config.Nacos.DataId = *dataId
-	} else {
+	if len(*dataId) <= 0 {
 		envDataId := os.Getenv(common.NacosDataid)
 		if len(envDataId) > 0 {
-			config.Nacos.DataId = envDataId
+			*dataId = envDataId
 		}
 	}
 
-	if len(*group) > 0 {
-		config.Nacos.Group = *group
-	} else {
+	if len(*group) <= 0 {
 		envGroup := os.Getenv(common.NacosGroup)
 		if len(envGroup) > 0 {
-			config.Nacos.Group = envGroup
+			*group = envGroup
 		}
 	}
 
-	err := initConfigClient(config.Nacos.Address, config.Nacos.Namespace)
+	err := initConfigClient(*serviceAddr, *namespace)
 	if err != nil {
 		return err
 	}
-
 	var content string
 	content, err = client.GetConfig(vo.ConfigParam{
-		DataId: config.Nacos.DataId,
-		Group:  config.Nacos.Group,
+		DataId: *dataId,
+		Group:  *group,
 	})
 	if err != nil {
 		return err
 	}
-
-	err = yaml.Unmarshal([]byte(content), &configure)
+	_, err = toml.Decode(content, &config)
 	if err != nil {
 		return err
 	}
+
+	configure = &config
 	return err
 }
 

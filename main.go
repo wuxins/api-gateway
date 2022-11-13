@@ -9,6 +9,7 @@ import (
 	"github.com/wuxins/api-gateway/redisclient"
 	"github.com/wuxins/api-gateway/server"
 	"github.com/wuxins/api-gateway/task"
+	_ "net/http/pprof"
 	"os"
 	"os/signal"
 	"syscall"
@@ -45,6 +46,10 @@ func main() {
 	go func() {
 		httpsServ.Start()
 	}()*/
+	monitorServ := server.NewMonitorServer()
+	go func() {
+		monitorServ.Start()
+	}()
 
 	quit := make(chan os.Signal)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
@@ -52,5 +57,5 @@ func main() {
 
 	httpServ.Stop()
 	//httpsServ.Stop()
-
+	monitorServ.Stop()
 }

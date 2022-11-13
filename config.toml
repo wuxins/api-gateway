@@ -1,6 +1,7 @@
 [System]
 FlushPathMapSpan = 60_000
 Env = "dev"
+LogConfigFile = "log.xml"
 
 [Http]
 ServicePort = 7_777
@@ -45,4 +46,9 @@ MaxIdleConns = 1_000
 IdleConnTimeout = 60_000
 
 [Monitor]
-LogConfigFile = "log.xml"
+ServicePort = 8989
+LogDir = ""
+LogFileName = "monitor.log"
+LogRotateMaxMSize = 100
+LogRotateMaxLines = 500000
+

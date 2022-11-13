@@ -86,7 +86,7 @@ type Rate struct {
 type Monitor struct {
 	LogDir            string `yaml:"LogDir"`
 	LogFileName       string `yaml:"LogFileName"`
-	LogRotateMaxsize  int    `yaml:"LogRotateMaxsize"`
+	LogRotateMaxMSize int    `yaml:"LogRotateMaxMSize"`
 	LogRotateMaxLines int    `yaml:"LogRotateMaxLines"`
 }
 

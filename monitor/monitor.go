@@ -14,7 +14,7 @@ func Init(monitor config.Monitor) log4go.Logger {
 
 	fileDir := monitor.LogDir
 	fileName := monitor.LogFileName
-	rotateSize := monitor.LogRotateMaxsize
+	rotateSize := monitor.LogRotateMaxMSize
 	rotateMaxLines := monitor.LogRotateMaxLines
 	if len(fileDir) <= 0 {
 		fileDir = ""

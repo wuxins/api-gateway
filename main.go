@@ -22,7 +22,7 @@ func main() {
 	defer log4go.Close()
 
 	// monitor init
-	monitorDog := monitor.Init(*config.GetConfigure().Monitor)
+	monitorDog := monitor.Init(*config.GetConfigure().Proxy.Monitor)
 	defer monitorDog.Close()
 
 	// db init
@@ -38,24 +38,24 @@ func main() {
 	go task.StartFlushPathMap()
 
 	// start proxy server
-	httpServ := server.NewHttpServer()
+	proxyHttpServer := server.NewProxyHttpServer()
 	go func() {
-		httpServ.Start()
+		proxyHttpServer.Start()
 	}()
 	/*httpsServ := server.NewHttpsServer()
 	go func() {
 		httpsServ.Start()
 	}()*/
-	monitorServ := server.NewMonitorServer()
+	httpServer := server.NewHttpServer()
 	go func() {
-		monitorServ.Start()
+		httpServer.Start()
 	}()
 
 	quit := make(chan os.Signal)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 
-	httpServ.Stop()
+	proxyHttpServer.Stop()
 	//httpsServ.Stop()
-	monitorServ.Stop()
+	httpServer.Stop()
 }

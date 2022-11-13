@@ -14,7 +14,7 @@ func RateLimiterPlugin() func(c *RouterContext) {
 
 		regularPath := c.RegularPath
 
-		if config.GetConfigure().Rate.Enable && regularPath.NeedRateLimit && regularPath.RateLimit > 0 {
+		if config.GetConfigure().Proxy.Rate.Enable && regularPath.NeedRateLimit && regularPath.RateLimit > 0 {
 			reteCtx := ratelimiter.RateLimiterCtx{
 				Key:        regularPath.ApiCode,
 				Rate:       regularPath.RateLimit,

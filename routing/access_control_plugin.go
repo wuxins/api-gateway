@@ -17,9 +17,9 @@ func AccessControlPlugin() func(c *RouterContext) {
 		r := c.Req
 		w := c.Rw
 
-		w.Header().Set(common.AccessControlAllowOrigin, config.GetConfigure().CORS.AccessControlAllowOrigin)
-		w.Header().Set(common.AccessControlAllowMethods, config.GetConfigure().CORS.AccessControlAllowMethods)
-		w.Header().Set(common.AccessControlAllowHeaders, config.GetConfigure().CORS.AccessControlAllowHeaders)
+		w.Header().Set(common.AccessControlAllowOrigin, config.GetConfigure().Proxy.CORS.AccessControlAllowOrigin)
+		w.Header().Set(common.AccessControlAllowMethods, config.GetConfigure().Proxy.CORS.AccessControlAllowMethods)
+		w.Header().Set(common.AccessControlAllowHeaders, config.GetConfigure().Proxy.CORS.AccessControlAllowHeaders)
 		if strings.EqualFold("OPTIONS", strings.ToUpper(c.Req.Method)) {
 			w.WriteHeader(http.StatusOK)
 			c.Abort()

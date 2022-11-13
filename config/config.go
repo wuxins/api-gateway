@@ -10,12 +10,17 @@ import (
 var configure *Config
 
 type Config struct {
-	System  *System  `yaml:"System"`
+	System *System `yaml:"System"`
+	Http   *Http   `yaml:"Http"`
+	Proxy  *Proxy  `yaml:"Proxy"`
+	DB     *DB     `yaml:"DB"`
+	Redis  *Redis  `yaml:"Redis"`
+}
+
+type Proxy struct {
 	Http    *Http    `yaml:"Http"`
 	Https   *Https   `yaml:"Https"`
 	CORS    *CORS    `yaml:"CORS"`
-	DB      *DB      `yaml:"DB"`
-	Redis   *Redis   `yaml:"Redis"`
 	Routing *Routing `yaml:"Routing"`
 	Rate    *Rate    `yaml:"Rate"`
 	Monitor *Monitor `yaml:"Monitor"`

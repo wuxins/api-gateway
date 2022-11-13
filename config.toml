@@ -4,15 +4,39 @@ Env = "dev"
 LogConfigFile = "log.xml"
 
 [Http]
-ServicePort = 7_777
+ServicePort = 8989
 ServerReadTimeout = 1_000
 ServerKeepalive = 3_000
 GracefulShutdownTimeout = 60_000
 
-[CORS]
-AccessControlAllowOrigin = "*"
-AccessControlAllowMethods = "POST, GET, OPTIONS, PUT, DELETE"
-AccessControlAllowHeaders = "G-tenant,channel,agentChannel,token,did,lang,securityToken,deviceRam,userToken"
+[Proxy]
+    [Proxy.Http]
+    ServicePort = 7_777
+    ServerReadTimeout = 1_000
+    ServerKeepalive = 3_000
+    GracefulShutdownTimeout = 60_000
+
+    [Proxy.CORS]
+    AccessControlAllowOrigin = "*"
+    AccessControlAllowMethods = "POST, GET, OPTIONS, PUT, DELETE"
+    AccessControlAllowHeaders = "G-tenant,channel,agentChannel,token,did,lang,securityToken,deviceRam,userToken"
+
+    [Proxy.Rate]
+    Enable = true
+    LocalRateDownPercent = 20
+
+    [Proxy.Routing]
+    RequestTimeout = 30_000
+    MaxConnsPerHost = 20_000
+    MaxIdleConnsPerHost = 200
+    MaxIdleConns = 1_000
+    IdleConnTimeout = 60_000
+
+    [Proxy.Monitor]
+    LogDir = ""
+    LogFileName = "monitor.log"
+    LogRotateMaxMSize = 100
+    LogRotateMaxLines = 500000
 
 [DB]
 DBType = "mysql"
@@ -33,22 +57,3 @@ IdleTimeout = 900_000
 MinIdleConns = 8
 MaxRetries = 0
 DetectAliveInterval = 1_000
-
-[Rate]
-Enable = true
-LocalRateDownPercent = 20
-
-[Routing]
-RequestTimeout = 30_000
-MaxConnsPerHost = 20_000
-MaxIdleConnsPerHost = 200
-MaxIdleConns = 1_000
-IdleConnTimeout = 60_000
-
-[Monitor]
-ServicePort = 8989
-LogDir = ""
-LogFileName = "monitor.log"
-LogRotateMaxMSize = 100
-LogRotateMaxLines = 500000
-

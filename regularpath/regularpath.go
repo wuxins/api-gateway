@@ -173,10 +173,10 @@ func urlsToPath(api dto.Api) (RegularPath, error) {
 	path.Transport = &http.Transport{
 		Proxy:                 http.ProxyFromEnvironment,
 		ResponseHeaderTimeout: time.Duration(path.ReadTimeout) * time.Millisecond,
-		MaxIdleConnsPerHost:   config.GetConfigure().Routing.MaxIdleConnsPerHost,
-		MaxIdleConns:          config.GetConfigure().Routing.MaxIdleConns,
-		IdleConnTimeout:       time.Duration(config.GetConfigure().Routing.IdleConnTimeout) * time.Millisecond,
-		MaxConnsPerHost:       config.GetConfigure().Routing.MaxConnsPerHost,
+		MaxIdleConnsPerHost:   config.GetConfigure().Proxy.Routing.MaxIdleConnsPerHost,
+		MaxIdleConns:          config.GetConfigure().Proxy.Routing.MaxIdleConns,
+		IdleConnTimeout:       time.Duration(config.GetConfigure().Proxy.Routing.IdleConnTimeout) * time.Millisecond,
+		MaxConnsPerHost:       config.GetConfigure().Proxy.Routing.MaxConnsPerHost,
 	}
 	log4go.Debug("urlsToPath results: %v", path)
 	return path, nil

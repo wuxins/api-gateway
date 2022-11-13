@@ -37,15 +37,23 @@ func main() {
 	// async db api info loader
 	go task.StartFlushPathMap()
 
+	// run server
+	startServer()
+}
+
+func startServer() {
+
 	// start proxy server
 	proxyHttpServer := server.NewProxyHttpServer()
 	go func() {
 		proxyHttpServer.Start()
 	}()
+
 	/*httpsServ := server.NewHttpsServer()
 	go func() {
 		httpsServ.Start()
 	}()*/
+
 	httpServer := server.NewHttpServer()
 	go func() {
 		httpServer.Start()
@@ -56,6 +64,7 @@ func main() {
 	<-quit
 
 	proxyHttpServer.Stop()
+
 	//httpsServ.Stop()
 	httpServer.Stop()
 }

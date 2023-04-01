@@ -26,6 +26,12 @@ func AccessControlPlugin() func(c *RouterContext) {
 			return
 		}
 
+		if strings.Contains(r.URL.Path, "/favicon.ico") {
+			w.WriteHeader(http.StatusOK)
+			c.Abort()
+			return
+		}
+
 		requestId := idgenerator.GenSnowflakeId().String()
 		requestTime := strconv.FormatInt(common.UnixMilliseconds(time.Now()), 10)
 		c.RequestId = requestId

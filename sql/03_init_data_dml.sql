@@ -1,36 +1,91 @@
-TRUNCATE `api`;
-TRUNCATE `api_version`;
-TRUNCATE `environment`;
-TRUNCATE `upstream_service`;
-TRUNCATE `upstream_service_env`;
-TRUNCATE `api_group`;
+INSERT INTO `api_gateway`.`upstream_service`(`name`, `service_code`)
+VALUES ('登录', 'life-login');
+INSERT INTO `api_gateway`.`upstream_service`(`name`, `service_code`)
+VALUES ('客户', 'life-customer');
 
-INSERT INTO environment (name, env)
-VALUES ('开发环境', 'dev'),
-       ('测试环境', 'test');
+INSERT INTO `api_gateway`.`upstream_service_env`(`service_code`, `env`, `address`)
+VALUES ('life-login', 'dev', 'http://svc-zains-bm-login-service:8080');
+INSERT INTO `api_gateway`.`upstream_service_env`(`service_code`, `env`, `address`)
+VALUES ('life-customer', 'dev', 'http://svc-zains-bm-customer-service:8080');
 
-INSERT INTO upstream_service (name, service_code)
-VALUES ('保单服务', 'life-policy'),
-       ('订单服务', 'life-order');
+INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `method`, `src_url`, `des_url`, `service_code`, `maintainer`,
+                                `description`)
+VALUES ('C端客户登录', 'A00001', 'POST', '/life-login/api/users/login', '/life-login/api/users/login', 'life-login',
+        'yicai.liu', 'C端客户登录');
 
-INSERT INTO upstream_service_env (service_code, env, address)
-VALUES ('life-policy', 'dev', 'http://localhost:6666'),
-       ('life-policy', 'test', 'http://localhost:6666'),
-       ('life-order', 'dev', 'http://localhost:6666'),
-       ('life-order', 'test', 'http://localhost:6666');
+INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`,
+                                        `need_monitor`, `read_timeout`, `ignore_header_params`, `ignore_query_params`)
+VALUES ('A00001', 'dev', 'Y', 100, 'N', NULL, 'Y', 100000, NULL, NULL);
 
-INSERT INTO api (name, api_code, method, service_code, src_url, des_url, maintainer, description)
-VALUES ('获取保单列表', 'A00001', 'GET', 'life-policy', '/life-policy/policies', '/life-policy/outer/policies', '野区蔡徐坤',
-        '获取保单列表'),
-       ('获取保单详情', 'A00002', 'GET', 'life-policy', '/life-policy/policies/{{policyNo}}',
-        '/life-policy/outer/policies/{{policyNo}}', '中单川建国', '获取保单详情'),
-       ('获取订单列表', 'A00003', 'GET', 'life-order', '/life-order/orders', '/life-order/outer/orders', '对抗郭德纲', '获取订单列表');
+INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `method`, `src_url`, `des_url`, `service_code`, `maintainer`,
+                                `description`)
+VALUES ('查询客户详情', 'B00001', 'GET', '/life-customer/api/customers', '/life-customer/api/customers', 'life-customer',
+        'yicai.liu', '查询客户详情');
 
-INSERT INTO api_version (api_code, env, need_rate_limit, rate_limit, need_fallback, fallback, need_monitor,
-                         read_timeout)
-VALUES ('A00001', 'dev', 'Y', 100, 'N', null, 'Y', 10000),
-       ('A00002', 'dev', 'Y', 100, 'N', null, 'Y', 10000),
-       ('A00003', 'dev', 'Y', 100, 'N', null, 'Y', 10000),
-       ('A00001', 'test', 'Y', 300, 'N', null, 'Y', 10000),
-       ('A00002', 'test', 'Y', 300, 'N', null, 'Y', 10000),
-       ('A00003', 'test', 'Y', 300, 'N', null, 'Y', 10000);
+INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`,
+                                        `need_monitor`, `read_timeout`, `ignore_header_params`, `ignore_query_params`)
+VALUES ('B00001', 'dev', 'Y', 100, 'N', NULL, 'Y', 100000, NULL, NULL);
+
+INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `method`, `src_url`, `des_url`, `service_code`, `maintainer`,
+                                `description`)
+VALUES ('查询被保人列表', 'B00002', 'GET', '/life-customer/api/customers/insureds', '/life-customer/api/customers/insureds',
+        'life-customer', 'yicai.liu', '查询被保人列表');
+
+INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`,
+                                        `need_monitor`, `read_timeout`, `ignore_header_params`, `ignore_query_params`)
+VALUES ('B00002', 'dev', 'Y', 100, 'N', NULL, 'Y', 100000, NULL, NULL);
+
+INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `method`, `src_url`, `des_url`, `service_code`, `maintainer`,
+                                `description`)
+VALUES ('查询商品列表', 'C00001', 'GET', '/life-channel/api/goods', '/life-channel/api/goods',
+        'life-channel', 'zhongxiong.zeng', '查询商品列表');
+
+INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`,
+                                        `need_monitor`, `read_timeout`, `ignore_header_params`, `ignore_query_params`)
+VALUES ('C00001', 'dev', 'Y', 100, 'N', NULL, 'Y', 100000, NULL, NULL);
+
+INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `method`, `src_url`, `des_url`, `service_code`, `maintainer`,
+                                `description`)
+VALUES ('查询试算因子', 'C00002', 'GET', '/life-channel/api/goods/{{goodsCode}}/premium-factors',
+        '/life-channel/api/goods/{{goodsCode}}/premium-factors', 'life-channel', 'zhongxiong.zeng', '查询试算因子');
+
+INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`,
+                                        `need_monitor`, `read_timeout`, `ignore_header_params`, `ignore_query_params`)
+VALUES ('C00002', 'dev', 'Y', 100, 'N', NULL, 'Y', 100000, NULL, NULL);
+
+INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `method`, `src_url`, `des_url`, `service_code`, `maintainer`,
+                                `description`)
+VALUES ('查询试商品因子范围', 'C00003', 'GET', '/life-channel/api/goods/{{goodsCode}}/premium-factors/ranges',
+        '/life-channel/api/goods/{{goodsCode}}/premium-factors/ranges',
+        'life-channel', 'zhongxiong.zeng', '查询试商品因子范围');
+
+INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`,
+                                        `need_monitor`, `read_timeout`, `ignore_header_params`, `ignore_query_params`)
+VALUES ('C00003', 'dev', 'Y', 100, 'N', NULL, 'Y', 100000, NULL, NULL);
+
+INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `method`, `src_url`, `des_url`, `service_code`, `maintainer`,
+                                `description`)
+VALUES ('查询投保因子', 'C00004', 'GET', '/life-channel/api/goods/{{goodsCode}}/insure-factors',
+        '/life-channel/api/goods/{{goodsCode}}/insure-factors', 'life-channel', 'zhongxiong.zeng', '查询投保因子');
+
+INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`,
+                                        `need_monitor`, `read_timeout`, `ignore_header_params`, `ignore_query_params`)
+VALUES ('C00004', 'dev', 'Y', 100, 'N', NULL, 'Y', 100000, NULL, NULL);
+
+INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `method`, `src_url`, `des_url`, `service_code`, `maintainer`,
+                                `description`)
+VALUES ('查询商品结构', 'C00005', 'GET', '/life-channel/api/goods/{{goodsCode}}/struct',
+        '/life-channel/api/goods/{{goodsCode}}/struct', 'life-channel', 'zhongxiong.zeng', '查询商品结构');
+
+INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`,
+                                        `need_monitor`, `read_timeout`, `ignore_header_params`, `ignore_query_params`)
+VALUES ('C00005', 'dev', 'Y', 100, 'N', NULL, 'Y', 100000, NULL, NULL);
+
+INSERT INTO `api_gateway`.`api`(`name`, `api_code`, `method`, `src_url`, `des_url`, `service_code`, `maintainer`,
+                                `description`)
+VALUES ('功能试算（包含折扣码和优惠券）', 'C00006', 'POST', '/life-market/api/calculators/trial',
+        '/life-market/api/calculators/trial', 'life-market', 'zhongxiong.zeng', '功能试算（包含折扣码和优惠券）');
+
+INSERT INTO `api_gateway`.`api_version`(`api_code`, `env`, `need_rate_limit`, `rate_limit`, `need_fallback`, `fallback`,
+                                        `need_monitor`, `read_timeout`, `ignore_header_params`, `ignore_query_params`)
+VALUES ('C00006', 'dev', 'Y', 100, 'N', NULL, 'Y', 100000, NULL, NULL);

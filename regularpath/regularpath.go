@@ -35,6 +35,7 @@ type RegularPath struct {
 	Fallback           string
 	NeedMonitor        bool
 	NeedApiAuth        bool
+	Tenants            map[string]dto.Tenant
 	ReadTimeout        int64
 	IgnoreHeaderParams []string
 	IgnoreQueryParams  []string
@@ -54,6 +55,14 @@ var regexpString = "{{[a-zA-Z\\d]+}}"
 var placeHolderRegexp = regexp.MustCompile(regexpString)
 
 var requestMethodApiPathTree = map[string]*RegularPathTree{}
+
+var tenantsMap = map[string]dto.Tenant{}
+
+func FlushTenants(tenants []dto.Tenant) {
+	for _, tenant := range tenants {
+		tenantsMap[tenant.TenantCode] = tenant
+	}
+}
 
 func FlushPathMapByDtos(apis []dto.Api) error {
 
@@ -166,10 +175,16 @@ func urlsToPath(api dto.Api) (RegularPath, error) {
 	}
 	if api.NeedApiAuth == "Y" {
 		path.NeedApiAuth = true
+		tenantCodesStr := api.TenantCodes
+		if len(tenantCodesStr) > 0 {
+			tenantCodes := strings.Split(tenantCodesStr, common.DelimiterComma)
+			for _, code := range tenantCodes {
+				path.Tenants[code] = tenantsMap[code]
+			}
+		}
 	} else {
 		path.NeedApiAuth = false
 	}
-
 	ignoreQueryParams := api.IgnoreQueryParams
 	if len(ignoreQueryParams) > 0 {
 		path.IgnoreQueryParams = strings.Split(ignoreQueryParams, common.DelimiterComma)

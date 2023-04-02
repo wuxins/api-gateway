@@ -28,7 +28,12 @@ func flushPathMap() {
 	marshal, _ := json.Marshal(apis)
 	log4go.Info("GetAllApi : %v", string(marshal))
 
+	regularpath.FlushTenants(dao.GetAllTenants())
 	flushErr := regularpath.FlushPathMapByDtos(apis)
+	if flushErr != nil {
+		log4go.Error("Flush Error : %v", flushErr)
+		return
+	}
 
 	for _, api := range apis {
 		reteInfo := ratelimiter.RateLimiterCtx{
@@ -39,11 +44,6 @@ func flushPathMap() {
 		ratelimiter.GetRateLimiter().FlushLimiter(reteInfo)
 
 		breaker.FlushBreaker(api)
-	}
-
-	if flushErr != nil {
-		log4go.Error("Flush Error : %v", flushErr)
-		return
 	}
 
 	log4go.Info("FlushPathMap Success!")

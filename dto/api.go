@@ -19,7 +19,6 @@ type Api struct {
 	IgnoreHeaderParams     string `gorm:"ignore_header_params"`
 	IgnoreQueryParams      string `gorm:"ignore_query_params"`
 	TenantCodes            string `gorm:"tenant_codes"`
-	Tenants                []Tenant
 	NeedGray               string `gorm:"need_gray"`
 	GrayStrategy           GrayStrategy
 }

@@ -13,3 +13,10 @@ func GetAllApi() []dto.Api {
 	dbclient.GetDB().Raw(common.ApiSql, config.GetConfigure().System.Env).Scan(&apis)
 	return apis
 }
+
+func GetAllTenants() []dto.Tenant {
+
+	var tenants []dto.Tenant
+	dbclient.GetDB().Raw(common.TenantSql, config.GetConfigure().System.Env).Scan(&tenants)
+	return tenants
+}

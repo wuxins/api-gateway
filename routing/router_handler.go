@@ -135,6 +135,7 @@ func NewRouterHandler() *RouterHandler {
 	router.Group("/").Use(
 		AccessControlPlugin(),
 		UrlCheckPlugin(),
+		TenantCheckPlugin(),
 		RateLimiterPlugin(),
 		FallbackPlugin(),
 		IgnoreParamsPlugin(),

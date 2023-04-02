@@ -4,13 +4,13 @@ go 1.17
 
 require (
 	github.com/BurntSushi/toml v0.3.1
+	github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gitstliu/log4go v0.0.0-20180109082532-d146e6b86faa
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/jinzhu/gorm v1.9.16
 	github.com/nacos-group/nacos-sdk-go v1.1.1
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
 require (

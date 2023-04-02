@@ -2,10 +2,11 @@ package routing
 
 import (
 	"bytes"
+	"errors"
+	"github.com/afex/hystrix-go/hystrix"
 	"github.com/wuxins/api-gateway/common"
 	"github.com/wuxins/api-gateway/monitor"
 	"github.com/wuxins/api-gateway/regularpath"
-	"github.com/wuxins/api-gateway/utils"
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
@@ -14,14 +15,26 @@ import (
 	"time"
 )
 
-func ReverseProxyPlugin() func(c *RouterContext) {
+func BreakerProxyPlugin() func(c *RouterContext) {
 
 	return func(c *RouterContext) {
 
-		routingErr := BizRouting(c)
-		if routingErr != nil {
-			fail(c, http.StatusInternalServerError, common.SysErrorMsg)
-			return
+		if c.RegularPath.NeedBreaker {
+			_ = hystrix.Do(c.RegularPath.ApiCode, func() error {
+				err := BizRouting(c)
+				if err != nil {
+					return errors.New(err.Error())
+				}
+				return nil
+			}, func(err error) error {
+				fail(c, http.StatusServiceUnavailable, err.Error())
+				return nil
+			})
+		} else {
+			err := BizRouting(c)
+			if err != nil {
+				fail(c, http.StatusServiceUnavailable, err.Error())
+			}
 		}
 
 		c.Abort()
@@ -88,16 +101,16 @@ func BizRouting(c *RouterContext) error {
 			return respErr
 		}
 	}
+	var res error
 
 	proxy.ErrorHandler = func(writer http.ResponseWriter, request *http.Request, routeErr error) {
-		if routeErr != nil {
-			utils.WriteHttpResponse(writer, http.StatusBadGateway, routeErr.Error(), c.RequestId, c.RequestTime, r, true)
-		}
+		res = routeErr
 	}
 
 	r.URL.Path = remoteUrlMeta.Path
 	r.Host = remote.Host
+
 	proxy.ServeHTTP(w, r)
 
-	return nil
+	return res
 }

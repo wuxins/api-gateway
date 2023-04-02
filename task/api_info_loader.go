@@ -3,6 +3,7 @@ package task
 import (
 	"encoding/json"
 	"github.com/gitstliu/log4go"
+	"github.com/wuxins/api-gateway/breaker"
 	"github.com/wuxins/api-gateway/config"
 	"github.com/wuxins/api-gateway/dao"
 	"github.com/wuxins/api-gateway/ratelimiter"
@@ -36,11 +37,14 @@ func flushPathMap() {
 			RedisAlive: redisclient.Alive(),
 		}
 		ratelimiter.GetRateLimiter().FlushLimiter(reteInfo)
+
+		breaker.FlushBreaker(api)
 	}
 
 	if flushErr != nil {
 		log4go.Error("Flush Error : %v", flushErr)
 		return
 	}
+
 	log4go.Info("FlushPathMap Success!")
 }

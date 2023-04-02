@@ -3,7 +3,6 @@ package routing
 import (
 	"context"
 	"github.com/wuxins/api-gateway/common"
-	"github.com/wuxins/api-gateway/dto"
 	"github.com/wuxins/api-gateway/regularpath"
 	"github.com/wuxins/api-gateway/utils"
 	"math"
@@ -36,7 +35,6 @@ type RouterContext struct {
 	RequestId              string
 	RequestTime            string
 	RequestUpstreamAddress string
-	RequestTenant          dto.ApiTenant
 }
 
 func (c *RouterContext) Get(key interface{}) interface{} {
@@ -128,6 +126,11 @@ func NewRouterHandler() *RouterHandler {
 		return
 	})
 
+	// oauth2.0 token endpoint
+	router.Group("/oauth/tokens").Use(
+		AccessControlPlugin(),
+		OauthTokenPlugin())
+
 	// reverse proxy router
 	router.Group("/").Use(
 		AccessControlPlugin(),
@@ -135,7 +138,7 @@ func NewRouterHandler() *RouterHandler {
 		RateLimiterPlugin(),
 		FallbackPlugin(),
 		IgnoreParamsPlugin(),
-		ReverseProxyPlugin())
+		BreakerProxyPlugin())
 
 	return &RouterHandler{
 		router,

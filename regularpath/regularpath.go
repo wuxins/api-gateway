@@ -30,9 +30,11 @@ type RegularPath struct {
 	DesSplitURL        []string
 	NeedRateLimit      bool
 	RateLimit          int
+	NeedBreaker        bool
 	NeedFallback       bool
 	Fallback           string
 	NeedMonitor        bool
+	NeedApiAuth        bool
 	ReadTimeout        int64
 	IgnoreHeaderParams []string
 	IgnoreQueryParams  []string
@@ -128,7 +130,6 @@ func urlsToPath(api dto.Api) (RegularPath, error) {
 	}
 
 	path := RegularPath{}
-	path.ApiName = api.Name
 	path.ApiCode = api.ApiCode
 	path.Method = api.Method
 	path.ReadTimeout = api.ReadTimeout
@@ -141,12 +142,16 @@ func urlsToPath(api dto.Api) (RegularPath, error) {
 	path.DesSplitURL = strings.Split(path.DesURL, "/")
 	path.SrcParams, path.SrcParamsIndex = urlToParamMap(path.SrcURL)
 	path.DesParams, path.DesParamsIndex = urlToParamMap(path.DesURL)
-	path.ApiId = api.Id
 	if api.NeedRateLimit == "Y" {
 		path.NeedRateLimit = true
 		path.RateLimit = api.RateLimit
 	} else {
 		path.NeedRateLimit = false
+	}
+	if api.NeedBreaker == "Y" {
+		path.NeedBreaker = true
+	} else {
+		path.NeedFallback = false
 	}
 	if api.NeedFallback == "Y" {
 		path.NeedFallback = true
@@ -158,6 +163,11 @@ func urlsToPath(api dto.Api) (RegularPath, error) {
 		path.NeedMonitor = true
 	} else {
 		path.NeedMonitor = false
+	}
+	if api.NeedApiAuth == "Y" {
+		path.NeedApiAuth = true
+	} else {
+		path.NeedApiAuth = false
 	}
 
 	ignoreQueryParams := api.IgnoreQueryParams

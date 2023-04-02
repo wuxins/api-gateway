@@ -1,9 +1,7 @@
-SELECT a.id,
-       a.NAME,
-       a.api_code,
-       a.method,
-       a.src_url,
-       a.des_url,
+select av.api_code,
+       av.method,
+       av.src_url,
+       av.des_url,
        av.read_timeout,
        av.need_rate_limit,
        av.rate_limit,
@@ -12,13 +10,38 @@ SELECT a.id,
        av.fallback,
        av.ignore_header_params,
        av.ignore_query_params,
-       se.address
-FROM api_version av
-         JOIN api a ON a.api_code = av.api_code
-    AND av.env = 'dev'
-         JOIN upstream_service s ON s.service_code = a.service_code
-         JOIN upstream_service_env se ON se.service_code = s.service_code AND se.env = av.env
-WHERE av.is_deleted = 'N'
-  AND a.is_deleted = 'N'
-  AND s.is_deleted = 'N'
-  AND se.is_deleted = 'N'
+       av.tenant_codes,
+       us.address
+from t_api_version av
+         join t_api a on a.api_code = av.api_code and av.env = 'DEV'
+         join t_upstream_service_version us on us.service_code = av.service_code and us.env = av.env
+where av.is_deleted = 'N'
+  and a.is_deleted = 'N'
+  and us.is_deleted = 'N';
+
+select env,
+       `key`,
+       secret,
+       token_sign_key,
+       token_sign_method,
+       token_expire_in,
+       token_expire_return_code
+from t_tenant_version
+where env = 'DEV'
+  and is_deleted = 'N';
+
+
+select *
+from t_api;
+
+select *
+from t_api_version;
+
+select *
+from t_upstream_service_version;
+
+select *
+from t_tenant;
+
+select *
+from t_tenant_version;

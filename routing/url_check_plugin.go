@@ -21,7 +21,7 @@ func UrlCheckPlugin() func(c *RouterContext) {
 
 		regularPath := regularpath.CheckURLMatch(currUrl, r.Method)
 		if regularPath == nil {
-			fail(c, http.StatusForbidden, common.PathErrorMsg)
+			fail(c, http.StatusForbidden, common.UnauthorizedMsg)
 			return
 		}
 

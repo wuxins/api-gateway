@@ -60,8 +60,12 @@ var tenantsMap = map[string]dto.Tenant{}
 
 func FlushTenants(tenants []dto.Tenant) {
 	for _, tenant := range tenants {
-		tenantsMap[tenant.TenantCode] = tenant
+		tenantsMap[tenant.TenantKey] = tenant
 	}
+}
+
+func GetTenants() map[string]dto.Tenant {
+	return tenantsMap
 }
 
 func FlushPathMapByDtos(apis []dto.Api) error {
@@ -177,10 +181,15 @@ func urlsToPath(api dto.Api) (RegularPath, error) {
 		path.NeedApiAuth = true
 		tenantCodesStr := api.TenantCodes
 		if len(tenantCodesStr) > 0 {
+			newTenantMap := map[string]dto.Tenant{}
 			tenantCodes := strings.Split(tenantCodesStr, common.DelimiterComma)
 			for _, code := range tenantCodes {
-				path.Tenants[code] = tenantsMap[code]
+				if _, ok := tenantsMap[code]; !ok {
+					continue
+				}
+				newTenantMap[code] = tenantsMap[code]
 			}
+			path.Tenants = newTenantMap
 		}
 	} else {
 		path.NeedApiAuth = false

@@ -1,10 +1,9 @@
 package dto
 
 type Tenant struct {
-	TenantCode            string `gorm:"tenant_code"`
-	Secret                string `gorm:"secret"`
-	TokenSignKey          string `gorm:"token_sign_key"`
-	TokenSignMethod       string `gorm:"token_sign_method"`
-	TokenExpireIn         int    `gorm:"token_expire_in"`
-	TokenExpireReturnCode string `gorm:"token_expire_return_code"`
+	TenantKey          string `gorm:"tenant_key"`
+	TenantSecret       string `gorm:"tenant_secret"`
+	TokenExpireIn      int    `gorm:"token_expire_in"`
+	TokenExpireCode    int    `gorm:"token_expire_code"`
+	TokenExpireContent string `gorm:"token_expire_content"`
 }

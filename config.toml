@@ -57,3 +57,7 @@
     MinIdleConns = 8
     MaxRetries = 0
     DetectAliveInterval = 1_000
+
+[Tenant]
+    TokenSignKey = "hello world"
+    TokenSignMethod = "HS256"

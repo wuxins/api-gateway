@@ -15,6 +15,7 @@ type Config struct {
 	Proxy  *Proxy  `yaml:"Proxy"`
 	DB     *DB     `yaml:"DB"`
 	Redis  *Redis  `yaml:"Redis"`
+	Tenant *Tenant `yaml:"Tenant"`
 }
 
 type Proxy struct {
@@ -81,6 +82,11 @@ type Routing struct {
 	MaxIdleConns        int   `yaml:"MaxIdleConns"`
 	MaxIdleConnsPerHost int   `yaml:"MaxIdleConnsPerHost"`
 	IdleConnTimeout     int64 `yaml:"IdleConnTimeout"`
+}
+
+type Tenant struct {
+	TokenSignKey    string `yaml:"TokenSignKey"`
+	TokenSignMethod string `yaml:"TokenSignMethod"`
 }
 
 type Rate struct {

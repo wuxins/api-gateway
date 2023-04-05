@@ -36,11 +36,13 @@ var SysErrorMsg = "System Error!"
 var BreakerErrorMsg = "Circuit Breaker Open!"
 var PathErrorMsg = "Path can not be decoded!"
 var TenantUnsupportedMsg = "Tenant not supported!"
+var TenantSKErrorMsg = "Tenant SK error!"
+var TenantTokenExpireMsg = "Tenant token expired!"
 var RateLimitMsg = "Rate limited!"
 
 var JwtSignKey = "my_sign_key"
 
-/**
+/*
 select av.api_code,
        av.method,
        av.src_url,
@@ -53,26 +55,27 @@ select av.api_code,
        av.fallback,
        av.ignore_header_params,
        av.ignore_query_params,
+       av.need_api_auth,
        av.tenant_codes,
        us.address
 from t_api_version av
-         join t_api a on a.api_code = av.api_code and av.env = 'DEV'
+         join t_api a on a.api_code = av.api_code and av.env = ?
          join t_upstream_service_version us on us.service_code = av.service_code and us.env = av.env
 where av.is_deleted = 'N'
   and a.is_deleted = 'N'
-  and us.is_deleted = 'N'
+  and us.is_deleted = 'N';
 */
-var ApiSql = "select av.api_code,\n       av.method,\n       av.src_url,\n       av.des_url,\n       av.read_timeout,\n       av.need_rate_limit,\n       av.rate_limit,\n       av.need_monitor,\n       av.need_fallback,\n       av.fallback,\n       av.ignore_header_params,\n       av.ignore_query_params,\n       av.tenant_codes,\n       us.address\nfrom t_api_version av\n         join t_api a on a.api_code = av.api_code and av.env = 'DEV'\n         join t_upstream_service_version us on us.service_code = av.service_code and us.env = av.env\nwhere av.is_deleted = 'N'\n  and a.is_deleted = 'N'\n  and us.is_deleted = 'N'"
+var ApiSql = "select av.api_code,\n       av.method,\n       av.src_url,\n       av.des_url,\n       av.read_timeout,\n       av.need_rate_limit,\n       av.rate_limit,\n       av.need_monitor,\n       av.need_fallback,\n       av.fallback,\n       av.ignore_header_params,\n       av.ignore_query_params,\n       av.need_api_auth,\n       av.tenant_codes,\n       us.address\nfrom t_api_version av\n         join t_api a on a.api_code = av.api_code and av.env = ?\n         join t_upstream_service_version us on us.service_code = av.service_code and us.env = av.env\nwhere av.is_deleted = 'N'\n  and a.is_deleted = 'N'\n  and us.is_deleted = 'N'"
 
-/**
-select key,
-       secret,
-       token_sign_key,
-       token_sign_method,
+/*
+select env,
+       tenant_key,
+       tenant_secret,
        token_expire_in,
-       token_expire_return_code
+       token_expire_code,
+       token_expire_content
 from t_tenant_version
 where env = ?
   and is_deleted = 'N';
 */
-var TenantSql = "select key,\n       secret,\n       token_sign_key,\n       token_sign_method,\n       token_expire_in,\n       token_expire_return_code\nfrom t_tenant_version\nwhere env = ?\n  and is_deleted = 'N'"
+var TenantSql = "select env,\n       tenant_key,\n       tenant_secret,\n       token_expire_in,\n       token_expire_code,\n       token_expire_content\nfrom t_tenant_version\nwhere env = ?\n  and is_deleted = 'N'"

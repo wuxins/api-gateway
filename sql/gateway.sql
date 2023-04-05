@@ -181,22 +181,21 @@ CREATE TABLE `t_upstream_service_version`
 DROP TABLE IF EXISTS `t_tenant_version`;
 CREATE TABLE `t_tenant_version`
 (
-    `id`                       bigint(0)                                               NOT NULL AUTO_INCREMENT COMMENT 'primary key',
-    `name`                     varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT 'tenant name',
-    `env`                      varchar(8) CHARACTER SET utf8 COLLATE utf8_general_ci   NOT NULL COMMENT 'tenant env',
-    `key`                      varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT 'tenant app key',
-    `secret`                   varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'tenant app secret',
-    `token_sign_key`           varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'token sign key',
-    `token_sign_method`        varchar(8) CHARACTER SET utf8 COLLATE utf8_general_ci   NOT NULL COMMENT 'token sign method',
-    `token_expire_in`          int(0)                                                  NOT NULL COMMENT 'token expire in',
-    `token_expire_return_code` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT 'token expire return code',
-    `gmt_created`              datetime(0)                                             NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'record created time',
-    `gmt_modified`             datetime(0)                                             NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT 'record updated time',
-    `creator`                  varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL DEFAULT 'system' COMMENT 'who created the record',
-    `modifier`                 varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL DEFAULT 'system' COMMENT 'who updated the record',
-    `is_deleted`               char(1) CHARACTER SET utf8 COLLATE utf8_general_ci      NOT NULL DEFAULT 'N' COMMENT 'logical delete identifier(Y-effective,N-ineffective)',
+    `id`                   bigint(0)                                               NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+    `name`                 varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT 'tenant name',
+    `env`                  varchar(8) CHARACTER SET utf8 COLLATE utf8_general_ci   NOT NULL COMMENT 'tenant env',
+    `tenant_key`           varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT 'tenant app key',
+    `tenant_secret`        varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'tenant app secret',
+    `token_expire_in`      int(0)                                                  NOT NULL COMMENT 'token expire in',
+    `token_expire_code`    varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT 'token expire return code',
+    `token_expire_content` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT 'token expire return content',
+    `gmt_created`          datetime(0)                                             NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'record created time',
+    `gmt_modified`         datetime(0)                                             NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT 'record updated time',
+    `creator`              varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL DEFAULT 'system' COMMENT 'who created the record',
+    `modifier`             varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL DEFAULT 'system' COMMENT 'who updated the record',
+    `is_deleted`           char(1) CHARACTER SET utf8 COLLATE utf8_general_ci      NOT NULL DEFAULT 'N' COMMENT 'logical delete identifier(Y-effective,N-ineffective)',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `idx_code` (`key`, `env`, `is_deleted`) USING BTREE
+    UNIQUE INDEX `idx_code` (`tenant_key`, `env`, `is_deleted`) USING BTREE
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 100000000
   CHARACTER SET = utf8

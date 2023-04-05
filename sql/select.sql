@@ -10,6 +10,7 @@ select av.api_code,
        av.fallback,
        av.ignore_header_params,
        av.ignore_query_params,
+       av.need_api_auth,
        av.tenant_codes,
        us.address
 from t_api_version av
@@ -20,12 +21,11 @@ where av.is_deleted = 'N'
   and us.is_deleted = 'N';
 
 select env,
-       `key`,
-       secret,
-       token_sign_key,
-       token_sign_method,
+       tenant_key,
+       tenant_secret,
        token_expire_in,
-       token_expire_return_code
+       token_expire_code,
+       token_expire_content
 from t_tenant_version
 where env = 'DEV'
   and is_deleted = 'N';

@@ -1,8 +1,10 @@
 package routing
 
 import (
+	"crypto/md5"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/wuxins/api-gateway/common"
 	"github.com/wuxins/api-gateway/config"
@@ -66,7 +68,10 @@ func OauthTokenPlugin() func(c *RouterContext) {
 			fail(c, http.StatusUnauthorized, common.TenantUnsupportedMsg)
 			return
 		}
-		if tenants[key].TenantSecret != secret {
+		salt := tenants[key].TenantSecretSalt
+		tenantSecret := tenants[key].TenantSecret
+
+		if fmt.Sprintf("%x", md5.Sum([]byte(tenantSecret+salt))) != secret {
 			fail(c, http.StatusUnauthorized, common.TenantSKErrorMsg)
 			return
 		}

@@ -71,6 +71,7 @@ var ApiSql = "select av.api_code,\n       av.method,\n       av.src_url,\n      
 select env,
        tenant_key,
        tenant_secret,
+       tenant_secret_salt,
        token_expire_in,
        token_expire_code,
        token_expire_content
@@ -78,4 +79,4 @@ from t_tenant_version
 where env = ?
   and is_deleted = 'N';
 */
-var TenantSql = "select env,\n       tenant_key,\n       tenant_secret,\n       token_expire_in,\n       token_expire_code,\n       token_expire_content\nfrom t_tenant_version\nwhere env = ?\n  and is_deleted = 'N'"
+var TenantSql = "select env,\n       tenant_key,\n       tenant_secret,\n       tenant_secret_salt,\n       token_expire_in,\n       token_expire_code,\n       token_expire_content\nfrom t_tenant_version\nwhere env = ?\n  and is_deleted = 'N'"

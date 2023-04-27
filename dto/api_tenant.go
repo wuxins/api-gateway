@@ -1,6 +1,7 @@
 package dto
 
-type Tenant struct {
+type ApiTenant struct {
+	ApiCode            string `gorm:"api_code"`
 	TenantCode         string `gorm:"tenant_code"`
 	TenantKey          string `gorm:"tenant_key"`
 	TenantSecret       string `gorm:"tenant_secret"`

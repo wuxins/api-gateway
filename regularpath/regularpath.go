@@ -35,7 +35,7 @@ type RegularPath struct {
 	Fallback           string
 	NeedMonitor        bool
 	NeedApiAuth        bool
-	Tenants            map[string]dto.Tenant
+	ApiTenants         map[string]dto.ApiTenant
 	ReadTimeout        int64
 	IgnoreHeaderParams []string
 	IgnoreQueryParams  []string
@@ -68,10 +68,19 @@ func GetTenants() map[string]dto.Tenant {
 	return tenantsMap
 }
 
-func FlushPathMapByDtos(apis []dto.Api) error {
+func FlushPathMapByDtos(apis []dto.Api, apiTenants []dto.ApiTenant) error {
 
 	requestMethodWithApis := map[string][]RegularPath{}
 	for _, api := range apis {
+		api.ApiTenants = make(map[string]dto.ApiTenant)
+		if api.NeedApiAuth == "Y" {
+			for _, apiTenant := range apiTenants {
+				if apiTenant.ApiCode == api.ApiCode {
+					api.ApiTenants[apiTenant.TenantCode] = apiTenant
+				}
+			}
+		}
+
 		path, pathErr := urlsToPath(api)
 		if pathErr != nil {
 			return pathErr
@@ -179,18 +188,7 @@ func urlsToPath(api dto.Api) (RegularPath, error) {
 	}
 	if api.NeedApiAuth == "Y" {
 		path.NeedApiAuth = true
-		tenantCodesStr := api.TenantCodes
-		if len(tenantCodesStr) > 0 {
-			newTenantMap := map[string]dto.Tenant{}
-			tenantCodes := strings.Split(tenantCodesStr, common.DelimiterComma)
-			for _, code := range tenantCodes {
-				if _, ok := tenantsMap[code]; !ok {
-					continue
-				}
-				newTenantMap[code] = tenantsMap[code]
-			}
-			path.Tenants = newTenantMap
-		}
+		path.ApiTenants = api.ApiTenants
 	} else {
 		path.NeedApiAuth = false
 	}

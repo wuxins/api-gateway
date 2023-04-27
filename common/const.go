@@ -56,7 +56,6 @@ select av.api_code,
        av.ignore_header_params,
        av.ignore_query_params,
        av.need_api_auth,
-       av.tenant_codes,
        us.address
 from t_api_version av
          join t_api a on a.api_code = av.api_code and av.env = ?
@@ -65,10 +64,10 @@ where av.is_deleted = 'N'
   and a.is_deleted = 'N'
   and us.is_deleted = 'N';
 */
-var ApiSql = "select av.api_code,\n       av.method,\n       av.src_url,\n       av.des_url,\n       av.read_timeout,\n       av.need_rate_limit,\n       av.rate_limit,\n       av.need_monitor,\n       av.need_fallback,\n       av.fallback,\n       av.ignore_header_params,\n       av.ignore_query_params,\n       av.need_api_auth,\n       av.tenant_codes,\n       us.address\nfrom t_api_version av\n         join t_api a on a.api_code = av.api_code and av.env = ?\n         join t_upstream_service_version us on us.service_code = av.service_code and us.env = av.env\nwhere av.is_deleted = 'N'\n  and a.is_deleted = 'N'\n  and us.is_deleted = 'N'"
+var ApiSql = "select av.api_code,\n       av.method,\n       av.src_url,\n       av.des_url,\n       av.read_timeout,\n       av.need_rate_limit,\n       av.rate_limit,\n       av.need_monitor,\n       av.need_fallback,\n       av.fallback,\n       av.ignore_header_params,\n       av.ignore_query_params,\n       av.need_api_auth,\n       us.address\nfrom t_api_version av\n         join t_api a on a.api_code = av.api_code and av.env = ?\n         join t_upstream_service_version us on us.service_code = av.service_code and us.env = av.env\nwhere av.is_deleted = 'N'\n  and a.is_deleted = 'N'\n  and us.is_deleted = 'N'"
 
 /*
-select env,
+select tenant_code,
        tenant_key,
        tenant_secret,
        tenant_secret_salt,
@@ -79,4 +78,23 @@ from t_tenant_version
 where env = ?
   and is_deleted = 'N';
 */
-var TenantSql = "select env,\n       tenant_key,\n       tenant_secret,\n       tenant_secret_salt,\n       token_expire_in,\n       token_expire_code,\n       token_expire_content\nfrom t_tenant_version\nwhere env = ?\n  and is_deleted = 'N'"
+var TenantSql = "select tenant_code,\n       tenant_key,\n       tenant_secret,\n       tenant_secret_salt,\n       token_expire_in,\n       token_expire_code,\n       token_expire_content\nfrom t_tenant_version\nwhere env = ?\n  and is_deleted = 'N'"
+
+/**
+select att.api_code,
+       ttv.tenant_code,
+       ttv.tenant_key,
+       ttv.tenant_secret,
+       ttv.tenant_secret_salt,
+       ttv.token_expire_in,
+       ttv.token_expire_code,
+       ttv.token_expire_content
+from t_tenant_version ttv
+         left join t_tenant tt on tt.tenant_code = ttv.tenant_code
+         left join t_api_tenant att on att.tenant_code = ttv.tenant_code
+where att.is_deleted = 'N'
+  and tt.is_deleted = 'N'
+  and ttv.is_deleted = 'N'
+  and ttv.env = ?
+*/
+var ApiTenantSql = "select att.api_code,\n       ttv.tenant_code,\n       ttv.tenant_key,\n       ttv.tenant_secret,\n       ttv.tenant_secret_salt,\n       ttv.token_expire_in,\n       ttv.token_expire_code,\n       ttv.token_expire_content\nfrom t_tenant_version ttv\n         left join t_tenant tt on tt.tenant_code = ttv.tenant_code\n         left join t_api_tenant att on att.tenant_code = ttv.tenant_code\nwhere att.is_deleted = 'N'\n  and tt.is_deleted = 'N'\n  and ttv.is_deleted = 'N'\n  and ttv.env = ?"

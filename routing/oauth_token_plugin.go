@@ -70,13 +70,13 @@ func OauthTokenPlugin() func(c *RouterContext) {
 		}
 		salt := tenants[key].TenantSecretSalt
 		tenantSecret := tenants[key].TenantSecret
-
-		if fmt.Sprintf("%x", md5.Sum([]byte(tenantSecret+salt))) != secret {
+		secretSum := fmt.Sprintf("%x", md5.Sum([]byte(secret+salt)))
+		if !strings.EqualFold(secretSum, tenantSecret) {
 			fail(c, http.StatusUnauthorized, common.TenantSKErrorMsg)
 			return
 		}
 		claims := jwt.StandardClaims{
-			Issuer:    key,
+			Issuer:    tenants[key].TenantCode,
 			ExpiresAt: time.Now().Add(time.Duration(tenants[key].TokenExpireIn) * time.Second).In(time.Local).Unix(),
 		}
 

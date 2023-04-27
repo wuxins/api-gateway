@@ -20,3 +20,9 @@ func GetAllTenants() []dto.Tenant {
 	dbclient.GetDB().Raw(common.TenantSql, config.GetConfigure().System.Env).Scan(&tenants)
 	return tenants
 }
+
+func GetAllApiTenants() []dto.ApiTenant {
+	var apiTenants []dto.ApiTenant
+	dbclient.GetDB().Raw(common.ApiTenantSql, config.GetConfigure().System.Env).Scan(&apiTenants)
+	return apiTenants
+}

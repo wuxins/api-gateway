@@ -18,7 +18,7 @@ func TenantCheckPlugin() func(c *RouterContext) {
 			c.Next()
 			return
 		}
-		tenants := regularPath.Tenants
+		tenants := regularPath.ApiTenants
 		if nil == tenants {
 			fail(c, http.StatusUnauthorized, common.TenantUnsupportedMsg)
 			return

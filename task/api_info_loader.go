@@ -24,12 +24,13 @@ func StartFlushPathMap() {
 
 func flushPathMap() {
 
+	regularpath.FlushTenants(dao.GetAllTenants())
+
 	apis := dao.GetAllApi()
 	marshal, _ := json.Marshal(apis)
 	log4go.Info("GetAllApi : %v", string(marshal))
 
-	regularpath.FlushTenants(dao.GetAllTenants())
-	flushErr := regularpath.FlushPathMapByDtos(apis)
+	flushErr := regularpath.FlushPathMapByDtos(apis, dao.GetAllApiTenants())
 	if flushErr != nil {
 		log4go.Error("Flush Error : %v", flushErr)
 		return

@@ -18,7 +18,7 @@ type Api struct {
 	ReadTimeout            int64  `gorm:"read_timeout"`
 	IgnoreHeaderParams     string `gorm:"ignore_header_params"`
 	IgnoreQueryParams      string `gorm:"ignore_query_params"`
-	TenantCodes            string `gorm:"tenant_codes"`
 	NeedGray               string `gorm:"need_gray"`
+	ApiTenants             map[string]ApiTenant
 	GrayStrategy           GrayStrategy
 }

@@ -40,7 +40,8 @@ type RegularPath struct {
 	IgnoreHeaderParams []string
 	IgnoreQueryParams  []string
 	NeedGray           bool
-	GrayStrategy       dto.GrayStrategy
+	GrayRule           dto.GrayRule
+	GrayAddress        string
 	Transport          http.RoundTripper
 }
 
@@ -150,13 +151,11 @@ func urlsToPath(api dto.Api) (RegularPath, error) {
 			return RegularPath{}, errors.New(fmt.Sprintf("Parameter %v is mismatching", key))
 		}
 	}
-
 	path := RegularPath{}
 	path.ApiCode = api.ApiCode
 	path.Method = api.Method
 	path.ReadTimeout = api.ReadTimeout
 	path.Address = api.Address
-	path.GrayStrategy = api.GrayStrategy
 	path.URL = placeHolderRegexp.ReplaceAllString(api.SrcUrl, regexpStringUnshell)
 	path.SrcURL = api.SrcUrl
 	path.DesURL = api.DesUrl
@@ -164,6 +163,14 @@ func urlsToPath(api dto.Api) (RegularPath, error) {
 	path.DesSplitURL = strings.Split(path.DesURL, "/")
 	path.SrcParams, path.SrcParamsIndex = urlToParamMap(path.SrcURL)
 	path.DesParams, path.DesParamsIndex = urlToParamMap(path.DesURL)
+	path.GrayAddress = api.GrayAddress
+	rule := dto.GetGrayRule(api.GrayRuleCode)
+	if nil != rule {
+		path.NeedGray = true
+		path.GrayRule = *rule
+	} else {
+		path.NeedGray = false
+	}
 	if api.NeedRateLimit == "Y" {
 		path.NeedRateLimit = true
 		path.RateLimit = api.RateLimit

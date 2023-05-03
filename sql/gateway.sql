@@ -158,15 +158,17 @@ CREATE TABLE `t_upstream_service`
 DROP TABLE IF EXISTS `t_upstream_service_version`;
 CREATE TABLE `t_upstream_service_version`
 (
-    `id`           bigint(0)                                               NOT NULL AUTO_INCREMENT COMMENT 'primary key',
-    `service_code` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT 'service code',
-    `env`          varchar(8) CHARACTER SET utf8 COLLATE utf8_general_ci   NOT NULL COMMENT 'environment code',
-    `address`      varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'service addresses',
-    `gmt_created`  datetime(0)                                             NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'record created time',
-    `gmt_modified` datetime(0)                                             NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT 'record updated time',
-    `creator`      varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL DEFAULT 'system' COMMENT 'who created the record',
-    `modifier`     varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL DEFAULT 'system' COMMENT 'who updated the record',
-    `is_deleted`   char(1) CHARACTER SET utf8 COLLATE utf8_general_ci      NOT NULL DEFAULT 'N' COMMENT 'logical delete identifier(Y-effective,N-ineffective)',
+    `id`             bigint(0)                                               NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+    `service_code`   varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT 'service code',
+    `env`            varchar(8) CHARACTER SET utf8 COLLATE utf8_general_ci   NOT NULL COMMENT 'environment code',
+    `address`        varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'service addresses',
+    `gray_rule_code` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT 'service gray rule code',
+    `gray_address`   varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'service gray addresses',
+    `gmt_created`    datetime(0)                                             NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'record created time',
+    `gmt_modified`   datetime(0)                                             NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT 'record updated time',
+    `creator`        varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL DEFAULT 'system' COMMENT 'who created the record',
+    `modifier`       varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL DEFAULT 'system' COMMENT 'who updated the record',
+    `is_deleted`     char(1) CHARACTER SET utf8 COLLATE utf8_general_ci      NOT NULL DEFAULT 'N' COMMENT 'logical delete identifier(Y-effective,N-ineffective)',
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE INDEX `idx_code_env` (`service_code`, `env`, `is_deleted`) USING BTREE
 ) ENGINE = InnoDB
@@ -327,3 +329,50 @@ CREATE TABLE `t_report_config`
   CHARACTER SET = utf8
   COLLATE = utf8_general_ci COMMENT = 'Api version define'
   ROW_FORMAT = Compact;
+
+
+DROP TABLE IF EXISTS `t_gray_rule`;
+create table t_gray_rule
+(
+    id           bigint                                not null auto_increment primary key comment 'primary key',
+    rule_code    varchar(32)                           not null comment 'gray rule code',
+    rule_name    varchar(32)                           not null comment 'gray rule name',
+    global       char        default 'N'               null comment 'gray global rule',
+    gmt_created  datetime    default CURRENT_TIMESTAMP not null comment 'record created time',
+    gmt_modified datetime    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment 'record updated time',
+    creator      varchar(45) default 'system'          not null comment 'who created the record',
+    modifier     varchar(45) default 'system'          not null comment 'who updated the record',
+    is_deleted   char        default 'N'               not null comment 'logical delete identifier(Y-effective,N-ineffective)',
+    constraint idx_code
+        unique (rule_code, is_deleted)
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 100000000
+  CHARACTER SET = utf8
+  COLLATE = utf8_general_ci COMMENT = 'Gray rule info'
+  ROW_FORMAT = Compact;
+
+DROP TABLE IF EXISTS `t_gray_rule_version`;
+create table t_gray_rule_version
+(
+    id              bigint                                not null auto_increment primary key comment 'primary key',
+    rule_code       varchar(32)                           not null comment 'gray rule code',
+    rule_name       varchar(32)                           not null comment 'gray rule name',
+    env             varchar(8)                            not null comment 'gray environment code',
+    mode            tinyint     default 0                 null comment 'gray mode（0：feature 1：scale)',
+    scale_rate      int         default 0                 null comment 'gray rate percent on scale mode',
+    feature_content varchar(1600)                         null comment 'gray content on feature mode',
+    header_pass_tag varchar(32)                           null comment 'gray pass header tag name',
+    active          char        default 'N'               null comment 'gray rule switch',
+    gmt_created     datetime    default CURRENT_TIMESTAMP not null comment 'record created time',
+    gmt_modified    datetime    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment 'record updated time',
+    creator         varchar(45) default 'system'          not null comment 'who created the record',
+    modifier        varchar(45) default 'system'          not null comment 'who updated the record',
+    is_deleted      char        default 'N'               not null comment 'logical delete identifier(Y-effective,N-ineffective)',
+    constraint idx_code
+        unique (rule_code, env, is_deleted)
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 100000000
+  CHARACTER SET = utf8
+  COLLATE = utf8_general_ci COMMENT = 'Gray rule info version'
+  ROW_FORMAT = Compact;
+

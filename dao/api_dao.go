@@ -26,3 +26,10 @@ func GetAllApiTenants() []dto.ApiTenant {
 	dbclient.GetDB().Raw(common.ApiTenantSql, config.GetConfigure().System.Env).Scan(&apiTenants)
 	return apiTenants
 }
+
+func GetAllGrayRules() []dto.GrayRule {
+
+	var rules []dto.GrayRule
+	dbclient.GetDB().Raw(common.GrayRuleSql, config.GetConfigure().System.Env).Scan(&rules)
+	return rules
+}

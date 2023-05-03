@@ -6,6 +6,7 @@ import (
 	"github.com/wuxins/api-gateway/breaker"
 	"github.com/wuxins/api-gateway/config"
 	"github.com/wuxins/api-gateway/dao"
+	"github.com/wuxins/api-gateway/dto"
 	"github.com/wuxins/api-gateway/ratelimiter"
 	"github.com/wuxins/api-gateway/redisclient"
 	"github.com/wuxins/api-gateway/regularpath"
@@ -25,6 +26,8 @@ func StartFlushPathMap() {
 func flushPathMap() {
 
 	regularpath.FlushTenants(dao.GetAllTenants())
+
+	dto.FlushGrayRule(dao.GetAllGrayRules())
 
 	apis := dao.GetAllApi()
 	marshal, _ := json.Marshal(apis)

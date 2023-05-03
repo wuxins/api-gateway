@@ -4,7 +4,6 @@ type Api struct {
 	ApiCode                string `gorm:"api_code"`
 	Method                 string `gorm:"method"`
 	Address                string `gorm:"address"`
-	GrayContent            string `gorm:"gray_content"`
 	SrcUrl                 string `gorm:"src_url"`
 	DesUrl                 string `gorm:"des_url"`
 	NeedRateLimit          string `gorm:"need_rate_limit"`
@@ -20,5 +19,7 @@ type Api struct {
 	IgnoreQueryParams      string `gorm:"ignore_query_params"`
 	NeedGray               string `gorm:"need_gray"`
 	ApiTenants             map[string]ApiTenant
-	GrayStrategy           GrayStrategy
+	GrayAddress            string `gorm:"gray_address"`
+	GrayRuleCode           string `gorm:"gray_rule_code"`
+	GrayRule               GrayRule
 }

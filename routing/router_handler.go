@@ -139,6 +139,7 @@ func NewRouterHandler() *RouterHandler {
 		RateLimiterPlugin(),
 		FallbackPlugin(),
 		IgnoreParamsPlugin(),
+		GrayStrategyPlugin(),
 		BreakerProxyPlugin())
 
 	return &RouterHandler{

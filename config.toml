@@ -4,14 +4,14 @@
     LogConfigFile = "log.xml"
 
 [Http]
-    ServicePort = 8989
+    ServicePort = 9999
     ServerReadTimeout = 1_000
     ServerKeepalive = 3_000
     GracefulShutdownTimeout = 60_000
 
 [Proxy]
     [Proxy.Http]
-    ServicePort = 8_080
+    ServicePort = 8888
     ServerReadTimeout = 1_000
     ServerKeepalive = 3_000
     GracefulShutdownTimeout = 60_000
@@ -40,16 +40,16 @@
 
 [DB]
     DBType = "mysql"
-    ConnectionString = "root:NsvGgQ3puI90S2#5@tcp(rm-3ns2ion03j6021v7c.mysql.rds.aliyuncs.com:3303)/api_gateway?charset=utf8&parseTime=True"
+    ConnectionString = "root:yicai.liu@tcp(mysql:3306)/api_gateway?charset=utf8&parseTime=True"
     LogMode = true
     MaxOpenConns = 10
     MaxIdleConns = 5
     ConnMaxIdleTime = 30_000
 
 [Redis]
-    Addresses = "zains-dev-bm.redis.rds.aliyuncs.com:6379"
+    Addresses = "redis:6379"
     DB = 0
-    Password = "zains_dev_bm:yCd0Fxm8gz0aC4"
+    Password = "yicai.liu"
     PoolSize = 0
     DialTimeout = 100
     ReadTimeout = 100

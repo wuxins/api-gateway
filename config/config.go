@@ -16,6 +16,7 @@ type Config struct {
 	DB     *DB     `yaml:"DB"`
 	Redis  *Redis  `yaml:"Redis"`
 	Tenant *Tenant `yaml:"Tenant"`
+	CMD    *CMD    `yaml:"CMD"`
 }
 
 type Proxy struct {
@@ -101,6 +102,14 @@ type Monitor struct {
 	LogRotateMaxLines int    `yaml:"LogRotateMaxLines"`
 }
 
+type CMD struct {
+	ConfMode       string
+	NacosAddress   string
+	NacosNamespace string
+	NacosDataid    string
+	NacosGroup     string
+}
+
 // GetConfigure export configuration information
 func GetConfigure() *Config {
 	return configure
@@ -131,24 +140,16 @@ func getConfigureLoader(mode string) ConfigureLoader {
 // Example on program arguments startup: -NACOSADDRESS=127.0.0.1:8888 -NAMESPACE=dev -DATAID=testDataId -GROUP=DEFAULT_GROUP
 func init() {
 
-	configMode := flag.String(common.ConfLoadMode, "", "config mode")
-	flag.Parse()
+	cmd := parseFromCmdAndEnvs()
 	config := Config{}
-	if len(*configMode) <= 0 {
-		*configMode = os.Getenv(common.ConfLoadMode)
-	}
-	if len(*configMode) <= 0 {
-		*configMode = common.ConfLoadModeLocal
-	}
-
-	log4go.Info("Config mode: %v", *configMode)
-	err := getConfigureLoader(*configMode).load(config)
+	config.CMD = &cmd
+	log4go.Info("Config mode: %v", config.CMD.ConfMode)
+	err := getConfigureLoader(config.CMD.ConfMode).load(config)
 	if err != nil {
 		log4go.Info("Config Load Error", err.Error())
 		panic(err)
 		return
 	}
-
 	if len(configure.System.LogConfigFile) <= 0 {
 		configure.System.LogConfigFile = "log.xml" // default with the startup binary file int the same dir
 	}
@@ -156,6 +157,51 @@ func init() {
 		panic("Config env can not be nil")
 		return
 	}
-
 	log4go.Info("Config Load Success!")
+}
+
+func parseFromCmdAndEnvs() CMD {
+	configMode := flag.String(common.ConfLoadMode, "", "config mode")
+	serviceAddr := flag.String(common.NacosAddress, "", "Nacos Address")
+	namespace := flag.String(common.NacosNamespace, "", "Nacos Namespace")
+	dataId := flag.String(common.NacosDataid, "", "Nacos DataId")
+	group := flag.String(common.NacosGroup, "", "Nacos Group")
+	flag.Parse()
+	cmd := CMD{}
+	cmd.ConfMode = *configMode
+	if len(cmd.ConfMode) <= 0 {
+		cmd.ConfMode = os.Getenv(common.ConfLoadMode)
+	}
+	if len(cmd.ConfMode) <= 0 {
+		cmd.ConfMode = common.ConfLoadModeLocal
+	}
+	cmd.NacosAddress = *serviceAddr
+	if len(cmd.NacosAddress) <= 0 {
+		envAddr := os.Getenv(common.NacosAddress)
+		if len(envAddr) > 0 {
+			cmd.NacosAddress = envAddr
+		}
+	}
+	cmd.NacosNamespace = *namespace
+	if len(cmd.NacosNamespace) <= 0 {
+		envNamespace := os.Getenv(common.NacosNamespace)
+		if len(envNamespace) > 0 {
+			cmd.NacosNamespace = envNamespace
+		}
+	}
+	cmd.NacosDataid = *dataId
+	if len(cmd.NacosDataid) <= 0 {
+		envDataId := os.Getenv(common.NacosDataid)
+		if len(envDataId) > 0 {
+			cmd.NacosDataid = envDataId
+		}
+	}
+	cmd.NacosGroup = *group
+	if len(cmd.NacosGroup) <= 0 {
+		envGroup := os.Getenv(common.NacosGroup)
+		if len(envGroup) > 0 {
+			cmd.NacosGroup = envGroup
+		}
+	}
+	return cmd
 }

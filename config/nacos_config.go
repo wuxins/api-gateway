@@ -1,14 +1,11 @@
 package config
 
 import (
-	"flag"
 	"github.com/BurntSushi/toml"
 	"github.com/nacos-group/nacos-sdk-go/clients"
 	"github.com/nacos-group/nacos-sdk-go/clients/config_client"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/vo"
-	"github.com/wuxins/api-gateway/common"
-	"os"
 	"strconv"
 	"strings"
 )
@@ -20,48 +17,14 @@ type NacosLoader struct {
 
 func (loader *NacosLoader) load(config Config) error {
 
-	serviceAddr := flag.String(common.NacosAddress, "", "Nacos Address")
-	namespace := flag.String(common.NacosNamespace, "", "Nacos Namespace")
-	dataId := flag.String(common.NacosDataid, "", "Nacos DataId")
-	group := flag.String(common.NacosGroup, "", "Nacos Group")
-	flag.Parse()
-
-	if len(*serviceAddr) <= 0 {
-		envAddr := os.Getenv(common.NacosAddress)
-		if len(envAddr) > 0 {
-			*serviceAddr = envAddr
-		}
-	}
-
-	if len(*namespace) <= 0 {
-		envNamespace := os.Getenv(common.NacosNamespace)
-		if len(envNamespace) > 0 {
-			*namespace = envNamespace
-		}
-	}
-
-	if len(*dataId) <= 0 {
-		envDataId := os.Getenv(common.NacosDataid)
-		if len(envDataId) > 0 {
-			*dataId = envDataId
-		}
-	}
-
-	if len(*group) <= 0 {
-		envGroup := os.Getenv(common.NacosGroup)
-		if len(envGroup) > 0 {
-			*group = envGroup
-		}
-	}
-
-	err := initConfigClient(*serviceAddr, *namespace)
+	err := initConfigClient(config.CMD.NacosAddress, config.CMD.NacosNamespace)
 	if err != nil {
 		return err
 	}
 	var content string
 	content, err = client.GetConfig(vo.ConfigParam{
-		DataId: *dataId,
-		Group:  *group,
+		DataId: config.CMD.NacosDataid,
+		Group:  config.CMD.NacosGroup,
 	})
 	if err != nil {
 		return err

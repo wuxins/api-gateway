@@ -1,47 +1,27 @@
 package monitor
 
 import (
-	"github.com/gitstliu/log4go"
+	"github.com/sirupsen/logrus"
 	"github.com/wuxins/api-gateway/config"
-	"strings"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-var monitorLogger = log4go.Logger{}
+var log *logrus.Logger
 
-const M = 1024 * 1024
-
-func Init(monitor config.Monitor) log4go.Logger {
-
-	fileDir := monitor.LogDir
-	fileName := monitor.LogFileName
-	rotateSize := monitor.LogRotateMaxMSize
-	rotateMaxLines := monitor.LogRotateMaxLines
-	if len(fileDir) <= 0 {
-		fileDir = ""
-	} else {
-		if !strings.HasSuffix(fileDir, "/") {
-			fileDir = fileDir + "/"
-		}
-	}
-	if len(fileName) <= 0 {
-		fileName = "monitor.log"
-	}
-	if rotateSize <= 0 {
-		rotateSize = 100
-	}
-	if rotateMaxLines <= 0 {
-		rotateMaxLines = 500000
-	}
-
-	writer := log4go.NewFileLogWriter(fileDir+fileName, true)
-	writer.SetFormat("%M")
-	writer.SetRotateDaily(false)
-	writer.SetRotateSize(rotateSize * M)
-	writer.SetRotateLines(rotateMaxLines)
-	monitorLogger.AddFilter("file", log4go.INFO, writer)
-	return monitorLogger
+func Init(monitor config.Monitor) {
+	log = logrus.New()
+	log.SetFormatter(&logrus.JSONFormatter{
+		DisableTimestamp: true,
+	})
+	log.SetOutput(&lumberjack.Logger{
+		Filename:   "monitor.log",
+		MaxSize:    100,
+		MaxBackups: 100,
+		MaxAge:     3,
+		Compress:   true,
+	})
 }
 
 func Report(event Event) {
-	monitorLogger.Info(event)
+	log.Info(event)
 }

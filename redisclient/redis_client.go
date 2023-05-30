@@ -2,10 +2,10 @@ package redisclient
 
 import (
 	"context"
-	"github.com/gitstliu/log4go"
 	"github.com/go-redis/redis/v8"
 	"github.com/wuxins/api-gateway/common"
 	"github.com/wuxins/api-gateway/config"
+	"github.com/wuxins/api-gateway/log"
 	"github.com/wuxins/api-gateway/monitor"
 	"strings"
 	"time"
@@ -45,7 +45,7 @@ func Init(redisConf config.Redis) redis.UniversalClient {
 				})
 			} else {
 				alive = true
-				log4go.Debug("Redis heartbeat ok")
+				log.Debug("Redis heartbeat ok")
 			}
 		}
 	}()

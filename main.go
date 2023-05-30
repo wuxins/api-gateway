@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/gitstliu/log4go"
 	"github.com/wuxins/api-gateway/config"
 	"github.com/wuxins/api-gateway/dbclient"
 	"github.com/wuxins/api-gateway/idgenerator"
@@ -17,13 +16,8 @@ import (
 
 func main() {
 
-	// log init
-	log4go.LoadConfiguration(config.GetConfigure().System.LogConfigFile)
-	defer log4go.Close()
-
 	// monitor init
-	monitorDog := monitor.Init(*config.GetConfigure().Proxy.Monitor)
-	defer monitorDog.Close()
+	monitor.Init(*config.GetConfigure().Proxy.Monitor)
 
 	// db init
 	dbclient.Init(*config.GetConfigure().DB)

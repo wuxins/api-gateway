@@ -1,9 +1,9 @@
 package ratelimiter
 
 import (
-	"github.com/gitstliu/log4go"
 	"github.com/go-redis/redis/v8"
 	"github.com/wuxins/api-gateway/common"
+	"github.com/wuxins/api-gateway/log"
 	"github.com/wuxins/api-gateway/monitor"
 	"github.com/wuxins/api-gateway/redisclient"
 	"strconv"
@@ -40,7 +40,10 @@ func (rateLimiter *ServerRateLimiter) FlushLimiter(info RateLimiterCtx) {
 		// Remove useless key
 		key := common.ServerRatePrefix + info.Key // key[1]
 		count, _ := redisclient.GetInstance().ZRemRangeByScore(redisclient.BackgroundCtx, key, "0", strconv.FormatInt(common.UnixMilliseconds(time.Now().Add(-time.Minute*1)), 10)).Result()
-		log4go.Debug("FlushLimiter, Remove useless key % v, count %v", key, count)
+		log.Pairs(map[string]interface{}{
+			"key":   key,
+			"count": count,
+		}).Debug("FlushLimiter, Remove useless key")
 	}
 }
 
@@ -79,12 +82,20 @@ func (rateLimiter *ServerRateLimiter) TryAcquire(info RateLimiterCtx) (bool, err
 		}
 		// Redis go wrong
 		if err != nil {
-			log4go.Error("TryAcquire eval script error,requestId %v,error %v", requestId, err)
+			log.Pairs(map[string]interface{}{
+				"requestId": requestId,
+			}).Error("TryAcquire eval script error", err)
 			return false, err
 		}
 		// Lua boolean true -> r integer reply with value of 1 , return code == 1
 		code := resp.(int64)
-		log4go.Debug("TryAcquire redis key %v, requestId %v,limit rate %v", key, requestId, info.Rate)
+
+		log.Pairs(map[string]interface{}{
+			"redisKey":  key,
+			"requestId": requestId,
+			"limitRate": info.Rate,
+		}).Debug("TryAcquire redis key")
+
 		return code == 1, nil
 	}
 
@@ -110,7 +121,13 @@ func (rateLimiter *ServerRateLimiter) TryAcquire(info RateLimiterCtx) (bool, err
 		return false, nil
 	}
 
-	log4go.Debug("TryAcquire local key %v success, requestId %v,current rate %v, limit rate %v", apiCode, requestId, localRateCounter.m[apiCode], acRate)
+	log.Pairs(map[string]interface{}{
+		"localKey":    apiCode,
+		"requestId":   requestId,
+		"currentRate": localRateCounter.m[apiCode],
+		"limitRate":   info.Rate,
+	}).Debug("TryAcquire redis key")
+
 	return true, nil
 }
 
@@ -130,11 +147,22 @@ func (rateLimiter *ServerRateLimiter) Release(info RateLimiterCtx) {
 			})
 			return
 		}
-		log4go.Debug("Release redis key %v ,requestId %v,removeCount %v", key, info.RequestId, remCount)
+
+		log.Pairs(map[string]interface{}{
+			"redisKey":    key,
+			"requestId":   info.RequestId,
+			"removeCount": remCount,
+			"limitRate":   info.Rate,
+		}).Debug("Release redis key")
 	} else {
 		localRateCounter.Lock()
 		localRateCounter.m[apiCode]--
 		localRateCounter.Unlock()
-		log4go.Debug("Release local key %v success,requestId %v,current rate %v", apiCode, info.RequestId, localRateCounter.m[apiCode])
+
+		log.Pairs(map[string]interface{}{
+			"localKey":    apiCode,
+			"requestId":   info.RequestId,
+			"currentRate": localRateCounter.m[apiCode],
+		}).Debug("Release local key")
 	}
 }

@@ -2,11 +2,11 @@ package task
 
 import (
 	"encoding/json"
-	"github.com/gitstliu/log4go"
 	"github.com/wuxins/api-gateway/breaker"
 	"github.com/wuxins/api-gateway/config"
 	"github.com/wuxins/api-gateway/dao"
 	"github.com/wuxins/api-gateway/dto"
+	"github.com/wuxins/api-gateway/log"
 	"github.com/wuxins/api-gateway/ratelimiter"
 	"github.com/wuxins/api-gateway/redisclient"
 	"github.com/wuxins/api-gateway/regularpath"
@@ -31,11 +31,11 @@ func flushPathMap() {
 
 	apis := dao.GetAllApi()
 	marshal, _ := json.Marshal(apis)
-	log4go.Info("GetAllApi : %v", string(marshal))
+	log.Pair("GetAllApi", string(marshal)).Info()
 
 	flushErr := regularpath.FlushPathMapByDtos(apis, dao.GetAllApiTenants())
 	if flushErr != nil {
-		log4go.Error("Flush Error : %v", flushErr)
+		log.Error("Flush Error", flushErr)
 		return
 	}
 
@@ -46,9 +46,8 @@ func flushPathMap() {
 			RedisAlive: redisclient.Alive(),
 		}
 		ratelimiter.GetRateLimiter().FlushLimiter(reteInfo)
-
 		breaker.FlushBreaker(api)
 	}
 
-	log4go.Info("FlushPathMap Success!")
+	log.Info("FlushPathMap Success!")
 }

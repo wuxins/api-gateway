@@ -7,10 +7,11 @@ require (
 	github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/gitstliu/log4go v0.0.0-20180109082532-d146e6b86faa
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/jinzhu/gorm v1.9.16
 	github.com/nacos-group/nacos-sdk-go v1.1.1
+	github.com/sirupsen/logrus v1.9.2
+	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
 
 require (
@@ -37,8 +38,7 @@ require (
 	golang.org/x/crypto v0.0.0-20210920023735-84f357641f63 // indirect
 	golang.org/x/net v0.0.0-20220421235706-1d1ef9303861 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/sys v0.0.0-20220429233432-b5fbb4746d32 // indirect
+	golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/ini.v1 v1.42.0 // indirect
-	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 )

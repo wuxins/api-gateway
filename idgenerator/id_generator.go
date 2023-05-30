@@ -2,9 +2,9 @@ package idgenerator
 
 import (
 	"github.com/bwmarrin/snowflake"
-	"github.com/gitstliu/log4go"
 	"github.com/go-redis/redis/v8"
 	"github.com/wuxins/api-gateway/common"
+	"github.com/wuxins/api-gateway/log"
 	"github.com/wuxins/api-gateway/redisclient"
 	"time"
 )
@@ -15,11 +15,9 @@ func InitSnowflakeNode(redisClient redis.UniversalClient) {
 	snowflake.Epoch = time.Now().UnixNano() / 1000000
 	incr, err := redisClient.Incr(redisclient.BackgroundCtx, common.SnowflakeNodeKey).Result()
 	if err != nil {
-		log4go.Error("InitSnowflakeNode error %v", err)
-		panic(err)
-		return
+		log.Fatal("InitSnowflakeNode error", err)
 	}
-	log4go.Info("Initial snowflake node id :%v", incr)
+	log.Pair("InitSnowflakeNode id", incr).Info()
 	node, _ = snowflake.NewNode(incr)
 }
 

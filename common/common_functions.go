@@ -5,10 +5,9 @@ import (
 	"compress/gzip"
 	"errors"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/wuxins/api-gateway/log"
 	"strings"
 	"time"
-
-	"github.com/gitstliu/log4go"
 )
 
 type TimeSpan struct {
@@ -22,8 +21,7 @@ type NodeToRecord interface {
 
 func PanicHandler() {
 	if r := recover(); r != nil {
-		log4go.Error("Run time Error %v", r)
-		panic(r)
+		log.Fatal("Run time Error")
 	}
 }
 

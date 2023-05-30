@@ -2,8 +2,8 @@ package server
 
 import (
 	"context"
-	"github.com/gitstliu/log4go"
 	"github.com/wuxins/api-gateway/config"
+	"github.com/wuxins/api-gateway/log"
 	"github.com/wuxins/api-gateway/routing"
 	"net/http"
 	"strconv"
@@ -22,8 +22,7 @@ func (s *httpProxyServer) Start() {
 	httpConf = config.GetConfigure().Proxy.Http
 	serverPort := httpConf.ServicePort
 	if serverPort <= 0 {
-		log4go.Error("Http proxy server start without port, exit !")
-		return
+		log.Fatal("Http proxy server start without port, exit!")
 	}
 	httpProxyServerHandler = &http.Server{
 		Addr:        ":" + strconv.Itoa(serverPort),
@@ -31,9 +30,9 @@ func (s *httpProxyServer) Start() {
 		ReadTimeout: time.Duration(httpConf.ServerReadTimeout) * time.Millisecond,
 		IdleTimeout: time.Duration(httpConf.ServerKeepalive) * time.Millisecond,
 	}
-	log4go.Info("Http proxy server started at %v", serverPort)
+	log.Pair("port", serverPort).Info("Http proxy server started!")
 	if err := httpProxyServerHandler.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		log4go.Error("Http proxy server started error %v", err)
+		log.Fatal("Http proxy server started error", err)
 	}
 }
 
@@ -42,7 +41,7 @@ func (s *httpProxyServer) Stop() {
 	defer cancel()
 	err := httpProxyServerHandler.Shutdown(ctx)
 	if err != nil {
-		log4go.Error("Http proxy server shutdown error %v", err)
+		log.Error("Http proxy server shutdown error", err)
 	}
-	log4go.Info("Http proxy server shutdown gracefully !")
+	log.Info("Http proxy server shutdown gracefully!")
 }

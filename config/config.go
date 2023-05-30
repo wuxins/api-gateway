@@ -2,8 +2,8 @@ package config
 
 import (
 	"flag"
-	"github.com/gitstliu/log4go"
 	"github.com/wuxins/api-gateway/common"
+	"github.com/wuxins/api-gateway/log"
 	"os"
 )
 
@@ -30,8 +30,8 @@ type Proxy struct {
 
 type System struct {
 	FlushPathMapSpan int64  `yaml:"FlushPathMapSpan"`
-	LogConfigFile    string `yaml:"LogConfigFile"`
 	Env              string `yaml:"Env"`
+	LogLevel         string `yaml:"LogLevel"`
 }
 
 type Http struct {
@@ -143,21 +143,17 @@ func init() {
 	cmd := parseFromCmdAndEnvs()
 	config := Config{}
 	config.CMD = &cmd
-	log4go.Info("Config mode: %v", config.CMD.ConfMode)
+
 	err := getConfigureLoader(config.CMD.ConfMode).load(config)
+	log.Init(configure.System.LogLevel)
+	log.Pair("ConfigMode", configure.CMD.ConfMode).Info()
 	if err != nil {
-		log4go.Info("Config Load Error", err.Error())
-		panic(err)
-		return
-	}
-	if len(configure.System.LogConfigFile) <= 0 {
-		configure.System.LogConfigFile = "log.xml" // default with the startup binary file int the same dir
+		log.Fatal("Config Load Error", err.Error())
 	}
 	if len(configure.System.Env) <= 0 {
-		panic("Config env can not be nil")
-		return
+		log.Fatal("Config env can not be nil!")
 	}
-	log4go.Info("Config Load Success!")
+	log.Info("Config Load Success!")
 }
 
 func parseFromCmdAndEnvs() CMD {

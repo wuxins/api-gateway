@@ -20,19 +20,6 @@ func OauthTokenPlugin() func(c *RouterContext) {
 	return func(c *RouterContext) {
 
 		r := c.Req
-		/*
-			body, err := ioutil.ReadAll(r.Body)
-			if err != nil {
-				fail(c, http.StatusInternalServerError, err.Error())
-				return
-			}
-
-			var tokenInput dto.TokensRequest
-			if err = json.Unmarshal(body, &tokenInput); err != nil {
-				fail(c, http.StatusInternalServerError, err.Error())
-				return
-			}
-		*/
 
 		authHeader := r.Header["Authorization"]
 		if authHeader == nil {

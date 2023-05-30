@@ -3,10 +3,10 @@ package regularpath
 import (
 	"errors"
 	"fmt"
-	"github.com/gitstliu/log4go"
 	"github.com/wuxins/api-gateway/common"
 	"github.com/wuxins/api-gateway/config"
 	"github.com/wuxins/api-gateway/dto"
+	"github.com/wuxins/api-gateway/log"
 	"net/http"
 	"regexp"
 	"strings"
@@ -217,7 +217,7 @@ func urlsToPath(api dto.Api) (RegularPath, error) {
 		IdleConnTimeout:       time.Duration(config.GetConfigure().Proxy.Routing.IdleConnTimeout) * time.Millisecond,
 		MaxConnsPerHost:       config.GetConfigure().Proxy.Routing.MaxConnsPerHost,
 	}
-	log4go.Debug("urlsToPath results: %v", path)
+	log.Pair("urlsToPath results", path).Debug()
 	return path, nil
 }
 
@@ -268,7 +268,7 @@ func CheckURLMatch(url string, method string) *RegularPath {
 	if tempRoot == nil {
 		return nil
 	}
-	log4go.Debug("tempRoot.Value %v", tempRoot.Value)
+	log.Pair("tempRoot.Value", tempRoot.Value).Debug()
 	return &tempRoot.Value
 }
 

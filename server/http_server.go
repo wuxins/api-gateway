@@ -2,8 +2,8 @@ package server
 
 import (
 	"context"
-	"github.com/gitstliu/log4go"
 	"github.com/wuxins/api-gateway/config"
+	"github.com/wuxins/api-gateway/log"
 	"net/http"
 	"strconv"
 	"time"
@@ -19,13 +19,12 @@ type httpServer struct {
 func (s *httpServer) Start() {
 
 	port := config.GetConfigure().Http.ServicePort
-
 	httpServerHandler = &http.Server{
 		Addr: ":" + strconv.Itoa(port),
 	}
-	log4go.Info("Http server started at %v", port)
+	log.Pair("port", port).Info("Http server started!")
 	if err := httpServerHandler.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		log4go.Error("Http server started error %v", err)
+		log.Fatal("Http server started error", err)
 	}
 
 }
@@ -35,7 +34,7 @@ func (s *httpServer) Stop() {
 	defer cancel()
 	err := httpServerHandler.Shutdown(ctx)
 	if err != nil {
-		log4go.Error("Http server shutdown error %v", err)
+		log.Error("Http server shutdown error", err)
 	}
-	log4go.Info("Http server shutdown gracefully !")
+	log.Info("Http server shutdown gracefully!")
 }

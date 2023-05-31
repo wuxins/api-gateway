@@ -17,7 +17,7 @@ func InitSnowflakeNode(redisClient redis.UniversalClient) {
 	if err != nil {
 		log.Fatal("InitSnowflakeNode error", err)
 	}
-	log.Pair("InitSnowflakeNode id", incr).Info()
+	log.Pair("id", incr).Info()
 	node, _ = snowflake.NewNode(incr)
 }
 

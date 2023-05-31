@@ -10,7 +10,7 @@ import (
 
 var log *logrus.Logger
 
-func Init(logLevel string) {
+func Init(logLevel string, rotateFileName string, rotateMaxSize int, rotateMaxBackups int, rotateMaxAge int) {
 
 	log = logrus.New()
 	level := logrus.InfoLevel
@@ -27,18 +27,36 @@ func Init(logLevel string) {
 	log.SetLevel(level)
 	log.SetReportCaller(true)
 	log.SetFormatter(&logrus.TextFormatter{
-		TimestampFormat: "2006-01-02 15:04:05",
+		TimestampFormat: "2006-01-02 15:04:05.000",
 		FullTimestamp:   true,
 		CallerPrettyfier: func(frame *runtime.Frame) (function string, file string) {
-			return frame.Function, path.Base(frame.File) + ":" + strconv.Itoa(frame.Line)
+			return "", path.Base(frame.File) + ":" + strconv.Itoa(frame.Line)
 		},
 	})
+
+	filename := "gateway.log"
+	maxSize := 50
+	maxBackups := 100
+	maxAge := 30
+	if len(rotateFileName) > 0 {
+		filename = rotateFileName
+	}
+	if rotateMaxSize > 0 {
+		maxSize = rotateMaxSize
+	}
+	if rotateMaxBackups > 0 {
+		maxBackups = rotateMaxBackups
+	}
+	if rotateMaxAge > 0 {
+		maxAge = rotateMaxAge
+	}
+
 	log.SetOutput(&lumberjack.Logger{
-		Filename:   "gateway.log",
-		MaxSize:    100,
-		MaxBackups: 100,
-		MaxAge:     3,
-		Compress:   true,
+		Filename:   filename,
+		MaxSize:    maxSize,
+		MaxBackups: maxBackups,
+		MaxAge:     maxAge,
+		Compress:   false,
 	})
 }
 

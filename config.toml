@@ -2,7 +2,15 @@
     FlushPathMapSpan = 60_000
     Env = "dev"
     LogLevel = "info"
-
+    
+[Log]
+    Level = "debug"
+    Filename = "api_gateway.log"
+    RotateMaxSize = 1
+    RotateMaxBackups = 5
+    RotateMaxAge = 2
+    RotateCompress = false
+    
 [Http]
     ServicePort = 9999
     ServerReadTimeout = 1_000
@@ -33,10 +41,11 @@
     IdleConnTimeout = 60_000
 
     [Proxy.Monitor]
-    LogDir = ""
-    LogFileName = "monitor.log"
-    LogRotateMaxMSize = 100
-    LogRotateMaxLines = 500000
+    Filename = "cat.log"
+    RotateMaxSize = 1
+    RotateMaxBackups = 5
+    RotateMaxAge = 2
+    RotateCompress = false
 
 [DB]
     DBType = "mysql"

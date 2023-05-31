@@ -11,6 +11,7 @@ var configure *Config
 
 type Config struct {
 	System *System `yaml:"System"`
+	Log    *Log    `yaml:"Log"`
 	Http   *Http   `yaml:"Http"`
 	Proxy  *Proxy  `yaml:"Proxy"`
 	DB     *DB     `yaml:"DB"`
@@ -31,7 +32,15 @@ type Proxy struct {
 type System struct {
 	FlushPathMapSpan int64  `yaml:"FlushPathMapSpan"`
 	Env              string `yaml:"Env"`
-	LogLevel         string `yaml:"LogLevel"`
+}
+
+type Log struct {
+	Level            string `yaml:"Level"`
+	Filename         string `yaml:"Filename"`
+	RotateMaxSize    int    `yaml:"RotateMaxSize"`
+	RotateMaxBackups int    `yaml:"RotateMaxBackups"`
+	RotateMaxAge     int    `yaml:"RotateMaxAge"`
+	RotateCompress   bool   `yaml:"RotateCompress"`
 }
 
 type Http struct {
@@ -96,10 +105,11 @@ type Rate struct {
 }
 
 type Monitor struct {
-	LogDir            string `yaml:"LogDir"`
-	LogFileName       string `yaml:"LogFileName"`
-	LogRotateMaxMSize int    `yaml:"LogRotateMaxMSize"`
-	LogRotateMaxLines int    `yaml:"LogRotateMaxLines"`
+	Filename         string `yaml:"Filename"`
+	RotateMaxSize    int    `yaml:"RotateMaxSize"`
+	RotateMaxBackups int    `yaml:"RotateMaxBackups"`
+	RotateMaxAge     int    `yaml:"RotateMaxAge"`
+	RotateCompress   bool   `yaml:"RotateCompress"`
 }
 
 type CMD struct {
@@ -145,7 +155,10 @@ func init() {
 	config.CMD = &cmd
 
 	err := getConfigureLoader(config.CMD.ConfMode).load(config)
-	log.Init(configure.System.LogLevel)
+	if configure.Log == nil {
+		configure.Log = &Log{}
+	}
+	log.Init(configure.Log.Level, configure.Log.Filename, configure.Log.RotateMaxSize, configure.Log.RotateMaxBackups, configure.Log.RotateMaxAge)
 	log.Pair("ConfigMode", configure.CMD.ConfMode).Info()
 	if err != nil {
 		log.Fatal("Config Load Error", err.Error())

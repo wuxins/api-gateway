@@ -41,8 +41,8 @@ func Init(monitor config.Monitor) {
 }
 
 func Report(event Event) {
-	output, _ := sonic.Marshal(&event)
-	log.Info(string(output))
+	output, _ := sonic.MarshalString(&event)
+	log.Info(output)
 }
 
 type Formatter struct{}

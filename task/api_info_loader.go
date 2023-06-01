@@ -31,7 +31,7 @@ func flushPathMap() {
 
 	apis := dao.GetAllApi()
 	marshal, _ := json.Marshal(apis)
-	log.Pair("GetAllApi", string(marshal)).Info()
+	log.Pair("GetAllApi", string(marshal)).Debug()
 
 	flushErr := regularpath.FlushPathMapByDtos(apis, dao.GetAllApiTenants())
 	if flushErr != nil {

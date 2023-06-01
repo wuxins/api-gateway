@@ -2,6 +2,7 @@ package config
 
 import (
 	"flag"
+	"github.com/bytedance/sonic"
 	"github.com/wuxins/api-gateway/common"
 	"github.com/wuxins/api-gateway/log"
 	"os"
@@ -147,19 +148,20 @@ func getConfigureLoader(mode string) ConfigureLoader {
 // In mode "Local", config initial rely on the conf node - (Local of config.yml) .
 // In mode "Nacos", config initial rely on the four factors (Address、Namespace、DataId、Group),
 // and will first check the startup program arguments,then config node (Nacos of config.yml) .
-// Example on program arguments startup: -NACOSADDRESS=127.0.0.1:8888 -NAMESPACE=dev -DATAID=testDataId -GROUP=DEFAULT_GROUP
+// Example on program arguments startup:
+// 		./api-gateway -CONFIG_MODE=nacos -NACOS_ADDRESS=127.0.0.1:8888 -NACOS_NAMESPACE=dev -NACOS_DATAID=api-gateway -NACOS_GROUP=DEFAULT_GROUP
 func init() {
 
 	cmd := parseFromCmdAndEnvs()
 	config := Config{}
 	config.CMD = &cmd
-
 	err := getConfigureLoader(config.CMD.ConfMode).load(config)
 	if configure.Log == nil {
 		configure.Log = &Log{}
 	}
 	log.Init(configure.Log.Level, configure.Log.Filename, configure.Log.RotateMaxSize, configure.Log.RotateMaxBackups, configure.Log.RotateMaxAge)
-	log.Pair("ConfigMode", configure.CMD.ConfMode).Info()
+	output, _ := sonic.MarshalString(&configure)
+	log.Info(output)
 	if err != nil {
 		log.Fatal("Config Load Error", err.Error())
 	}

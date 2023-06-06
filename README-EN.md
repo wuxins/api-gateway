@@ -1,7 +1,7 @@
 # Overview
 
 简体中文 | [English](readme-en.md)  
- 高性能可扩展弹性部署的Http网关
+High-performance & scalable http gateway .
 
 **Background & Motivation**
 

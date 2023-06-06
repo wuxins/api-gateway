@@ -1,7 +1,8 @@
+English | [简体中文](README.md)
+
 # Overview
 
-简体中文 | [English](readme-en.md)  
-High-performance & scalable http gateway .
+_High-performance & scalable http gateway ._
 
 **Background & Motivation**
 

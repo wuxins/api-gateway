@@ -1,9 +1,10 @@
+简体中文 | [English](README-EN.md)
+
 # Overview
 
-简体中文 | [English](README-EN.md)  
- 高性能可扩展弹性部署的Http网关
+_高性能可扩展弹性部署的Http网关_
 
-**Background & Motivation**
+**背景**
 
 With the following questions, Api gateway was born:
 
@@ -15,55 +16,56 @@ With the following questions, Api gateway was born:
 
 If you have these problems, it may help you.
 
-**Architecture**
+**架构**
 
 ![Api gateway architecture!](./docs/arch.png "Api gateway architecture")
 
-1. Middleware dependencies
+1. 中间件依赖
 
 | Middleware | Startup | Runtime | Usage                    |
 |------------|---------|---------|--------------------------|
 | MySQL      | √       | ×       | Api meta data storages   |
 | Redis      | √       | ×       | Distributed rate limiter |
 
-2. Environment requirements
+2. 部署环境
 
-- Go version  
+- Go 版本   
   go 1.16+
-- OS  
+- 操作系统    
   linux、macos、windows
 
-**Features**
+**特性**
 
-- Interface level security
-- Progressive release api
-- Restful API forwarding support
-- Rate limit
-- API Breaker
-- Fallback
-- Timeout control
-- OAuth2.0 client credential support
-- Parameters ignore
-- Group by api
-- Gray rules
-- Monitor
-- Api document management
+- 接口级安全控制
+- API渐进式发布
+- Restful API 转发支持
+- 限流
+- 熔断
+- 降级
+- 超时控制
+- OAuth2.0 客户端鉴权
+- 参数过滤
+- API分组
+- 灰度
+- 监控
+- API文档生成
 
-**Key concepts**
+**核心概念**
 
-- Environment
-- API group
-- Upstream service
-- Tenant
-- API
+- 环境
+- API分组
+- 上游应用
+- 租户
+- API接口
 
-**Quick Start**
+**快速通道**
 
-1. Startup middlewares  
+1. 启动依赖中间件  
    MySql、Redis execute gateway.sql in MySql
-2. Deploy  
+2. 生成镜像  
    Run docker Makefile
-3. Startup gateway Two boot modes are supported:
+3. 启动网关  
+   Two boot modes are supported:
 
 ```agsl
 1. By local configuration(config.toml)
@@ -76,17 +78,17 @@ If you have these problems, it may help you.
     
 ```
 
-**Best practice**
+**最佳实践**
 
 ![Api gateway workflow!](./docs/workflow.png "Api gateway workflow")
 
-**Performance**
+**性能**
 
-Stress test tools : Apache bench httpd-tools ab test.  
-Back api uri: /upstream-service-test/outer/resources/{{resourceId}}  
-Api gateway uri: /upstream-service-test/resources/{{resourceId}}  
-Request method: GET  
-Response body content:
+压测工具 : Apache bench httpd-tools ab test.  
+后端接口: /upstream-service-test/outer/resources/{{resourceId}}  
+网关转发接口: /upstream-service-test/resources/{{resourceId}}  
+请求方法: GET  
+响应内容:
 
 ```json
 {
@@ -116,16 +118,16 @@ Response body content:
 }
 ```
 
-| Server         | Usage                     | Resources     |
+| 服务器         | 用途                     | 资源     |
 |----------------|---------------------------|---------------|
-| 192.168.45.19  | Stress test tools machine | Aliyun 8C 16G |
-| 192.168.45.141 | Api gateway               | Aliyun 8C 16G | 
-| 192.168.45.142 | Backend upstream service  | Aliyun 8C 16G | 
+| 192.168.45.19  | 压测机 | Aliyun 8C 16G |
+| 192.168.45.141 | API网关               | Aliyun 8C 16G | 
+| 192.168.45.142 | 上游后端服务           | Aliyun 8C 16G | 
 
-| Scenario                       | Rate limiter switch | Monitor switch | concurrency | Request Count | Error rate | CPU(%) | Memory(%) | Command                                                                                                          |
+| 场景                       | 开启限流 | 开启监控 | 并发数 | 请求总量 | 错误率 | CPU(%) | 内存(%) | 压测指令                                                                                                          |
 |--------------------------------|---------------------|----------------|-------------|---------------|------------|--------|-----------|------------------------------------------------------------------------------------------------------------------|
-| Stress request backend service | ×                   | ×              | 200         | 500000        | 0%         | 450%   | 0.1       | ab -c 200 -n 500000 -H 'G-Tenant:website' http://192.168.45.142:8888/upstream-service-test/outer/resources/12345 | 
-| Stress request api gateway     | ×                   | ×              | 200         | 500000        | 0%         | 610%   | 0.1       | ab -c 200 -n 500000 -H 'G-Tenant:website' http://192.168.45.141:7777/upstream-service-test/resources/12345       | 
-| Stress request api gateway     | ×                   | √              | 200         | 500000        | 0%         | 610%   | 0.1       | ab -c 200 -n 500000 -H 'G-Tenant:website' http://192.168.45.141:7777/upstream-service-test/resources/12345       | 
-| Stress request api gateway     | √                   | ×              | 200         | 500000        | 0%         | 610%   | 0.1       | ab -c 200 -n 500000 -H 'G-Tenant:website' http://192.168.45.141:7777/upstream-service-test/resources/12345       | 
-| Stress request api gateway     | √                   | √              | 200         | 500000        | 0%         | 610%   | 0.1       | ab -c 200 -n 500000 -H 'G-Tenant:website' http://192.168.45.141:7777/upstream-service-test/resources/12345       | 
+| 直接压测后端服务 | ×                   | ×              | 200         | 500000        | 0%         | 450%   | 0.1       | ab -c 200 -n 500000 -H 'G-Tenant:website' http://192.168.45.142:8888/upstream-service-test/outer/resources/12345 | 
+| 压测API网关     | ×                   | ×              | 200         | 500000        | 0%         | 610%   | 0.1       | ab -c 200 -n 500000 -H 'G-Tenant:website' http://192.168.45.141:7777/upstream-service-test/resources/12345       | 
+| 压测API网关     | ×                   | √              | 200         | 500000        | 0%         | 610%   | 0.1       | ab -c 200 -n 500000 -H 'G-Tenant:website' http://192.168.45.141:7777/upstream-service-test/resources/12345       | 
+| 压测API网关     | √                   | ×              | 200         | 500000        | 0%         | 610%   | 0.1       | ab -c 200 -n 500000 -H 'G-Tenant:website' http://192.168.45.141:7777/upstream-service-test/resources/12345       | 
+| 压测API网关     | √                   | √              | 200         | 500000        | 0%         | 610%   | 0.1       | ab -c 200 -n 500000 -H 'G-Tenant:website' http://192.168.45.141:7777/upstream-service-test/resources/12345       | 

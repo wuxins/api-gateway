@@ -22,8 +22,8 @@ If you have these problems, it may help you.
 
 | Middleware | Startup | Runtime | Usage                    |
 |------------|---------|---------|--------------------------|
-| MySQL      | ✔       | ×       | Api meta data storages   |
-| Redis      | ✔       | ×       | Distributed rate limiter |
+| MySQL      | √       | ×       | Api meta data storages   |
+| Redis      | √       | ×       | Distributed rate limiter |
 
 2. Environment requirements
 
@@ -85,6 +85,7 @@ Back api uri: /upstream-service-test/outer/resources/{{resourceId}}
 Api gateway uri: /upstream-service-test/resources/{{resourceId}}
 Request method: GET
 Response body content:
+
 ```json
 {
   "code": "200000",
@@ -123,6 +124,6 @@ Response body content:
 |--------------------------------|---------------------|----------------|-------------|---------------|------------|--------|-----------|------------------------------------------------------------------------------------------------------------------|
 | Stress request backend service | ×                   | ×              | 200         | 500000        | 0%         | 450%   | 0.1       | ab -c 200 -n 500000 -H 'G-Tenant:website' http://192.168.45.142:8888/upstream-service-test/outer/resources/12345 | 
 | Stress request api gateway     | ×                   | ×              | 200         | 500000        | 0%         | 610%   | 0.1       | ab -c 200 -n 500000 -H 'G-Tenant:website' http://192.168.45.141:7777/upstream-service-test/resources/12345       | 
-| Stress request api gateway     | ×                   | ✔              | 200         | 500000        | 0%         | 610%   | 0.1       | ab -c 200 -n 500000 -H 'G-Tenant:website' http://192.168.45.141:7777/upstream-service-test/resources/12345       | 
-| Stress request api gateway     | ✔                   | ×              | 200         | 500000        | 0%         | 610%   | 0.1       | ab -c 200 -n 500000 -H 'G-Tenant:website' http://192.168.45.141:7777/upstream-service-test/resources/12345       | 
-| Stress request api gateway     | ✔                   | ✔              | 200         | 500000        | 0%         | 610%   | 0.1       | ab -c 200 -n 500000 -H 'G-Tenant:website' http://192.168.45.141:7777/upstream-service-test/resources/12345       | 
+| Stress request api gateway     | ×                   | √              | 200         | 500000        | 0%         | 610%   | 0.1       | ab -c 200 -n 500000 -H 'G-Tenant:website' http://192.168.45.141:7777/upstream-service-test/resources/12345       | 
+| Stress request api gateway     | √                   | ×              | 200         | 500000        | 0%         | 610%   | 0.1       | ab -c 200 -n 500000 -H 'G-Tenant:website' http://192.168.45.141:7777/upstream-service-test/resources/12345       | 
+| Stress request api gateway     | √                   | √              | 200         | 500000        | 0%         | 610%   | 0.1       | ab -c 200 -n 500000 -H 'G-Tenant:website' http://192.168.45.141:7777/upstream-service-test/resources/12345       | 

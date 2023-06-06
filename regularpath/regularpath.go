@@ -3,9 +3,9 @@ package regularpath
 import (
 	"errors"
 	"fmt"
-	"github.com/gitstliu/log4go"
+	"github.com/wuxins/api-gateway/common"
 	"github.com/wuxins/api-gateway/config"
-	"github.com/wuxins/api-gateway/dao/dto"
+	"github.com/wuxins/api-gateway/dto"
 	"net/http"
 	"regexp"
 	"strings"
@@ -13,28 +13,35 @@ import (
 )
 
 type RegularPath struct {
-	ApiId          int64
-	ApiName        string
-	ApiCode        string
-	Method         string
-	URL            string
-	UpstreamHost   string
-	SrcURL         string
-	DesURL         string
-	SrcParams      map[string]int
-	SrcParamsIndex map[int]string
-	DesParams      map[string]int
-	DesParamsIndex map[int]string
-	SrcSplitURL    []string
-	DesSplitURL    []string
-	NeedRateLimit  bool
-	RateLimit      int
-	NeedFallback   bool
-	Fallback       string
-	NeedMonitor    bool
-	ReadTimeout    int64
-	Tenants        []dto.Tenant
-	Transport      http.RoundTripper
+	ApiId              int64
+	ApiName            string
+	ApiCode            string
+	Method             string
+	URL                string
+	Address            string
+	SrcURL             string
+	DesURL             string
+	SrcParams          map[string]int
+	SrcParamsIndex     map[int]string
+	DesParams          map[string]int
+	DesParamsIndex     map[int]string
+	SrcSplitURL        []string
+	DesSplitURL        []string
+	NeedRateLimit      bool
+	RateLimit          int
+	NeedBreaker        bool
+	NeedFallback       bool
+	Fallback           string
+	NeedMonitor        bool
+	NeedApiAuth        bool
+	ApiTenants         map[string]dto.ApiTenant
+	ReadTimeout        int64
+	IgnoreHeaderParams []string
+	IgnoreQueryParams  []string
+	NeedGray           bool
+	GrayRule           dto.GrayRule
+	GrayAddress        string
+	Transport          http.RoundTripper
 }
 
 type RegularPathTree struct {
@@ -49,10 +56,31 @@ var placeHolderRegexp = regexp.MustCompile(regexpString)
 
 var requestMethodApiPathTree = map[string]*RegularPathTree{}
 
-func FlushPathMapByDtos(apis []dto.Api) error {
+var tenantsMap = map[string]dto.Tenant{}
+
+func FlushTenants(tenants []dto.Tenant) {
+	for _, tenant := range tenants {
+		tenantsMap[tenant.TenantKey] = tenant
+	}
+}
+
+func GetTenants() map[string]dto.Tenant {
+	return tenantsMap
+}
+
+func FlushPathMapByDtos(apis []dto.Api, apiTenants []dto.ApiTenant) error {
 
 	requestMethodWithApis := map[string][]RegularPath{}
 	for _, api := range apis {
+		api.ApiTenants = make(map[string]dto.ApiTenant)
+		if api.NeedApiAuth == "Y" {
+			for _, apiTenant := range apiTenants {
+				if apiTenant.ApiCode == api.ApiCode {
+					api.ApiTenants[apiTenant.TenantCode] = apiTenant
+				}
+			}
+		}
+
 		path, pathErr := urlsToPath(api)
 		if pathErr != nil {
 			return pathErr
@@ -122,14 +150,11 @@ func urlsToPath(api dto.Api) (RegularPath, error) {
 			return RegularPath{}, errors.New(fmt.Sprintf("Parameter %v is mismatching", key))
 		}
 	}
-
 	path := RegularPath{}
-	path.ApiName = api.Name
 	path.ApiCode = api.ApiCode
 	path.Method = api.Method
 	path.ReadTimeout = api.ReadTimeout
-	path.Tenants = api.Tenants
-	path.UpstreamHost = api.UpstreamHost
+	path.Address = api.Address
 	path.URL = placeHolderRegexp.ReplaceAllString(api.SrcUrl, regexpStringUnshell)
 	path.SrcURL = api.SrcUrl
 	path.DesURL = api.DesUrl
@@ -137,12 +162,24 @@ func urlsToPath(api dto.Api) (RegularPath, error) {
 	path.DesSplitURL = strings.Split(path.DesURL, "/")
 	path.SrcParams, path.SrcParamsIndex = urlToParamMap(path.SrcURL)
 	path.DesParams, path.DesParamsIndex = urlToParamMap(path.DesURL)
-	path.ApiId = api.Id
+	path.GrayAddress = api.GrayAddress
+	rule := dto.GetGrayRule(api.GrayRuleCode)
+	if nil != rule {
+		path.NeedGray = true
+		path.GrayRule = *rule
+	} else {
+		path.NeedGray = false
+	}
 	if api.NeedRateLimit == "Y" {
 		path.NeedRateLimit = true
 		path.RateLimit = api.RateLimit
 	} else {
 		path.NeedRateLimit = false
+	}
+	if api.NeedBreaker == "Y" {
+		path.NeedBreaker = true
+	} else {
+		path.NeedFallback = false
 	}
 	if api.NeedFallback == "Y" {
 		path.NeedFallback = true
@@ -155,15 +192,30 @@ func urlsToPath(api dto.Api) (RegularPath, error) {
 	} else {
 		path.NeedMonitor = false
 	}
+	if api.NeedApiAuth == "Y" {
+		path.NeedApiAuth = true
+		path.ApiTenants = api.ApiTenants
+	} else {
+		path.NeedApiAuth = false
+	}
+	ignoreQueryParams := api.IgnoreQueryParams
+	if len(ignoreQueryParams) > 0 {
+		path.IgnoreQueryParams = strings.Split(ignoreQueryParams, common.DelimiterComma)
+	}
+
+	ignoreHeaderParams := api.IgnoreHeaderParams
+	if len(ignoreHeaderParams) > 0 {
+		path.IgnoreHeaderParams = strings.Split(ignoreHeaderParams, common.DelimiterComma)
+	}
+
 	path.Transport = &http.Transport{
 		Proxy:                 http.ProxyFromEnvironment,
 		ResponseHeaderTimeout: time.Duration(path.ReadTimeout) * time.Millisecond,
-		MaxIdleConnsPerHost:   config.GetConfigure().Routing.MaxIdleConnsPerHost,
-		MaxIdleConns:          config.GetConfigure().Routing.MaxIdleConns,
-		IdleConnTimeout:       time.Duration(config.GetConfigure().Routing.IdleConnTimeout) * time.Millisecond,
-		MaxConnsPerHost:       config.GetConfigure().Routing.MaxConnsPerHost,
+		MaxIdleConnsPerHost:   config.GetConfigure().Proxy.Routing.MaxIdleConnsPerHost,
+		MaxIdleConns:          config.GetConfigure().Proxy.Routing.MaxIdleConns,
+		IdleConnTimeout:       time.Duration(config.GetConfigure().Proxy.Routing.IdleConnTimeout) * time.Millisecond,
+		MaxConnsPerHost:       config.GetConfigure().Proxy.Routing.MaxConnsPerHost,
 	}
-	log4go.Debug("urlsToPath results: %v", path)
 	return path, nil
 }
 
@@ -214,7 +266,6 @@ func CheckURLMatch(url string, method string) *RegularPath {
 	if tempRoot == nil {
 		return nil
 	}
-	log4go.Debug("tempRoot.Value %v", tempRoot.Value)
 	return &tempRoot.Value
 }
 

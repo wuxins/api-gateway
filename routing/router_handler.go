@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/wuxins/api-gateway/common"
 	"github.com/wuxins/api-gateway/regularpath"
+	"github.com/wuxins/api-gateway/utils"
 	"math"
 	"net/http"
 	"strings"
@@ -25,12 +26,15 @@ type Group struct {
 }
 
 type RouterContext struct {
-	Rw          http.ResponseWriter
-	Req         *http.Request
-	Ctx         context.Context
-	RegularPath *regularpath.RegularPath
+	Rw  http.ResponseWriter
+	Req *http.Request
+	Ctx context.Context
 	*Group
-	index int8
+	index                  int8
+	RegularPath            *regularpath.RegularPath
+	RequestId              string
+	RequestTime            string
+	RequestUpstreamAddress string
 }
 
 func (c *RouterContext) Get(key interface{}) interface{} {
@@ -114,19 +118,41 @@ func NewRouterHandler() *RouterHandler {
 
 	router := NewRouter()
 
-	router.Group("/ping").Use(func(c *RouterContext) {
-		c.Rw.WriteHeader(http.StatusOK)
-		c.Rw.Write(common.StringToBytes("pong"))
+	// heartbeat endpoint
+	router.Group("/ping").Use(func(routerContext *RouterContext) {
+		routerContext.Rw.WriteHeader(http.StatusOK)
+		_, _ = routerContext.Rw.Write(common.StringToBytes(common.HeartbeatMsg))
+		routerContext.Abort()
+		return
 	})
 
+	// oauth2.0 token endpoint
+	router.Group("/oauth/tokens").Use(
+		AccessControlPlugin(),
+		OauthTokenPlugin())
+
+	// reverse proxy router
 	router.Group("/").Use(
 		AccessControlPlugin(),
 		UrlCheckPlugin(),
 		TenantCheckPlugin(),
 		RateLimiterPlugin(),
-		ReverseProxyPlugin())
+		FallbackPlugin(),
+		IgnoreParamsPlugin(),
+		GrayStrategyPlugin(),
+		BreakerProxyPlugin())
 
 	return &RouterHandler{
 		router,
 	}
+}
+
+func success(c *RouterContext, data string) {
+	utils.WriteHttpResponse(c.Rw, http.StatusOK, data, c.RequestId, c.RequestTime, c.Req, false)
+	c.Abort()
+}
+
+func fail(c *RouterContext, status int, data string) {
+	utils.WriteHttpResponse(c.Rw, status, data, c.RequestId, c.RequestTime, c.Req, true)
+	c.Abort()
 }

@@ -2,52 +2,66 @@ package config
 
 import (
 	"flag"
-	"github.com/bwmarrin/snowflake"
-	"github.com/gitstliu/log4go"
+	"github.com/bytedance/sonic"
 	"github.com/wuxins/api-gateway/common"
-	"gopkg.in/yaml.v3"
-	"io/ioutil"
+	"github.com/wuxins/api-gateway/log"
 	"os"
 )
 
-type Conf struct {
-	Mode        string `yaml:"Mode"`
-	LocalLoaded bool
+var configure *Config
+
+type Config struct {
+	System *System `yaml:"System"`
+	Log    *Log    `yaml:"Log"`
+	Http   *Http   `yaml:"Http"`
+	Proxy  *Proxy  `yaml:"Proxy"`
+	DB     *DB     `yaml:"DB"`
+	Redis  *Redis  `yaml:"Redis"`
+	Tenant *Tenant `yaml:"Tenant"`
+	CMD    *CMD    `yaml:"CMD"`
 }
 
-type Nacos struct {
-	Address   string `yaml:"Address"`
-	Namespace string `yaml:"Namespace"`
-	DataId    string `yaml:"DataId"`
-	Group     string `yaml:"Group"`
-}
-
-type Local struct {
-	Sysconf *Sysconf `yaml:"Sysconf"`
-	DB      *DB      `yaml:"DB"`
+type Proxy struct {
+	Http    *Http    `yaml:"Http"`
+	Https   *Https   `yaml:"Https"`
+	CORS    *CORS    `yaml:"CORS"`
 	Routing *Routing `yaml:"Routing"`
-	Redis   *Redis   `yaml:"Redis"`
 	Rate    *Rate    `yaml:"Rate"`
 	Monitor *Monitor `yaml:"Monitor"`
 }
 
-type Config struct {
-	Conf  *Conf  `yaml:"Conf"`
-	Nacos *Nacos `yaml:"Nacos"`
-	Local *Local `yaml:"Local"`
+type System struct {
+	FlushPathMapSpan int64  `yaml:"FlushPathMapSpan"`
+	Env              string `yaml:"Env"`
 }
 
-type Sysconf struct {
-	ServicePort               int    `yaml:"ServicePort"`
-	FlushPathMapSpan          int64  `yaml:"FlushPathMapSpan"`
-	ServerReadTimeout         int64  `yaml:"ServerReadTimeout"`
-	ServerKeepalive           int64  `yaml:"ServerKeepalive"`
+type Log struct {
+	Level            string `yaml:"Level"`
+	Filename         string `yaml:"Filename"`
+	RotateMaxSize    int    `yaml:"RotateMaxSize"`
+	RotateMaxBackups int    `yaml:"RotateMaxBackups"`
+	RotateMaxAge     int    `yaml:"RotateMaxAge"`
+	RotateCompress   bool   `yaml:"RotateCompress"`
+}
+
+type Http struct {
+	ServicePort             int   `yaml:"ServicePort"`
+	ServerReadTimeout       int64 `yaml:"ServerReadTimeout"`
+	ServerKeepalive         int64 `yaml:"ServerKeepalive"`
+	GracefulShutdownTimeout int64 `yaml:"GracefulShutdownTimeout"`
+}
+
+type Https struct {
+	ServicePort             int   `yaml:"ServicePort"`
+	ServerReadTimeout       int64 `yaml:"ServerReadTimeout"`
+	ServerKeepalive         int64 `yaml:"ServerKeepalive"`
+	GracefulShutdownTimeout int64 `yaml:"GracefulShutdownTimeout"`
+}
+
+type CORS struct {
 	AccessControlAllowOrigin  string `yaml:"AccessControlAllowOrigin"`
 	AccessControlAllowMethods string `yaml:"AccessControlAllowMethods"`
 	AccessControlAllowHeaders string `yaml:"AccessControlAllowHeaders"`
-	GracefulShutdownTimeout   int64  `yaml:"GracefulShutdownTimeout"`
-	LogConfigFile             string `yaml:"LogConfigFile"`
-	Env                       string `yaml:"Env"`
 }
 
 type DB struct {
@@ -81,32 +95,34 @@ type Routing struct {
 	IdleConnTimeout     int64 `yaml:"IdleConnTimeout"`
 }
 
+type Tenant struct {
+	TokenSignKey    string `yaml:"TokenSignKey"`
+	TokenSignMethod string `yaml:"TokenSignMethod"`
+}
+
 type Rate struct {
 	Enable               bool `yaml:"Enable"`
 	LocalRateDownPercent int  `yaml:"LocalRateDownPercent"`
 }
 
 type Monitor struct {
-	LogDir            string `yaml:"LogDir"`
-	LogFileName       string `yaml:"LogFileName"`
-	LogRotateMaxsize  int    `yaml:"LogRotateMaxsize"`
-	LogRotateMaxLines int    `yaml:"LogRotateMaxLines"`
+	Filename         string `yaml:"Filename"`
+	RotateMaxSize    int    `yaml:"RotateMaxSize"`
+	RotateMaxBackups int    `yaml:"RotateMaxBackups"`
+	RotateMaxAge     int    `yaml:"RotateMaxAge"`
+	RotateCompress   bool   `yaml:"RotateCompress"`
 }
 
-type Configure struct {
-	Sysconf       *Sysconf `yaml:"Sysconf"`
-	DB            *DB      `yaml:"DB"`
-	Routing       *Routing `yaml:"Routing"`
-	Redis         *Redis   `yaml:"Redis"`
-	Rate          *Rate    `yaml:"Rate"`
-	Monitor       *Monitor `yaml:"Monitor"`
-	SnowflakeNode *snowflake.Node
+type CMD struct {
+	ConfMode       string
+	NacosAddress   string
+	NacosNamespace string
+	NacosDataid    string
+	NacosGroup     string
 }
-
-var configure *Configure
 
 // GetConfigure export configuration information
-func GetConfigure() *Configure {
+func GetConfigure() *Config {
 	return configure
 }
 
@@ -132,56 +148,71 @@ func getConfigureLoader(mode string) ConfigureLoader {
 // In mode "Local", config initial rely on the conf node - (Local of config.yml) .
 // In mode "Nacos", config initial rely on the four factors (Address、Namespace、DataId、Group),
 // and will first check the startup program arguments,then config node (Nacos of config.yml) .
-// Example on program arguments startup: -NACOSADDRESS=127.0.0.1:8888 -NAMESPACE=dev -DATAID=testDataId -GROUP=DEFAULT_GROUP
+// Example on program arguments startup:
+// 		./api-gateway -CONFIG_MODE=nacos -NACOS_ADDRESS=127.0.0.1:8888 -NACOS_NAMESPACE=dev -NACOS_DATAID=api-gateway -NACOS_GROUP=DEFAULT_GROUP
 func init() {
 
-	configMode := flag.String(common.ConfLoadMode, "", "config mode")
-	flag.Parse()
-
+	cmd := parseFromCmdAndEnvs()
 	config := Config{}
-	config.Nacos = &Nacos{}
-	config.Conf = &Conf{}
-	config.Local = &Local{}
-	if len(*configMode) <= 0 {
-		*configMode = os.Getenv(common.ConfLoadMode)
+	config.CMD = &cmd
+	err := getConfigureLoader(config.CMD.ConfMode).load(config)
+	if configure.Log == nil {
+		configure.Log = &Log{}
 	}
-	if len(*configMode) > 0 {
-		config.Conf.Mode = *configMode
-	} else {
-		file, err := ioutil.ReadFile("config.yaml")
-		if err != nil {
-			log4go.Info("Read config.yaml fail, %v", err)
-			panic(err)
-			return
-		}
-		err = yaml.Unmarshal(file, &config)
-		if err != nil {
-			log4go.Info("Parse config.yaml fail,%v", err)
-			panic(err)
-			return
-		}
-		config.Conf.LocalLoaded = true
-	}
-
-	log4go.Info("Config mode: %v", config.Conf.Mode)
-	if len(config.Conf.Mode) <= 0 {
-		panic("Config mode can not be nil")
-		return
-	}
-	err := getConfigureLoader(config.Conf.Mode).load(config)
+	log.Init(configure.Log.Level, configure.Log.Filename, configure.Log.RotateMaxSize, configure.Log.RotateMaxBackups, configure.Log.RotateMaxAge)
+	output, _ := sonic.MarshalString(&configure)
+	log.Info(output)
 	if err != nil {
-		log4go.Info("Config Load Error", err.Error())
-		panic(err)
-		return
+		log.Fatal("Config Load Error", err.Error())
 	}
+	if len(configure.System.Env) <= 0 {
+		log.Fatal("Config env can not be nil!")
+	}
+	log.Info("Config Load Success!")
+}
 
-	if len(configure.Sysconf.LogConfigFile) <= 0 {
-		configure.Sysconf.LogConfigFile = "log.xml" // default with the startup binary file int the same dir
+func parseFromCmdAndEnvs() CMD {
+	configMode := flag.String(common.ConfLoadMode, "", "config mode")
+	serviceAddr := flag.String(common.NacosAddress, "", "Nacos Address")
+	namespace := flag.String(common.NacosNamespace, "", "Nacos Namespace")
+	dataId := flag.String(common.NacosDataid, "", "Nacos DataId")
+	group := flag.String(common.NacosGroup, "", "Nacos Group")
+	flag.Parse()
+	cmd := CMD{}
+	cmd.ConfMode = *configMode
+	if len(cmd.ConfMode) <= 0 {
+		cmd.ConfMode = os.Getenv(common.ConfLoadMode)
 	}
-	if len(configure.Sysconf.Env) <= 0 {
-		panic("Config env can not be nil")
-		return
+	if len(cmd.ConfMode) <= 0 {
+		cmd.ConfMode = common.ConfLoadModeLocal
 	}
-
-	log4go.Info("Config Load Success!")
+	cmd.NacosAddress = *serviceAddr
+	if len(cmd.NacosAddress) <= 0 {
+		envAddr := os.Getenv(common.NacosAddress)
+		if len(envAddr) > 0 {
+			cmd.NacosAddress = envAddr
+		}
+	}
+	cmd.NacosNamespace = *namespace
+	if len(cmd.NacosNamespace) <= 0 {
+		envNamespace := os.Getenv(common.NacosNamespace)
+		if len(envNamespace) > 0 {
+			cmd.NacosNamespace = envNamespace
+		}
+	}
+	cmd.NacosDataid = *dataId
+	if len(cmd.NacosDataid) <= 0 {
+		envDataId := os.Getenv(common.NacosDataid)
+		if len(envDataId) > 0 {
+			cmd.NacosDataid = envDataId
+		}
+	}
+	cmd.NacosGroup = *group
+	if len(cmd.NacosGroup) <= 0 {
+		envGroup := os.Getenv(common.NacosGroup)
+		if len(envGroup) > 0 {
+			cmd.NacosGroup = envGroup
+		}
+	}
+	return cmd
 }

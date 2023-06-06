@@ -1,47 +1,59 @@
 package monitor
 
 import (
-	"github.com/gitstliu/log4go"
+	"bytes"
+	"github.com/bytedance/sonic"
+	"github.com/sirupsen/logrus"
 	"github.com/wuxins/api-gateway/config"
-	"strings"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-var monitorLogger = log4go.Logger{}
+var log *logrus.Logger
 
-const M = 1024 * 1024
+func Init(monitor config.Monitor) {
 
-func Init(monitor config.Monitor) log4go.Logger {
-
-	fileDir := monitor.LogDir
-	fileName := monitor.LogFileName
-	rotateSize := monitor.LogRotateMaxsize
-	rotateMaxLines := monitor.LogRotateMaxLines
-	if len(fileDir) <= 0 {
-		fileDir = ""
-	} else {
-		if !strings.HasSuffix(fileDir, "/") {
-			fileDir = fileDir + "/"
-		}
+	filename := "monitor.log"
+	maxSize := 50
+	maxBackups := 100
+	maxAge := 30
+	if len(monitor.Filename) > 0 {
+		filename = monitor.Filename
 	}
-	if len(fileName) <= 0 {
-		fileName = "monitor.log"
+	if monitor.RotateMaxSize > 0 {
+		maxSize = monitor.RotateMaxSize
 	}
-	if rotateSize <= 0 {
-		rotateSize = 100
+	if monitor.RotateMaxBackups > 0 {
+		maxBackups = monitor.RotateMaxBackups
 	}
-	if rotateMaxLines <= 0 {
-		rotateMaxLines = 500000
+	if monitor.RotateMaxAge > 0 {
+		maxAge = monitor.RotateMaxAge
 	}
 
-	writer := log4go.NewFileLogWriter(fileDir+fileName, true)
-	writer.SetFormat("%M")
-	writer.SetRotateDaily(false)
-	writer.SetRotateSize(rotateSize * M)
-	writer.SetRotateLines(rotateMaxLines)
-	monitorLogger.AddFilter("file", log4go.INFO, writer)
-	return monitorLogger
+	log = logrus.New()
+	log.SetFormatter(&Formatter{})
+	log.SetOutput(&lumberjack.Logger{
+		Filename:   filename,
+		MaxSize:    maxSize,
+		MaxBackups: maxBackups,
+		MaxAge:     maxAge,
+		Compress:   monitor.RotateCompress,
+	})
 }
 
 func Report(event Event) {
-	monitorLogger.Info(event)
+	output, _ := sonic.MarshalString(&event)
+	log.Info(output)
+}
+
+type Formatter struct{}
+
+func (m *Formatter) Format(entry *logrus.Entry) ([]byte, error) {
+	var b *bytes.Buffer
+	if entry.Buffer != nil {
+		b = entry.Buffer
+	} else {
+		b = &bytes.Buffer{}
+	}
+	b.WriteString(entry.Message + "\n")
+	return b.Bytes(), nil
 }

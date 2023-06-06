@@ -1,0 +1,73 @@
+[System]
+    FlushPathMapSpan = 60_000
+    Env = "dev"
+    LogLevel = "info"
+    
+[Log]
+    Level = "debug"
+    Filename = "api_gateway.log"
+    RotateMaxSize = 1
+    RotateMaxBackups = 5
+    RotateMaxAge = 2
+    RotateCompress = false
+    
+[Http]
+    ServicePort = 9999
+    ServerReadTimeout = 1_000
+    ServerKeepalive = 3_000
+    GracefulShutdownTimeout = 60_000
+
+[Proxy]
+    [Proxy.Http]
+    ServicePort = 8888
+    ServerReadTimeout = 1_000
+    ServerKeepalive = 3_000
+    GracefulShutdownTimeout = 60_000
+
+    [Proxy.CORS]
+    AccessControlAllowOrigin = "*"
+    AccessControlAllowMethods = "POST, GET, OPTIONS, PUT, DELETE"
+    AccessControlAllowHeaders = "G-tenant,channel,agentChannel,token,did,lang,securityToken,deviceRam,userToken"
+
+    [Proxy.Rate]
+    Enable = true
+    LocalRateDownPercent = 20
+
+    [Proxy.Routing]
+    RequestTimeout = 30_000
+    MaxConnsPerHost = 20_000
+    MaxIdleConnsPerHost = 200
+    MaxIdleConns = 1_000
+    IdleConnTimeout = 60_000
+
+    [Proxy.Monitor]
+    Filename = "cat.log"
+    RotateMaxSize = 1
+    RotateMaxBackups = 5
+    RotateMaxAge = 2
+    RotateCompress = false
+
+[DB]
+    DBType = "mysql"
+    ConnectionString = "root:yicai.liu@tcp(localhost:3306)/api_gateway?charset=utf8&parseTime=True"
+    LogMode = true
+    MaxOpenConns = 10
+    MaxIdleConns = 5
+    ConnMaxIdleTime = 30_000
+
+[Redis]
+    Addresses = "localhost:6379"
+    DB = 0
+    Password = "yicai.liu"
+    PoolSize = 0
+    DialTimeout = 100
+    ReadTimeout = 100
+    WriteTimeout = 100
+    IdleTimeout = 900_000
+    MinIdleConns = 8
+    MaxRetries = 0
+    DetectAliveInterval = 1_000
+
+[Tenant]
+    TokenSignKey = "78f2c169eeeba9f033bc394dd10119cb"
+    TokenSignMethod = "HS256"

@@ -16,6 +16,7 @@ With the following questions, Api gateway was born:
 If you have these problems, it may help you.
 
 **Architecture**
+
 ![Api gateway!](C:\work\docs\gateway.png "Api gateway")
 
 1. Middleware dependencies
@@ -80,12 +81,12 @@ If you have these problems, it may help you.
 **Best practice**
 
 **Performance**
-Stress test tools : Apache bench httpd-tools ab test.
-Back api uri: /upstream-service-test/outer/resources/{{resourceId}}
-Api gateway uri: /upstream-service-test/resources/{{resourceId}}
-Request method: GET
-Response body content:
 
+Stress test tools : Apache bench httpd-tools ab test.  
+Back api uri: /upstream-service-test/outer/resources/{{resourceId}}  
+Api gateway uri: /upstream-service-test/resources/{{resourceId}}  
+Request method: GET  
+Response body content:
 ```json
 {
   "code": "200000",

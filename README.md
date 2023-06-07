@@ -92,8 +92,6 @@ _高性能可扩展弹性部署的HTTP网关_
 
 API上线流程：上报->开发自测->测试验证->生产上线
 
-![Api gateway workflow!](./docs/workflow.png "Api gateway workflow")
-
 服务列表：
 
 | 服务名称                  | 开发语言    | 描述                           |

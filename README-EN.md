@@ -18,7 +18,7 @@ If you have these problems, it may help you.
 
 **Architecture**
 
-![Api gateway architecture!](./docs/arch.png "Api gateway architecture")
+![Api gateway architecture!](docs/pics/arch.png "Api gateway architecture")
 
 1. Middleware dependencies
 
@@ -79,7 +79,7 @@ If you have these problems, it may help you.
 
 **Best practice**
 
-![Api gateway workflow!](./docs/workflow.png "Api gateway workflow")
+![Api gateway workflow!](docs/pics/workflow.png "Api gateway workflow")
 
 **Performance**
 

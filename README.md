@@ -20,7 +20,7 @@ _高性能可扩展弹性部署的HTTP网关_
 
 ### 架构
 
-![Api gateway architecture!](./docs/arch.png "Api gateway architecture")
+![Api gateway architecture!](docs/pics/arch.png "Api gateway architecture")
 
 1. 中间件依赖
 
@@ -120,14 +120,14 @@ _高性能可扩展弹性部署的HTTP网关_
 - 管控平台操作示例图：
 
 1. API信息查询
-   ![Api gateway info!](./docs/gateway-api-info.png "Api gateway info")
+   ![Api gateway info!](docs/pics/gateway-api-info.png "Api gateway info")
 2. API信息同步
-   ![Api gateway sync!](./docs/gateway-api-sync.png "Api gateway sync")
+   ![Api gateway sync!](docs/pics/gateway-api-sync.png "Api gateway sync")
 3. API租户信息管理
-   ![Api tenant info!](./docs/gateway-tenant-info.png "Api tenant info")
+   ![Api tenant info!](docs/pics/gateway-tenant-info.png "Api tenant info")
 4. API文档预览
-   ![Api docs info!](./docs/gateway-api-docs-01.png "Api docs info")
-   ![Api docs info!](./docs/gateway-api-docs-02.png "Api docs info")
+   ![Api docs info!](docs/pics/gateway-api-docs-01.png "Api docs info")
+   ![Api docs info!](docs/pics/gateway-api-docs-02.png "Api docs info")
 
 ### 性能
 

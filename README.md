@@ -1,5 +1,6 @@
 简体中文 | [English](README-EN.md)
 
+
 # 概览
 
 _高性能可扩展弹性部署的HTTP网关_
@@ -45,19 +46,19 @@ _高性能可扩展弹性部署的HTTP网关_
 
 ### 特性列表
 
-- 接口级安全控制
-- API渐进式发布
-- Restful API 转发支持
-- 限流
-- 熔断
-- 降级
-- 超时控制
-- OAuth2.0 客户端鉴权
-- 参数过滤
-- API分组
-- 灰度
-- 监控
-- API文档生成
+- [接口级安全控制](docs/feature.md#接口级安全控制)
+- [API渐进式发布](docs/feature.md#API渐进式发布)
+- [Restful API 转发支持](docs/feature.md#Restful API 转发支持)
+- [限流](docs/feature.md#限流)
+- [熔断](docs/feature.md#熔断)
+- [降级](docs/feature.md#降级)
+- [超时控制](docs/feature.md#超时控制)
+- [OAuth2.0 客户端鉴权](docs/feature.md#OAuth2.0 客户端鉴权)
+- [参数过滤](docs/feature.md#参数过滤)
+- [API分组](docs/feature.md#API分组)
+- [灰度](docs/feature.md#灰度)
+- [监控](docs/feature.md#监控)
+- [API文档生成](docs/feature.md#api文档生成)
 
 **核心概念**
 

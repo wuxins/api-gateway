@@ -1,7 +1,6 @@
 简体中文 | [English](README-EN.md)
 
 
-[TOC](概览)
 # 概览
 
 _高性能可扩展弹性部署的HTTP网关_

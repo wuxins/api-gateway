@@ -57,7 +57,6 @@ select av.api_code,
        av.ignore_query_params,
        av.need_api_auth,
        us.address,
-       us.gray_rule_code,
        us.gray_address
 from t_api_version av
          join t_api a on a.api_code = av.api_code and av.env = ?
@@ -66,7 +65,7 @@ where av.is_deleted = 'N'
   and a.is_deleted = 'N'
   and us.is_deleted = 'N';
 */
-var ApiSql = "select av.api_code,\n       av.method,\n       av.src_url,\n       av.des_url,\n       av.read_timeout,\n       av.need_rate_limit,\n       av.rate_limit,\n       av.need_monitor,\n       av.need_fallback,\n       av.fallback,\n       av.ignore_header_params,\n       av.ignore_query_params,\n       av.need_api_auth,\n       us.address,\n       us.gray_rule_code,\n       us.gray_address\nfrom t_api_version av\n         join t_api a on a.api_code = av.api_code and av.env = ?\n         join t_upstream_service_version us on us.service_code = av.service_code and us.env = av.env\nwhere av.is_deleted = 'N'\n  and a.is_deleted = 'N'\n  and us.is_deleted = 'N'"
+var ApiSql = "select av.api_code,\n       av.method,\n       av.src_url,\n       av.des_url,\n       av.read_timeout,\n       av.need_rate_limit,\n       av.rate_limit,\n       av.need_monitor,\n       av.need_fallback,\n       av.fallback,\n       av.ignore_header_params,\n       av.ignore_query_params,\n       av.need_api_auth,\n       us.address,\n       us.gray_address\nfrom t_api_version av\n         join t_api a on a.api_code = av.api_code and av.env = ?\n         join t_upstream_service_version us on us.service_code = av.service_code and us.env = av.env\nwhere av.is_deleted = 'N'\n  and a.is_deleted = 'N'\n  and us.is_deleted = 'N'"
 
 /*
 select tenant_code,
@@ -92,27 +91,26 @@ select att.api_code,
        ttv.token_expire_code,
        ttv.token_expire_content
 from t_tenant_version ttv
-         left join t_tenant tt on tt.tenant_code = ttv.tenant_code
-         left join t_api_tenant att on att.tenant_code = ttv.tenant_code
+         join t_tenant tt on tt.tenant_code = ttv.tenant_code
+         join t_api_tenant att on att.tenant_code = ttv.tenant_code
 where att.is_deleted = 'N'
   and tt.is_deleted = 'N'
   and ttv.is_deleted = 'N'
   and ttv.env = ?
 */
-var ApiTenantSql = "select att.api_code,\n       ttv.tenant_code,\n       ttv.tenant_key,\n       ttv.tenant_secret,\n       ttv.tenant_secret_salt,\n       ttv.token_expire_in,\n       ttv.token_expire_code,\n       ttv.token_expire_content\nfrom t_tenant_version ttv\n         left join t_tenant tt on tt.tenant_code = ttv.tenant_code\n         left join t_api_tenant att on att.tenant_code = ttv.tenant_code\nwhere att.is_deleted = 'N'\n  and tt.is_deleted = 'N'\n  and ttv.is_deleted = 'N'\n  and ttv.env = ?"
+var ApiTenantSql = "select att.api_code,\n       ttv.tenant_code,\n       ttv.tenant_key,\n       ttv.tenant_secret,\n       ttv.tenant_secret_salt,\n       ttv.token_expire_in,\n       ttv.token_expire_code,\n       ttv.token_expire_content\nfrom t_tenant_version ttv\n         join t_tenant tt on tt.tenant_code = ttv.tenant_code\n         join t_api_tenant att on att.tenant_code = ttv.tenant_code\nwhere att.is_deleted = 'N'\n  and tt.is_deleted = 'N'\n  and ttv.is_deleted = 'N'\n  and ttv.env = ?"
 
 /**
-select grv.mode,
-       grv.scale_rate,
-       grv.feature_content,
-       grv.header_pass_tag,
-       gr.rule_code,
-       gr.global
-from t_gray_rule_version grv
-	join t_gray_rule gr on gr.rule_code = grv.rule_code
-where gr.is_deleted = 'N'
-  and grv.is_deleted = 'N'
-  and grv.active = 'Y'
-  and env = ?;
+SELECT mode,
+	scale_rate,
+	feature_content,
+	header_pass_tag,
+	rule_code
+FROM
+	t_gray_rule_version
+WHERE
+	is_deleted = 'N'
+	AND active = 'Y'
+	AND env = ?;
 */
-var GrayRuleSql = "select grv.mode,\n       grv.scale_rate,\n       grv.feature_content,\n       grv.header_pass_tag,\n       gr.rule_code,\n       gr.global\nfrom t_gray_rule_version grv\n\tjoin t_gray_rule gr on gr.rule_code = grv.rule_code\nwhere gr.is_deleted = 'N'\n  and grv.is_deleted = 'N'\n  and grv.active = 'Y'\n  and env = ?"
+var GrayRuleSql = "SELECT mode,\n\tscale_rate,\n\tfeature_content,\n\theader_pass_tag,\n\trule_code\nFROM\n\tt_gray_rule_version\nWHERE\n\tis_deleted = 'N'\n\tAND active = 'Y'\n\tAND env = ?"

@@ -163,7 +163,7 @@ func urlsToPath(api dto.Api) (RegularPath, error) {
 	path.SrcParams, path.SrcParamsIndex = urlToParamMap(path.SrcURL)
 	path.DesParams, path.DesParamsIndex = urlToParamMap(path.DesURL)
 	path.GrayAddress = api.GrayAddress
-	rule := dto.GetGrayRule(api.GrayRuleCode)
+	rule := dto.GetGrayRule()
 	if nil != rule {
 		path.NeedGray = true
 		path.GrayRule = *rule

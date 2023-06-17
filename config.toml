@@ -6,7 +6,7 @@
 [Log]
     Level = "debug"
     Filename = "api_gateway.log"
-    RotateMaxSize = 1
+    RotateMaxSize = 100
     RotateMaxBackups = 5
     RotateMaxAge = 2
     RotateCompress = false

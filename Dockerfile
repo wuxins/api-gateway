@@ -8,8 +8,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o app main.go
 FROM alpine
 ENV TZ Asia/Shanghai
 COPY --from=build /project/app /project/app
-ADD config.toml /project/
-ADD log.xml /project/
+ADD config.toml /project
 
 WORKDIR /project
 ENTRYPOINT  ["./app"]

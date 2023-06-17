@@ -20,6 +20,4 @@ type Api struct {
 	NeedGray               string `gorm:"need_gray"`
 	ApiTenants             map[string]ApiTenant
 	GrayAddress            string `gorm:"gray_address"`
-	GrayRuleCode           string `gorm:"gray_rule_code"`
-	GrayRule               GrayRule
 }

@@ -1,32 +1,20 @@
 package dto
 
-var serviceGrayRule = map[string]GrayRule{}
+var grayRule GrayRule
 
 type GrayRule struct {
-	RuleCode       string
-	Mode           int
-	ScaleRate      int
-	FeatureContent string
-	HeaderPassTag  string
+	RuleCode          string
+	Mode              int
+	ScaleRate         int
+	FeatureHeaderTags string
+	FeatureIpList     string
+	HeaderPassTag     string
 }
 
-type FeatureContent struct {
-	IpList       string
-	HeaderTagMap map[string]interface{}
+func FlushGrayRule(rule GrayRule) {
+	grayRule = rule
 }
 
-func FlushGrayRule(rules []GrayRule) {
-	for _, rule := range rules {
-		serviceGrayRule[rule.RuleCode] = rule
-	}
-}
-
-func GetGrayRule(ruleCode string) *GrayRule {
-
-	if len(ruleCode) <= 0 {
-		return nil
-	}
-	if item, ok := serviceGrayRule[ruleCode]; ok {
-		return &item
-	}
+func GetGrayRule() *GrayRule {
+	return &grayRule
 }

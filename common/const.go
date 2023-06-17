@@ -103,7 +103,8 @@ var ApiTenantSql = "select att.api_code,\n       ttv.tenant_code,\n       ttv.te
 /**
 SELECT mode,
 	scale_rate,
-	feature_content,
+	feature_ip_list,
+	feature_header_tags,
 	header_pass_tag,
 	rule_code
 FROM
@@ -113,4 +114,4 @@ WHERE
 	AND active = 'Y'
 	AND env = ?;
 */
-var GrayRuleSql = "SELECT mode,\n\tscale_rate,\n\tfeature_content,\n\theader_pass_tag,\n\trule_code\nFROM\n\tt_gray_rule_version\nWHERE\n\tis_deleted = 'N'\n\tAND active = 'Y'\n\tAND env = ?"
+var GrayRuleSql = "SELECT mode,\n\tscale_rate,\n\tfeature_ip_list,\n\tfeature_header_tags,\n\theader_pass_tag,\n\trule_code\nFROM\n\tt_gray_rule_version\nWHERE\n\tis_deleted = 'N'\n\tAND active = 'Y'\n\tAND env = ?"

@@ -27,7 +27,7 @@ func flushPathMap() {
 
 	regularpath.FlushTenants(dao.GetAllTenants())
 
-	dto.FlushGrayRule(dao.GetAllGrayRules())
+	dto.FlushGrayRule(dao.GetGrayRule())
 
 	apis := dao.GetAllApi()
 	marshal, _ := json.Marshal(apis)

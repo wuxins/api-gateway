@@ -2,8 +2,10 @@ package routing
 
 import (
 	"github.com/bytedance/sonic"
-	"github.com/wuxins/api-gateway/dto"
+	"github.com/wuxins/api-gateway/common"
+	"github.com/wuxins/api-gateway/utils"
 	"math/rand"
+	"strings"
 	"time"
 )
 
@@ -19,38 +21,41 @@ func GrayStrategyPlugin() func(c *RouterContext) {
 			c.Next()
 			return
 		}
-
 		grayStrategy := regularPath.GrayRule
-		hitGray := false
 		if r.Header[grayStrategy.HeaderPassTag] != nil && r.Header[grayStrategy.HeaderPassTag][0] == "Y" {
-			hitGray = true
-		} else {
-			featureContent := grayStrategy.FeatureContent
-			if grayStrategy.Mode == 0 { // feature
-				if len(featureContent) > 0 {
-					featureContentObj := dto.FeatureContent{}
-					_ = sonic.UnmarshalString(featureContent, &featureContentObj)
-
-					for key, value := range featureContentObj.HeaderTagMap {
-						if r.Header[key] != nil && r.Header[key][0] == value {
-							hitGray = true
-							break
-						}
-					}
-				}
-			} else { // scale+
-				rand.Seed(time.Now().UnixNano())
-				if rand.Intn(100) <= grayStrategy.ScaleRate {
-					hitGray = true
+			processGray(c)
+			return
+		}
+		grayIps := grayStrategy.FeatureIpList // ip
+		if len(grayIps) > 0 && strings.Contains(grayIps, utils.GetIP(r)) {
+			processGray(c)
+			return
+		}
+		if grayStrategy.Mode == 1 { // scale
+			rand.Seed(time.Now().UnixNano())
+			if rand.Intn(100) <= grayStrategy.ScaleRate {
+				processGray(c)
+				return
+			}
+		}
+		if grayStrategy.Mode == 0 && len(grayStrategy.FeatureHeaderTags) > 0 { // feature
+			featureContentMap := map[string]string{}
+			_ = sonic.UnmarshalString(grayStrategy.FeatureHeaderTags, &featureContentMap)
+			for key, value := range featureContentMap {
+				if nil != r.Header[key] && len(value) > 0 && common.ContainsStr(strings.Split(value, common.DelimiterComma), r.Header[key][0]) {
+					processGray(c)
+					return
 				}
 			}
 		}
-
-		if hitGray {
-			r.Header.Set(grayStrategy.HeaderPassTag, "Y")
-			c.RequestUpstreamAddress = regularPath.GrayAddress
-		}
-
 		c.Next()
 	}
+}
+
+func processGray(c *RouterContext) {
+	c.Req.Header.Set(c.RegularPath.GrayRule.HeaderPassTag, "Y")
+	if len(c.RegularPath.GrayAddress) > 0 {
+		c.RequestUpstreamAddress = c.RegularPath.GrayAddress
+	}
+	c.Next()
 }

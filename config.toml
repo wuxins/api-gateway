@@ -41,7 +41,7 @@
     IdleConnTimeout = 60_000
 
     [Proxy.Monitor]
-    Filename = "cat.log"
+    Filename = "api_monitor.log"
     RotateMaxSize = 1
     RotateMaxBackups = 5
     RotateMaxAge = 2
@@ -49,14 +49,14 @@
 
 [DB]
     DBType = "mysql"
-    ConnectionString = "root:yicai.liu@tcp(localhost:3306)/api_gateway?charset=utf8&parseTime=True"
+    ConnectionString = "root:yicai.liu@tcp(mysql:3306)/api_gateway?charset=utf8&parseTime=True"
     LogMode = true
     MaxOpenConns = 10
     MaxIdleConns = 5
     ConnMaxIdleTime = 30_000
 
 [Redis]
-    Addresses = "localhost:6379"
+    Addresses = "redis:6379"
     DB = 0
     Password = "yicai.liu"
     PoolSize = 0

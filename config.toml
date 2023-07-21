@@ -46,6 +46,7 @@
     RotateMaxBackups = 5
     RotateMaxAge = 2
     RotateCompress = false
+    BodyMaxSize = 2000
 
 [DB]
     DBType = "mysql"

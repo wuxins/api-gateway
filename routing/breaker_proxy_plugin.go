@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/afex/hystrix-go/hystrix"
 	"github.com/wuxins/api-gateway/common"
+	"github.com/wuxins/api-gateway/config"
 	"github.com/wuxins/api-gateway/monitor"
 	"github.com/wuxins/api-gateway/regularpath"
 	"io/ioutil"
@@ -75,19 +76,30 @@ func BizRouting(c *RouterContext) error {
 			}
 			requestStartTime, _ := strconv.ParseInt(c.RequestTime, 10, 64)
 			now := time.Now()
+			bodyMaxSize := config.GetConfigure().Proxy.Monitor.BodyMaxSize
+			reqBody := string(bodyBytes)
+			if len(reqBody) > bodyMaxSize {
+				reqBody = reqBody[0:bodyMaxSize]
+			}
+			respBodyStr := string(respBody)
+			if len(respBodyStr) > bodyMaxSize {
+				respBodyStr = respBodyStr[0:bodyMaxSize]
+			}
+			queryParams, _ := url.Parse(r.RequestURI)
 			monitor.Report(monitor.Event{
 				Metric:     monitor.MetricApi,
 				MetricType: monitor.MetricApiAccLog,
 				Time:       now.Format(common.DateFormatMs),
 				Key:        c.RequestId,
 				Content: monitor.ApiTransportMetric{
-					Url:        regularPath.SrcURL,
+					Url:        r.URL.Path,
 					Method:     r.Method,
 					ReqHeader:  r.Header,
-					ReqBody:    string(bodyBytes),
+					ReqQuery:   queryParams.RawQuery,
+					ReqBody:    reqBody,
 					Status:     res.StatusCode,
 					RespHeader: w.Header(),
-					RespBody:   string(respBody),
+					RespBody:   respBodyStr,
 					StartTime:  requestStartTime,
 					EndTime:    common.UnixMilliseconds(now),
 					Cost:       common.UnixMilliseconds(now) - requestStartTime,

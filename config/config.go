@@ -111,6 +111,7 @@ type Monitor struct {
 	RotateMaxBackups int    `yaml:"RotateMaxBackups"`
 	RotateMaxAge     int    `yaml:"RotateMaxAge"`
 	RotateCompress   bool   `yaml:"RotateCompress"`
+	BodyMaxSize      int    `yaml:"BodyMaxSize"`
 }
 
 type CMD struct {

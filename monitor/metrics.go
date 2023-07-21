@@ -28,6 +28,7 @@ type ApiTransportMetric struct {
 	Url        string
 	Method     string
 	ReqHeader  http.Header
+	ReqQuery   string
 	ReqBody    string
 	Status     int
 	RespHeader http.Header
